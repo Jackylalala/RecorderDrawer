@@ -1,0 +1,36 @@
+            //Add MS jh
+            byte[] fontData = Properties.Resources.msjh;
+            IntPtr fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
+            System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+            uint dummy = 0;
+            fonts.AddMemoryFont(fontPtr, Properties.Resources.msjh.Length);
+            AddFontMemResourceEx(fontPtr, (uint)Properties.Resources.msjh.Length, IntPtr.Zero, ref dummy);
+            System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+            //Add MS jh bd
+            fontData = Properties.Resources.msjhbd;
+            fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
+            System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+            dummy = 0;
+            fonts.AddMemoryFont(fontPtr, Properties.Resources.msjhbd.Length);
+            AddFontMemResourceEx(fontPtr, (uint)Properties.Resources.msjhbd.Length, IntPtr.Zero, ref dummy);
+            System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+            //Add Calibri
+            fontData = Properties.Resources.calibri;
+            fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
+            System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+            dummy = 0;
+            fonts.AddMemoryFont(fontPtr, Properties.Resources.calibri.Length);
+            AddFontMemResourceEx(fontPtr, (uint)Properties.Resources.calibri.Length, IntPtr.Zero, ref dummy);
+            System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+            //Add Calibri bd
+            fontData = Properties.Resources.calibrib;
+            fontPtr = System.Runtime.InteropServices.Marshal.AllocCoTaskMem(fontData.Length);
+            System.Runtime.InteropServices.Marshal.Copy(fontData, 0, fontPtr, fontData.Length);
+            dummy = 0;
+            fonts.AddMemoryFont(fontPtr, Properties.Resources.calibrib.Length);
+            AddFontMemResourceEx(fontPtr, (uint)Properties.Resources.calibrib.Length, IntPtr.Zero, ref dummy);
+            System.Runtime.InteropServices.Marshal.FreeCoTaskMem(fontPtr);
+            msjh = fonts.Families[1];
+            calibri = fonts.Families[0];
+        FontFamily msjh;
+        FontFamily calibri;
