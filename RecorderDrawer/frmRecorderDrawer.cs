@@ -1003,6 +1003,10 @@ namespace RecorderDrawer
 
         private void bgdWorkerAnimation_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
+            if (e.ProgressPercentage < 100)
+                pgbProcess.Value = e.ProgressPercentage;
+            else
+                pgbProcess.Value = 99;
             lblStatus.Text = e.UserState.ToString();
         }
 
