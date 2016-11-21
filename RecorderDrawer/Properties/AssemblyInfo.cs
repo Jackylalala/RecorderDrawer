@@ -9,9 +9,9 @@ using System.Resources;
 [assembly: AssemblyTitle("RecorderDrawer")]
 [assembly: AssemblyDescription("高壓反應器趨勢圖繪圖程式")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Oriental Union Chemical Corporation")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("RecorderDrawer")]
-[assembly: AssemblyCopyright("Mon-Wei Hsiao Copyright ©  2015")]
+[assembly: AssemblyCopyright("Mon-Wei Hsiao Copyright ©  2015 - 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("5.0.*")]
-[assembly: AssemblyFileVersion("5.0.0.0")]
+[assembly: AssemblyVersion("5.1.*")]
+[assembly: AssemblyFileVersion("5.1.0.0")]
 [assembly: NeutralResourcesLanguageAttribute("zh-TW")]

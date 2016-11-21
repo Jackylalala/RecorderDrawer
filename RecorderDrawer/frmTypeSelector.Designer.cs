@@ -49,16 +49,17 @@
             this.cboType.FormattingEnabled = true;
             this.cboType.Items.AddRange(new object[] {
             "自動選擇",
-            "3L反應器",
-            "1L & 5L反應器國華",
-            "2L反應器#201",
+            "3L反應器(#2)",
+            "1L & 5L反應器國華(#4, #5)",
+            "2L反應器#201(#1, #3)",
             "R1-CHPPO",
             "R1-EOD",
             "R2-CHPPO",
-            "R2-EOD",
+            "R2-EOD(#6)",
             "R3-CHPPO",
             "R3-EOD",
-            "CHPPO Pilot"});
+            "CHPPO Pilot",
+            "2F遠東新反應器(#7)"});
             this.cboType.Location = new System.Drawing.Point(30, 29);
             this.cboType.Name = "cboType";
             this.cboType.Size = new System.Drawing.Size(121, 25);

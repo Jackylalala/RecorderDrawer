@@ -95,6 +95,7 @@ namespace RecorderDrawer
          * 7: R3-CHPPO
          * 8: R3-EOD
          * 9: CHPPO Pilot
+         * 10: 2F遠東新反應器(#7)
          */
         private int type;
         //Synchronization lock
@@ -105,27 +106,27 @@ namespace RecorderDrawer
             new int[][] { new int[] { 0, 1, 6 }, new int[] { 0, 4 }, new int[] { 0 },   //內溫(溫度)
                 new int[] { 2 }, new int[] { 2 }, new int[] { 5, 2 }, 
                 new int[] { 5, 2 }, new int[] { 2, 5 }, new int[] { 2, 5 },
-                new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20 }}, 
+                new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20 }, new int[] { 0, 1, 6 }}, 
             new int[][] { new int[] { 2, 3 }, new int[] { 1, 2, 3, 5 }, new int[] { 1, 4 },  //外溫(壓力)
                 new int[] { 4 }, new int[] { 4 }, new int[] { 3 }, 
                 new int[] { 3 }, new int[] { 3 }, new int[] { 3 },
-                new int[] { 10, 11, 12, 13, 14, 15, 18, 22 }}, 
+                new int[] { 10, 11, 12, 13, 14, 15, 18, 22 }, new int[] { 2, 3 }}, 
             new int[][] { new int[] { 5 }, new int[] { 6 }, new int[] { 2 },   //壓力(液位)
                 new int[] { 1 }, new int[] { 1 }, new int[] { 1 }, 
                 new int[] { 1 }, new int[] { 1 }, new int[] { 1 },
-                new int[] { 16 }}, 
+                new int[] { 16 }, new int[] { 5 }}, 
             new int[][] { new int[] { 4 }, new int[] { 9 }, new int[] { 5 },   //流速(升溫)(流量)
                 new int[] { 3 }, new int[] { 3 }, new int[] { 4 }, 
                 new int[] { 4 }, new int[] { 4 }, new int[] { 4 },
-                new int[] { 17, 19 }},  
+                new int[] { 17, 19 }, new int[] { 4 }},  
             new int[][] { new int[] { 7 }, new int[] { 7 }, new int[] { 3 },  //轉速(總量)
                 new int[] { 0 }, new int[] { 0 }, new int[] { 0 }, 
                 new int[] { 0 }, new int[] { 0 }, new int[] { 0 },
-                new int[] { 21 }},  
+                new int[] { 21 }, new int[] { 7 }},  
             new int[][] { new int[] { }, new int[] { 8 }, new int[] { },  //扭力(WHSV)
                 new int[] { }, new int[] { }, new int[] { }, 
                 new int[] { }, new int[] { }, new int[] { },
-                new int[] { }} }; //WHSV: Column 23尚未建立
+                new int[] { }, new int[] { }} }; //WHSV: Column 23尚未建立
         //Threshold
         private float minLimit = 0;
         private float maxLimit = 0;
@@ -423,7 +424,7 @@ namespace RecorderDrawer
             {
                 Console.WriteLine(ex.StackTrace + ": " + ex.Message);
                 //Default value
-                yProp=new AxesProp[10][]{
+                yProp=new AxesProp[11][]{
                     new AxesProp[6]{  //Type 0
                         new AxesProp("內溫", 0, 0, 220, 20), 
                         new AxesProp("外溫", 0, 0, 220, 20), 
@@ -493,7 +494,14 @@ namespace RecorderDrawer
                         new AxesProp("液位", 8, 0, 500, 50),
                         new AxesProp("流量", 9, 0, 250, 25),
                         new AxesProp("總量", 10, 0, 300, 30),
-                        new AxesProp("WHSV", 11, 0, 15, 1.5F)}, 
+                        new AxesProp("WHSV", 11, 0, 15, 1.5F)},
+                    new AxesProp[6]{  //Type 10 2F遠東新反應器(#7)
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
                 };
             }
             xType = StrToIntDef(Properties.Settings.Default.xType, 0);
@@ -780,10 +788,16 @@ namespace RecorderDrawer
                     }
                 }
                 //Final record
-                if (rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]] > maxP)
-                    maxP = rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]];
-                if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] > maxFlow)
-                    maxFlow = rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]];
+                if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] >= 0.1)
+                {
+                    if (rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]] > maxP)
+                    {
+                        maxP = rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]];
+                        maxPTime = rawData[rawData.Count - 1].Date;
+                    }
+                    if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] > maxFlow)
+                        maxFlow = rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]];
+                }
                 double avgFlow = totalFlow / totalTime;
                 double avgPressure = totalPressure / totalTime;
                 double avgInnerPV = totalInnerPV / totalTime;
@@ -1873,7 +1887,6 @@ namespace RecorderDrawer
                             type = frmTypeSelector.Type;
                             //Draw chart
                             return ReadData();
-                            //bgdWorkerDraw.RunWorkerAsync(new object[] { 2, chtMain });
                         }
                     }
                 }
@@ -1967,6 +1980,12 @@ namespace RecorderDrawer
                             tooltipString = new string[] { "丙烯儲槽溫度", "反應器溫度(底)", "反應器溫度", "反應器溫度", "反應器溫度", "反應器溫度", "反應器溫度(頂)", "反應器出口冷卻溫度", "反應器CHP25%入口加熱帶溫度", "出料加熱帶溫度", "PI-201", "丙烯儲槽壓力", "丙烯pump出口壓力", "丙烯pump出口至反應器管線壓力", "CHP25% 儲槽壓力", "氣液分離槽壓力", "CHP25%儲槽液位", "氮氣質量流量計", "背壓閥壓力", "氣體質量流量計", "反應器入口丙烯加熱帶", "體質量流量計總量", "反應器壓力差" };
                             chkChartItem = new CheckBox[23];
                             lblDataDisplay = new Label[23];
+                            break;
+                        case 10:
+                            trendSeries = new Series[8];
+                            paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "流速PV", "壓力PV", "程控SV", "轉速PV", };
+                            chkChartItem = new CheckBox[8];
+                            lblDataDisplay = new Label[8];
                             break;
                         default:
                             throw new Exception("資料格式不符");
