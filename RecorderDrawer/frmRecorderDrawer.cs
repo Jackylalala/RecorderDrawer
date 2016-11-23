@@ -56,7 +56,7 @@ namespace RecorderDrawer
         //Title
         private string titleText = "";
         //Y axis properties
-        private AxesProp[][] yProp = new AxesProp[10][];
+        private AxesProp[][] yProp = new AxesProp[11][];
         //Data information
         private List<RecordData> rawData = new List<RecordData>();
         private int dataCount;
