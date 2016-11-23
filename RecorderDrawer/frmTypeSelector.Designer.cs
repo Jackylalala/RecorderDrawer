@@ -55,11 +55,11 @@
             "R1-CHPPO",
             "R1-EOD",
             "R2-CHPPO",
-            "R2-EOD(#6)",
+            "R2-EOD(#7)",
             "R3-CHPPO",
             "R3-EOD",
             "CHPPO Pilot",
-            "2F遠東新反應器(#7)"});
+            "2F遠東新反應器(#6)"});
             this.cboType.Location = new System.Drawing.Point(30, 29);
             this.cboType.Name = "cboType";
             this.cboType.Size = new System.Drawing.Size(121, 25);

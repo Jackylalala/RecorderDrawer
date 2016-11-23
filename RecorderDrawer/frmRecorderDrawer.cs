@@ -1789,11 +1789,11 @@ namespace RecorderDrawer
                 if (type == -1)
                 {
                     if (secondRow.Length == 9 && !secondRow[1].Equals(""))
-                        type = 0; //3L
+                        type = 0; //3L(#2)
                     else if (secondRow.Length == 11)
-                        type = 1; //1L & 5L國華
+                        type = 1; //1L & 5L國華(#4 #5)
                     else if (secondRow.Length == 8 && !secondRow[1].Equals(""))
-                        type = 2; //2L (#201)
+                        type = 2; //2L (#201)(#1 #3)
                     else if (secondRow.Length == 9 && secondRow[1].Equals(""))
                         type = 6; //R2-EOD (Default for type 3-8)
                     else if (secondRow.Length > 20)
