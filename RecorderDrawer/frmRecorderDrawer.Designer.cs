@@ -36,9 +36,9 @@
             this.munOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.munAnalysis = new System.Windows.Forms.ToolStripMenuItem();
             this.munStatList = new System.Windows.Forms.ToolStripMenuItem();
+            this.munSetting = new System.Windows.Forms.ToolStripMenuItem();
             this.munTitle = new System.Windows.Forms.ToolStripMenuItem();
-            this.munAxes = new System.Windows.Forms.ToolStripMenuItem();
-            this.munTimePeriod = new System.Windows.Forms.ToolStripMenuItem();
+            this.munDetailedSetting = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImg = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImgToFile = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImgToMail = new System.Windows.Forms.ToolStripMenuItem();
@@ -75,9 +75,7 @@
             this.munOpen,
             this.munAnalysis,
             this.munStatList,
-            this.munTitle,
-            this.munAxes,
-            this.munTimePeriod,
+            this.munSetting,
             this.munExportImg,
             this.munToClip,
             this.munExportAnimation,
@@ -111,29 +109,29 @@
             this.munStatList.Text = "統計數據(&D)";
             this.munStatList.Click += new System.EventHandler(this.munStatList_Click);
             // 
+            // munSetting
+            // 
+            this.munSetting.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.munTitle,
+            this.munDetailedSetting});
+            this.munSetting.Enabled = false;
+            this.munSetting.Name = "munSetting";
+            this.munSetting.Size = new System.Drawing.Size(58, 20);
+            this.munSetting.Text = "設定(&S)";
+            // 
             // munTitle
             // 
-            this.munTitle.Enabled = false;
             this.munTitle.Name = "munTitle";
-            this.munTitle.Size = new System.Drawing.Size(82, 20);
+            this.munTitle.Size = new System.Drawing.Size(152, 22);
             this.munTitle.Text = "設定標題(&T)";
-            this.munTitle.Click += new System.EventHandler(this.numTitle_Click);
+            this.munTitle.Click += new System.EventHandler(this.munTitle_Click);
             // 
-            // munAxes
+            // munDetailedSetting
             // 
-            this.munAxes.Enabled = false;
-            this.munAxes.Name = "munAxes";
-            this.munAxes.Size = new System.Drawing.Size(94, 20);
-            this.munAxes.Text = "設定座標軸(&S)";
-            this.munAxes.Click += new System.EventHandler(this.munAxes_Click);
-            // 
-            // munTimePeriod
-            // 
-            this.munTimePeriod.Enabled = false;
-            this.munTimePeriod.Name = "munTimePeriod";
-            this.munTimePeriod.Size = new System.Drawing.Size(106, 20);
-            this.munTimePeriod.Text = "設定時間範圍(&T)";
-            this.munTimePeriod.Click += new System.EventHandler(this.munTimePeriod_Click);
+            this.munDetailedSetting.Name = "munDetailedSetting";
+            this.munDetailedSetting.Size = new System.Drawing.Size(152, 22);
+            this.munDetailedSetting.Text = "詳細設定(&D)";
+            this.munDetailedSetting.Click += new System.EventHandler(this.munDetailedSetting_Click);
             // 
             // munExportImg
             // 
@@ -424,16 +422,14 @@
         private System.Windows.Forms.ToolStripMenuItem munOpen;
         private System.Windows.Forms.ToolStripMenuItem munAnalysis;
         private System.Windows.Forms.TextBox txtFilePath;
-        private System.Windows.Forms.ToolStripMenuItem munTitle;
+        private System.Windows.Forms.ToolStripMenuItem munSetting;
         private System.Windows.Forms.ToolStripStatusLabel lblStatus;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripMenuItem munAxes;
         private System.Windows.Forms.ToolStripMenuItem munExportImg;
         private System.Windows.Forms.DataVisualization.Charting.Chart chtMain;
         private System.Windows.Forms.ToolStripMenuItem munToClip;
         internal System.Windows.Forms.Label lblProcessing;
         private System.Windows.Forms.ToolStripMenuItem munAbout;
-        private System.Windows.Forms.ToolStripMenuItem munTimePeriod;
         private System.Windows.Forms.Label lblTimeDisplay;
         private System.Windows.Forms.CheckBox chkThreshold;
         private System.Windows.Forms.TextBox txtMinLimit;
@@ -452,6 +448,8 @@
         private System.Windows.Forms.ToolStripMenuItem munExportAnimationToFile;
         private System.Windows.Forms.ToolStripMenuItem munExportAnimationToMail;
         private System.ComponentModel.BackgroundWorker bgdWorkerMail;
+        private System.Windows.Forms.ToolStripMenuItem munTitle;
+        private System.Windows.Forms.ToolStripMenuItem munDetailedSetting;
     }
 }
 

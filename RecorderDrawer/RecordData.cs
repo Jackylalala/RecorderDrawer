@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
+using System.Xml.Serialization;
 
 namespace RecorderDrawer
 {
     class RecordData : IComparable<RecordData>
     {
         private DateTime date;
-        private List<float> parameter;
+        private List<float> parameter; 
 
         public DateTime Date { get { return date; } }
         public List<float> Parameter { get { return parameter; } }
@@ -18,6 +20,7 @@ namespace RecorderDrawer
             this.date = date;
             this.parameter = parameter.ToList<float>();
         }
+
         public int CompareTo(RecordData obj)
         {
             if (obj == null)

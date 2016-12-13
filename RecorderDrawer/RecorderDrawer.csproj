@@ -122,11 +122,11 @@
     <Compile Include="frmRecorderDrawer.Designer.cs">
       <DependentUpon>frmRecorderDrawer.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmSetAxes.cs">
+    <Compile Include="frmDetailedSetting.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmSetAxes.Designer.cs">
-      <DependentUpon>frmSetAxes.cs</DependentUpon>
+    <Compile Include="frmDetailedSetting.Designer.cs">
+      <DependentUpon>frmDetailedSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="frmTimePeriod.cs">
       <SubType>Form</SubType>
@@ -175,8 +175,8 @@
     <EmbeddedResource Include="frmRecorderDrawer.resx">
       <DependentUpon>frmRecorderDrawer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmSetAxes.resx">
-      <DependentUpon>frmSetAxes.cs</DependentUpon>
+    <EmbeddedResource Include="frmDetailedSetting.resx">
+      <DependentUpon>frmDetailedSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSetTime.resx">
       <DependentUpon>frmSetTime.cs</DependentUpon>

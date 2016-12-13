@@ -1,25 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.OleDb;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Threading;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using System.Drawing.Printing;
-using System.Drawing.Drawing2D;
 using System.IO;
-using System.Drawing.Text;
-using System.Collections;
 using System.Globalization;
 using System.Net.Mail;
 using System.Net;
+using System.Xml.Serialization;
+using System.Xml;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace RecorderDrawer
 {
@@ -27,10 +23,23 @@ namespace RecorderDrawer
     {
 
         #region | Field |
+        //Reactor list
+        public static string[] REACTOR_LIST = {
+            "3L反應器(#2)",
+            "1L & 5L反應器國華(#4, #5)",
+            "2L反應器#201(#1, #3)",
+            "R1-CHPPO",
+            "R1-EOD",
+            "R2-CHPPO",
+            "R2-EOD(#7)",
+            "R3-CHPPO",
+            "R3-EOD","CHPPO Pilot",
+            "2F遠東新反應器(#6)"
+        };
         //Unit table
         public static string[] UNIT_TABLE = { "\u00b0C", "bar", "psi", "ml/min", "rpm", "Ncm", "%", "kg/cm\u00b2", "mm", "g/hr", "g", "h-1" };
         //Datetime format
-        private string[] dateTimeList = { 
+        private static string[] dateTimeList = { 
                             "yyyy/M/d tt hh:mm:ss", 
                             "yyyy/MM/dd tt hh:mm:ss", 
                             "yyyy/M/d hh:mm:ss tt", 
@@ -54,20 +63,30 @@ namespace RecorderDrawer
                             "yyyy/M/d", 
                             "yyyy/MM/dd",
                             "M/d HH:mm:ss"
-                        }; 
+                        };
+        //X position of y axis label
+        private static readonly float[] yLabelXPos = new float[] { 13.3F, 84.3F, 8.3F, 89.3F, 3.3F, 94.3F };
+        private static readonly float[] yLabelYPos = new float[] { 15F, 12.5F, 10F, 7.5F, 5F, 2.5F };
         private List<int> hiddenList = new List<int>(); //Hidden list of series
         private string rawFileName; //File name
         private Series[] trendSeries;
-        private int xType; //0: text, 1: DateTime
-        private int xInterval; //X axis interval in minute
-        private int xAngle; //X axis label angle
-        //X position of y axis label
-        private static readonly float[] yLabelXPos = new float[] { 13.3F, 84.3F, 8.3F, 89.3F, 3.3F, 94.3F };
-        private static readonly float[] yLabelYPos = new float[] { 15F, 12.5F, 10F, 7.5F, 5F, 2.5F};
-        //Title
-        private string titleText = "";
+        //Recorder type, -1 means auto detect
+        /*
+         * 0: 3L
+         * 1: 1L & 5L (國華)
+         * 2: 2L (#201)
+         * 3: R1-CHPPO
+         * 4: R1-EOD
+         * 5: R2-CHPPO
+         * 6: R2-EOD
+         * 7: R3-CHPPO
+         * 8: R3-EOD
+         * 9: CHPPO Pilot
+         * 10: 2F遠東新反應器(#7)
+         */
+        private static int type;
         //Y axis properties
-        private AxesProp[][] yProp = new AxesProp[11][];
+        private static AxesProp[][] yProp = new AxesProp[11][];
         //Data information
         private List<RecordData> rawData = new List<RecordData>();
         private int dataCount;
@@ -90,25 +109,6 @@ namespace RecorderDrawer
         private CheckBox[] chkChartItem;
         //Chart data display box
         private Label[] lblDataDisplay;
-        //Time period
-        private bool limitedTimePeriod;
-        private DateTime startTime;
-        private DateTime endTime;
-        //Recorder type, -1 means auto detect
-        /*
-         * 0: 3L
-         * 1: 1L & 5L (國華)
-         * 2: 2L (#201)
-         * 3: R1-CHPPO
-         * 4: R1-EOD
-         * 5: R2-CHPPO
-         * 6: R2-EOD
-         * 7: R3-CHPPO
-         * 8: R3-EOD
-         * 9: CHPPO Pilot
-         * 10: 2F遠東新反應器(#7)
-         */
-        private int type;
         //Synchronization lock
         private static object syncHandle = new object();
         //Series map (6 axes, 6 type)
@@ -149,12 +149,38 @@ namespace RecorderDrawer
         private bool select = false;
         private int indexSelectionStart;
         private int indexSelectionEnd;
-        //Temp folder
-        private string tempPath = Application.StartupPath + @"\temp";
         //Delegate function
         private delegate bool SetFrameWorkDelegate(int percentage);
         private delegate bool DrawChartDelegate(Chart chart);
-        private ManualResetEvent mre = new ManualResetEvent(false);
+        #endregion
+
+        #region | Properties |
+        public static AxesProp[] YProp
+        {
+            get
+            {
+                if (type == -1)
+                    return null;
+                else
+                    return yProp[type];
+            }
+            set
+            {
+                yProp[type] = value;
+            }
+        }
+        public static int XType { get; set; } //0: text, 1: DateTime
+        public static int XInterval { get; set; } //X axis interval in minute
+        public static int XAngle { get; set; } //X axis label angle
+        public static bool LimitedTimePeriod { get; set; }
+        public static DateTime StartTime { get; set; }
+        public static DateTime EndTime { get; set; }
+        public static string TitleText { get; set; } = "";
+        public static float Density { get; set; }
+        public static float CostPerHour { get; set; }
+        public static float ReactorSize { get; set; } //In Liter
+        public static int Percentage { get; set; }
+        public static int Duration { get; set; }
         #endregion
 
         #region | Event |
@@ -183,7 +209,7 @@ namespace RecorderDrawer
                     type = ofd.SchemaType;
                     txtFilePath.Text = "來源檔案︰" + rawFileName;
                     munAnalysis.Enabled = true;
-                    limitedTimePeriod = false;
+                    LimitedTimePeriod = false;
                     munAnalysis_Click(null, new EventArgs());
                 }
             }
@@ -196,7 +222,7 @@ namespace RecorderDrawer
         private void munAnalysis_Click(object sender, EventArgs e)
         {
             hiddenList.Clear();
-            limitedTimePeriod = false;
+            LimitedTimePeriod = false;
             if (!float.TryParse(txtMinLimit.Text, out minLimit))
             {
                 txtMinLimit.Text = "-32767";
@@ -210,10 +236,12 @@ namespace RecorderDrawer
             bgdWorkerDraw.RunWorkerAsync(new object[] { 2, chtMain });
         }
 
-        private void numTitle_Click(object sender, EventArgs e)
+        private void munTitle_Click(object sender, EventArgs e)
         {
-            if (InputBox("圖表標題", "請輸入圖表標題", ref titleText) == DialogResult.OK)
+            string input = TitleText;
+            if (InputBox("圖表標題", "請輸入圖表標題", ref input) == DialogResult.OK)
             {
+                TitleText = input;
                 //Draw chart
                 bgdWorkerDraw.RunWorkerAsync(new object[] { 0, chtMain });
             }
@@ -328,9 +356,9 @@ namespace RecorderDrawer
 
         private void chtMain_SelectionRangeChanged(object sender, CursorEventArgs e)
         {
-            limitedTimePeriod = true;
-            startTime = rawData[indexSelectionStart].Date;
-            endTime = rawData[indexSelectionEnd].Date;
+            LimitedTimePeriod = true;
+            StartTime = rawData[indexSelectionStart].Date;
+            EndTime = rawData[indexSelectionEnd].Date;
             //Draw chart
             bgdWorkerDraw.RunWorkerAsync(new object[] { 2, chtMain });
         }
@@ -356,15 +384,15 @@ namespace RecorderDrawer
             {
                 if (indexSelectionStart != indexSelectionEnd)
                 {
-                    limitedTimePeriod = true;
+                    LimitedTimePeriod = true;
                     if (indexSelectionEnd < indexSelectionStart)
                     {
                         int temp = indexSelectionStart;
                         indexSelectionStart = indexSelectionEnd;
                         indexSelectionEnd = temp;
                     }
-                    startTime = rawData[indexSelectionStart].Date;
-                    endTime = rawData[indexSelectionEnd].Date;
+                    StartTime = rawData[indexSelectionStart].Date;
+                    EndTime = rawData[indexSelectionEnd].Date;
                     //Draw chart
                     bgdWorkerDraw.RunWorkerAsync(new object[] { 2, chtMain });
                 }
@@ -379,35 +407,13 @@ namespace RecorderDrawer
                 munAnalysis_Click(new object(), new EventArgs());
         }
 
-        private void munAxes_Click(object sender, EventArgs e)
+        private void munDetailedSetting_Click(object sender, EventArgs e)
         {
-            frmSetAxes frmSetAxes = new frmSetAxes(yProp[type], xType, xInterval, xAngle);
-            frmSetAxes.StartPosition = FormStartPosition.Manual;
-            frmSetAxes.Location = new Point(this.Location.X + this.Width / 2 - frmSetAxes.ClientSize.Width / 2, this.Location.Y + this.Height / 2 - frmSetAxes.ClientSize.Height / 2);
-            if (frmSetAxes.ShowDialog() == DialogResult.OK)
-            {
-                yProp[type] = (AxesProp[])frmSetAxes.YProp.Clone();
-                xType = frmSetAxes.XType;
-                xInterval = frmSetAxes.XInterval;
-                xAngle = frmSetAxes.XAngle;
-                //Draw chart
-                bgdWorkerDraw.RunWorkerAsync(new object[] { 1, chtMain });
-            }
-        }
-
-        private void munTimePeriod_Click(object sender, EventArgs e)
-        {
-            frmTimePeriod frmTimePeriod = new frmTimePeriod(limitedTimePeriod, startTime, endTime);
-            frmTimePeriod.StartPosition = FormStartPosition.Manual;
-            frmTimePeriod.Location = new Point(this.Location.X + this.Width / 2 - frmTimePeriod.ClientSize.Width / 2, this.Location.Y + this.Height / 2 - frmTimePeriod.ClientSize.Height / 2);
-            if (frmTimePeriod.ShowDialog() == DialogResult.OK)
-            {
-                this.limitedTimePeriod = frmTimePeriod.LimitedTimePeriod;
-                this.startTime = frmTimePeriod.StartTime;
-                this.endTime = frmTimePeriod.EndTime;
-                //Draw chart
+            frmDetailedSetting frmDetailedSetting = new frmDetailedSetting();
+            frmDetailedSetting.StartPosition = FormStartPosition.Manual;
+            frmDetailedSetting.Location = new Point(Location.X + Width / 2 - frmDetailedSetting.ClientSize.Width / 2, Location.Y + Height / 2 - frmDetailedSetting.ClientSize.Height / 2);
+            if (frmDetailedSetting.ShowDialog() == DialogResult.OK)
                 bgdWorkerDraw.RunWorkerAsync(new object[] { 2, chtMain });
-            }
         }
 
         private void frmRecorderDrawer_Load(object sender, EventArgs e)
@@ -515,9 +521,9 @@ namespace RecorderDrawer
                         new AxesProp("", 5, 0, 220, 20)},
                 };
             }
-            xType = StrToIntDef(Properties.Settings.Default.xType, 0);
-            xInterval = StrToIntDef(Properties.Settings.Default.xInterval, 1000);
-            xAngle = StrToIntDef(Properties.Settings.Default.xAngle, 0);
+            XType = StrToIntDef(Properties.Settings.Default.xType, 0);
+            XInterval = StrToIntDef(Properties.Settings.Default.xInterval, 1000);
+            XAngle = StrToIntDef(Properties.Settings.Default.xAngle, 0);
             chkXGrid.Checked = true;
             chkYGrid.Checked = true;
         }
@@ -538,9 +544,9 @@ namespace RecorderDrawer
                 }
             }
             Properties.Settings.Default.yProp = yPropString;
-            Properties.Settings.Default.xType = Convert.ToString(xType);
-            Properties.Settings.Default.xInterval = Convert.ToString(xInterval);
-            Properties.Settings.Default.xAngle = Convert.ToString(xAngle);
+            Properties.Settings.Default.xType = Convert.ToString(XType);
+            Properties.Settings.Default.xInterval = Convert.ToString(XInterval);
+            Properties.Settings.Default.xAngle = Convert.ToString(XAngle);
             Properties.Settings.Default.Save();
         }
 
@@ -686,7 +692,7 @@ namespace RecorderDrawer
             if (validFile)
             {
                 munAnalysis.Enabled = true;
-                limitedTimePeriod = false;
+                LimitedTimePeriod = false;
                 //Type select
                 frmTypeSelector frmTypeSelector = new frmTypeSelector();
                 frmTypeSelector.StartPosition = FormStartPosition.Manual;
@@ -741,110 +747,7 @@ namespace RecorderDrawer
                 MessageBox.Show("沒有數據！");
             else
             {
-                //Integration
-                double totalTime = 0;
-                List<double> blankTime = new List<double>();
-                bool startFlag = false;
-                bool pauseFlag = false;
-                double totalFlow = 0;
-                double totalPressure = 0;
-                List<double> totalPressureDuringBlank = new List<double>();
-                double totalInnerPV = 0;
-                List<double> totalInnerPVDuringBlank = new List<double>();
-                double maxP = 0;
-                DateTime maxPTime = new DateTime();
-                double maxFlow = 0;
-                int lastFlowPoint = 0; //Last point with flow large than 0.1
-                for (int i = 0; i < rawData.Count - 1; i++)
-                {
-                    if (rawData[i + 1].Parameter[seriesMap[3][type][0]] >= 0.1)
-                    {
-                        lastFlowPoint = i + 1;
-                        startFlag = true;
-                        pauseFlag = false;
-                        totalFlow +=
-                            (rawData[i + 1].Parameter[seriesMap[3][type][0]]) *
-                            (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                        totalPressure +=
-                            (rawData[i + 1].Parameter[seriesMap[2][type][0]]) *
-                            (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                        totalInnerPV +=
-                            (rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]]) *
-                            (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                        totalTime += (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                        if (rawData[i].Parameter[seriesMap[2][type][0]] > maxP)
-                        {
-                            maxP = rawData[i].Parameter[seriesMap[2][type][0]];
-                            maxPTime = rawData[i].Date;
-                        }
-                        if (rawData[i].Parameter[seriesMap[3][type][0]] > maxFlow)
-                            maxFlow = rawData[i].Parameter[seriesMap[3][type][0]];
-                    }
-                    else if (startFlag)
-                    {
-                        if (!pauseFlag)
-                        {
-                            blankTime.Add(0);
-                            totalInnerPVDuringBlank.Add(0);
-                            totalPressureDuringBlank.Add(0);
-                        }
-                        pauseFlag = true;
-                        blankTime[blankTime.Count - 1] += (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                        totalPressureDuringBlank[blankTime.Count - 1] +=
-                            (rawData[i + 1].Parameter[seriesMap[2][type][0]]) *
-                            (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                        totalInnerPVDuringBlank[blankTime.Count - 1] +=
-                            (rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]]) *
-                            (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                    }
-                }
-                //Final record
-                if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] >= 0.1)
-                {
-                    if (rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]] > maxP)
-                    {
-                        maxP = rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]];
-                        maxPTime = rawData[rawData.Count - 1].Date;
-                    }
-                    if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] > maxFlow)
-                        maxFlow = rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]];
-                }
-                double avgFlow = totalFlow / totalTime;
-                double avgPressure = totalPressure / totalTime;
-                double avgInnerPV = totalInnerPV / totalTime;
-                double totalTimeWithBlank = totalTime;
-                double totalPressureWithBlank = totalPressure;
-                double totalInnPVWithBlank = totalInnerPV;
-                for (int i = 0; i < blankTime.Count - 1; i++)
-                {
-                    if (blankTime[i] < 480)
-                    {
-                        totalTimeWithBlank += blankTime[i];
-                        totalPressureWithBlank += totalPressureDuringBlank[i];
-                        totalInnPVWithBlank += totalInnerPVDuringBlank[i];
-                    }
-                }
-                double avgFlowWithBlank = totalFlow / totalTimeWithBlank;
-                double avgPressureWithBlank = totalPressureWithBlank / totalTimeWithBlank;
-                double avgInnerPVWithBlank = totalInnPVWithBlank / totalTimeWithBlank;
-                //Calcd. aging time
-                int pointPerPeriod = (int)(20 / (rawData[1].Date - rawData[0].Date).TotalMinutes);
-                bool agingDone = false;
-                double agingTime = 0;
-                DateTime agingStart = new DateTime();
-                DateTime agingEnd = new DateTime();
-                for (int i = lastFlowPoint + pointPerPeriod; i < rawData.Count; i++)
-                {
-                    if (rawData[i].Parameter[seriesMap[2][type][0]] == rawData[i - pointPerPeriod].Parameter[seriesMap[2][type][0]])
-                    {
-                        agingDone = true;
-                        agingStart = rawData[lastFlowPoint].Date;
-                        agingEnd = rawData[i - pointPerPeriod].Date;
-                        agingTime = (rawData[i - pointPerPeriod].Date - rawData[lastFlowPoint].Date).TotalMinutes;
-                        break;
-                    }
-                }
-                //Show
+                //Cal. & Show
                 Form frmMsg = new Form();
                 TextBox txtMsg = new TextBox();
                 txtMsg.Multiline = true;
@@ -853,25 +756,7 @@ namespace RecorderDrawer
                 txtMsg.TabStop = false;
                 txtMsg.Font = new Font("微軟正黑體", 10);
                 txtMsg.ScrollBars = ScrollBars.Vertical;
-                txtMsg.Text =
-                    "*****僅計算流速大於0.1 ml/min(含)部分*****" + Environment.NewLine +
-                    "總時間：" + string.Format("{0:N2}", totalTime) + "分" + Environment.NewLine +
-                    "總流量：" + string.Format("{0:N2}", totalFlow) + " ml" + Environment.NewLine +
-                    "最高流速：" + string.Format("{0:N2}", maxFlow) + " ml/min" + Environment.NewLine +
-                    "平均流速：" + string.Format("{0:N2}", avgFlow) + " ml/min" + Environment.NewLine +
-                    "最高壓力：" + string.Format("{0:N2}", maxP) + " " + UNIT_TABLE[yProp[type][2].Unit] + " at " + maxPTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
-                    "平均壓力：" + string.Format("{0:N2}", avgPressure) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
-                    "平均內溫：" + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine + Environment.NewLine +
-                    "*****中途暫停時間超過8小時不列入計算*****" + Environment.NewLine +
-                    "暫停時間：" + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "分" + Environment.NewLine +
-                    "總時間(含暫停時間)：" + string.Format("{0:N2}", totalTimeWithBlank) + "分" + Environment.NewLine +
-                    "平均流速(含暫停時間)：" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
-                    "平均壓力(含暫停時間)：" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
-                    "平均內溫(含暫停時間)：" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine + Environment.NewLine +
-                    "*****熟成時間(20分鐘壓力變化等於0視為熟成完成)*****" + Environment.NewLine +
-                    "熟成開始：" + (agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A") + Environment.NewLine +
-                    "熟成結束：" + (agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A") + Environment.NewLine +
-                    "熟成時間：" + (agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成");
+                txtMsg.Text = calculate();
                 frmMsg.Text = "統計數據";
                 frmMsg.MaximizeBox = false;
                 frmMsg.MinimizeBox = false;
@@ -1080,10 +965,8 @@ namespace RecorderDrawer
                 munExportImg.Enabled = false;
                 munExportAnimation.Enabled = false;
                 munToClip.Enabled = false;
-                munTimePeriod.Enabled = false;
                 munStatList.Enabled = false;
-                munTitle.Enabled = false;
-                munAxes.Enabled = false;
+                munSetting.Enabled = false;
             }
             lblStatus.Text = e.UserState.ToString();
         }
@@ -1094,16 +977,14 @@ namespace RecorderDrawer
             lblProcessing.Visible = false;
             if (!e.Cancelled && e.Error == null)
             {
-                startTime = rawData[0].Date;
-                endTime = rawData[rawData.Count - 1].Date;
+                StartTime = rawData[0].Date;
+                EndTime = rawData[rawData.Count - 1].Date;
                 lblStatus.Text = "共 " + dataCount + " 筆資料，自 " + rawData[0].Date.ToString("MM/dd HH:mm:ss") + " 到 " + rawData[rawData.Count - 1].Date.ToString("MM/dd HH:mm:ss");
                 munExportImg.Enabled = true;
                 munExportAnimation.Enabled = true;
                 munToClip.Enabled = true;
-                munTimePeriod.Enabled = true;
                 munStatList.Enabled = true;
-                munTitle.Enabled = true;
-                munAxes.Enabled = true;
+                munSetting.Enabled = true;
             }
         }
 
@@ -1209,7 +1090,7 @@ namespace RecorderDrawer
                         pgbProcess.Visible = true;
                         pgbProcess.Style = ProgressBarStyle.Continuous;
                         pgbProcess.Value = 0;
-                        bgdWorkerAnimation.RunWorkerAsync(new object[] { 0, sfd.FileName, "", frmAnimation.Percentage, frmAnimation.Duration });
+                        bgdWorkerAnimation.RunWorkerAsync(new object[] { 0, sfd.FileName, "", Percentage, Duration });
                     }
                 }
                 catch (Exception ex)
@@ -1235,7 +1116,7 @@ namespace RecorderDrawer
                         pgbProcess.Visible = true;
                         pgbProcess.Style = ProgressBarStyle.Continuous;
                         pgbProcess.Value = 0;
-                        bgdWorkerAnimation.RunWorkerAsync(new object[] { 1, frmMailer.FileName, frmMailer.MailAddress, frmAnimation.Percentage, frmAnimation.Duration });
+                        bgdWorkerAnimation.RunWorkerAsync(new object[] { 1, frmMailer.FileName, frmMailer.MailAddress, Percentage, Duration });
                     }
                 }
                 catch (Exception ex)
@@ -1315,7 +1196,7 @@ namespace RecorderDrawer
 
         private double IndexToCursorPosition(int index)
         {
-            if (xType == 0)
+            if (XType == 0)
                 return index;
             else
                 return rawData[index].Date.ToOADate();
@@ -1323,7 +1204,7 @@ namespace RecorderDrawer
 
         private int CursorPositionToIndex(double position)
         {
-            if (xType == 0)
+            if (XType == 0)
             {
                 int index = (int)position;
                 if (index < 0)
@@ -1835,8 +1716,8 @@ namespace RecorderDrawer
                         if (DateTime.TryParseExact(dateString, dateTimeList, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out date))
                         {
                             //Determine limit range of datetime
-                            if (!limitedTimePeriod ||
-                                (limitedTimePeriod && date.CompareTo(startTime) >= 0 && date.CompareTo(endTime) <= 0))
+                            if (!LimitedTimePeriod ||
+                                (LimitedTimePeriod && date.CompareTo(StartTime) >= 0 && date.CompareTo(EndTime) <= 0))
                             {
                                 //Process numeric data
                                 for (int j = 1; j < data.Length; j++)
@@ -1888,11 +1769,11 @@ namespace RecorderDrawer
                     if (MessageBox.Show(ex.Message + "，是否手動選擇資料格式？", "資料格式錯誤", MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         munAnalysis.Enabled = true;
-                        limitedTimePeriod = false;
+                        LimitedTimePeriod = false;
                         //Type select
                         frmTypeSelector frmTypeSelector = new frmTypeSelector();
                         frmTypeSelector.StartPosition = FormStartPosition.Manual;
-                        frmTypeSelector.Location = new Point(this.Location.X + this.Width / 2 - frmTypeSelector.ClientSize.Width / 2, this.Location.Y + this.Height / 2 - frmTypeSelector.ClientSize.Height / 2);
+                        frmTypeSelector.Location = new Point(Location.X + Width / 2 - frmTypeSelector.ClientSize.Width / 2, this.Location.Y + this.Height / 2 - frmTypeSelector.ClientSize.Height / 2);
                         if (frmTypeSelector.ShowDialog() == DialogResult.OK)
                         {
                             type = frmTypeSelector.Type;
@@ -2045,7 +1926,7 @@ namespace RecorderDrawer
                         trendSeries[i].Name = paraTitle[i];
                         trendSeries[i].Color = seriesColor[i];
                         trendSeries[i].ChartType = SeriesChartType.FastLine;
-                        if (xType == 0)
+                        if (XType == 0)
                             trendSeries[i].XValueType = ChartValueType.String;
                         else
                             trendSeries[i].XValueType = ChartValueType.DateTime;
@@ -2071,7 +1952,7 @@ namespace RecorderDrawer
                     {
                         trendSeries[i].Sort(PointSortOrder.Ascending, "X");
                         //Change date to string (must after sorting, beacuse string CAN NOT be sort)
-                        if (xType == 0)
+                        if (XType == 0)
                         {
                             Parallel.For(0, trendSeries[i].Points.Count, j =>
                             {
@@ -2107,7 +1988,7 @@ namespace RecorderDrawer
                     targetChart.Legends.Clear();
                     targetChart.Titles.Clear();
                     //Create title
-                    Title chartTitle = new Title(titleText);
+                    Title chartTitle = new Title(TitleText);
                     chartTitle.Name = "Main";
                     chartTitle.Font = new Font("微軟正黑體", 18F);
                     targetChart.Titles.Add(chartTitle);
@@ -2116,15 +1997,15 @@ namespace RecorderDrawer
                     targetChart.ChartAreas["main"].Position = new ElementPosition(10, 11, 95, 89);
                     targetChart.ChartAreas["main"].InnerPlotPosition = new ElementPosition(7.5F, 10, 70, 70);
                     targetChart.ChartAreas["main"].AxisX.LabelStyle.IsEndLabelVisible = true;
-                    targetChart.ChartAreas["main"].AxisX.LabelStyle.Angle = xAngle;
+                    targetChart.ChartAreas["main"].AxisX.LabelStyle.Angle = XAngle;
                     targetChart.ChartAreas["main"].AxisX.MajorGrid.LineColor = Color.Gray;
                     targetChart.ChartAreas["main"].AxisY.MajorGrid.LineColor = Color.Gray;
                     targetChart.ChartAreas["main"].AxisX.MinorTickMark.Enabled = true;
                     targetChart.ChartAreas["main"].AxisX.MajorTickMark.Size = 2;
                     targetChart.ChartAreas["main"].AxisX.LabelStyle.Enabled = true;
-                    targetChart.ChartAreas["main"].AxisX.Interval = xInterval;
+                    targetChart.ChartAreas["main"].AxisX.Interval = XInterval;
                     targetChart.ChartAreas["main"].AxisX.LabelStyle.IntervalType = DateTimeIntervalType.Number;
-                    targetChart.ChartAreas["main"].AxisX.LabelStyle.Interval = xInterval;
+                    targetChart.ChartAreas["main"].AxisX.LabelStyle.Interval = XInterval;
                     if (chkXGrid.Checked)
                         targetChart.ChartAreas["main"].AxisX.MajorGrid.Enabled = true;
                     else
@@ -2140,14 +2021,14 @@ namespace RecorderDrawer
                         targetChart.ChartAreas["main"].AxisY2.MajorGrid.Enabled = false;
                     }
                     targetChart.ChartAreas["main"].CursorX.SelectionColor = Color.FromArgb(244, 157, 157);
-                    if (xType == 1)
+                    if (XType == 1)
                     {
                         targetChart.ChartAreas["main"].AxisX.LabelStyle.Format = "MM/dd HH:mm:ss";
-                        if (xInterval > 0)
+                        if (XInterval > 0)
                         {
-                            targetChart.ChartAreas["main"].AxisX.LabelStyle.Interval = xInterval;
+                            targetChart.ChartAreas["main"].AxisX.LabelStyle.Interval = XInterval;
                             targetChart.ChartAreas["main"].AxisX.LabelStyle.IntervalType = DateTimeIntervalType.Minutes;
-                            targetChart.ChartAreas["main"].AxisX.MinorTickMark.Interval = xInterval;
+                            targetChart.ChartAreas["main"].AxisX.MinorTickMark.Interval = XInterval;
                             targetChart.ChartAreas["main"].AxisX.MinorTickMark.IntervalType = DateTimeIntervalType.Minutes;
                         }
                         else
@@ -2256,6 +2137,12 @@ namespace RecorderDrawer
                             item.ShadowOffset = 1;
                         }
                     }
+                    //Add reactor name
+                    Title reactorName = new Title(REACTOR_LIST[type]);
+                    reactorName.ForeColor = Color.DimGray;
+                    reactorName.Font = new Font("微軟正黑體", 9, FontStyle.Italic | FontStyle.Bold);
+                    reactorName.Position = new ElementPosition(80, 90, 20, 5);
+                    targetChart.Titles.Add(reactorName);
                     //Set font sytle
                     foreach (Legend item in targetChart.Legends)
                         item.Font = new Font("微軟正黑體", 10, FontStyle.Bold);
@@ -2275,6 +2162,145 @@ namespace RecorderDrawer
                 }
                 return false;
             }
+        }
+
+        private string calculate()
+        {
+            //Integration
+            double totalTime = 0;
+            List<double> blankTime = new List<double>();
+            bool startFlag = false;
+            bool pauseFlag = false;
+            double totalFlow = 0;
+            double totalPressure = 0;
+            List<double> totalPressureDuringBlank = new List<double>();
+            double totalInnerPV = 0;
+            List<double> totalInnerPVDuringBlank = new List<double>();
+            double maxP = 0;
+            DateTime maxPTime = new DateTime();
+            double maxFlow = 0;
+            int lastFlowPoint = 0; //Last point with flow large than 0.1
+            for (int i = 0; i < rawData.Count - 1; i++)
+            {
+                if (rawData[i + 1].Parameter[seriesMap[3][type][0]] >= 0.1)
+                {
+                    lastFlowPoint = i + 1;
+                    startFlag = true;
+                    pauseFlag = false;
+                    totalFlow +=
+                        (rawData[i + 1].Parameter[seriesMap[3][type][0]]) *
+                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                    totalPressure +=
+                        (rawData[i + 1].Parameter[seriesMap[2][type][0]]) *
+                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                    totalInnerPV +=
+                        (rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]]) *
+                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                    totalTime += (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                    if (rawData[i].Parameter[seriesMap[2][type][0]] > maxP)
+                    {
+                        maxP = rawData[i].Parameter[seriesMap[2][type][0]];
+                        maxPTime = rawData[i].Date;
+                    }
+                    if (rawData[i].Parameter[seriesMap[3][type][0]] > maxFlow)
+                        maxFlow = rawData[i].Parameter[seriesMap[3][type][0]];
+                }
+                else if (startFlag)
+                {
+                    if (!pauseFlag)
+                    {
+                        blankTime.Add(0);
+                        totalInnerPVDuringBlank.Add(0);
+                        totalPressureDuringBlank.Add(0);
+                    }
+                    pauseFlag = true;
+                    blankTime[blankTime.Count - 1] += (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                    totalPressureDuringBlank[blankTime.Count - 1] +=
+                        (rawData[i + 1].Parameter[seriesMap[2][type][0]]) *
+                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                    totalInnerPVDuringBlank[blankTime.Count - 1] +=
+                        (rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]]) *
+                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                }
+            }
+            //Final record
+            if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] >= 0.1)
+            {
+                if (rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]] > maxP)
+                {
+                    maxP = rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]];
+                    maxPTime = rawData[rawData.Count - 1].Date;
+                }
+                if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] > maxFlow)
+                    maxFlow = rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]];
+            }
+            double avgFlow = totalFlow / totalTime;
+            double avgPressure = totalPressure / totalTime;
+            double avgInnerPV = totalInnerPV / totalTime;
+            double totalTimeWithBlank = totalTime;
+            double totalPressureWithBlank = totalPressure;
+            double totalInnPVWithBlank = totalInnerPV;
+            for (int i = 0; i < blankTime.Count - 1; i++)
+            {
+                if (blankTime[i] < 480)
+                {
+                    totalTimeWithBlank += blankTime[i];
+                    totalPressureWithBlank += totalPressureDuringBlank[i];
+                    totalInnPVWithBlank += totalInnerPVDuringBlank[i];
+                }
+            }
+            double avgFlowWithBlank = totalFlow / totalTimeWithBlank;
+            double avgPressureWithBlank = totalPressureWithBlank / totalTimeWithBlank;
+            double avgInnerPVWithBlank = totalInnPVWithBlank / totalTimeWithBlank;
+            //Calcd. aging time
+            int pointPerPeriod = 0;
+            for (int i = 0; i < rawData.Count - 1; i++)
+            {
+                if ((int)(20 / (rawData[i + 1].Date - rawData[i].Date).TotalMinutes) > 0)
+                {
+                    pointPerPeriod = (int)(20 / (rawData[i + 1].Date - rawData[i].Date).TotalMinutes);
+                    break;
+                }
+            }
+            bool agingDone = false;
+            double agingTime = 0;
+            DateTime agingStart = new DateTime();
+            DateTime agingEnd = new DateTime();
+            for (int i = lastFlowPoint + pointPerPeriod; i < rawData.Count; i++)
+            {
+                if (rawData[i].Parameter[seriesMap[2][type][0]] == rawData[i - pointPerPeriod].Parameter[seriesMap[2][type][0]])
+                {
+                    agingDone = true;
+                    agingStart = rawData[lastFlowPoint].Date;
+                    agingEnd = rawData[i - pointPerPeriod].Date;
+                    agingTime = (rawData[i - pointPerPeriod].Date - rawData[lastFlowPoint].Date).TotalMinutes;
+                    break;
+                }
+            }
+            //Return
+            string result = "*****僅計算流速大於0.1 ml/min(含)部分*****" + Environment.NewLine +
+                "總時間：" + string.Format("{0:N2}", totalTime) + "分" + Environment.NewLine +
+                "總流量：" + string.Format("{0:N2}", totalFlow) + " ml" + Environment.NewLine +
+                "最高流速：" + string.Format("{0:N2}", maxFlow) + " ml/min" + Environment.NewLine +
+                "平均流速：" + string.Format("{0:N2}", avgFlow) + " ml/min" + Environment.NewLine +
+                "最高壓力：" + string.Format("{0:N2}", maxP) + " " + UNIT_TABLE[yProp[type][2].Unit] + " at " + maxPTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
+                "平均壓力：" + string.Format("{0:N2}", avgPressure) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
+                "平均內溫：" + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine + Environment.NewLine +
+                "*****中途暫停時間超過8小時不列入計算*****" + Environment.NewLine +
+                "暫停時間：" + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "分" + Environment.NewLine +
+                "總時間(含暫停時間)：" + string.Format("{0:N2}", totalTimeWithBlank) + "分" + Environment.NewLine +
+                "平均流速(含暫停時間)：" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
+                "平均壓力(含暫停時間)：" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
+                "平均內溫(含暫停時間)：" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine + Environment.NewLine +
+                "*****熟成時間(20分鐘壓力變化等於0視為熟成完成)*****" + Environment.NewLine +
+                "熟成開始：" + (agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A") + Environment.NewLine +
+                "熟成結束：" + (agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A") + Environment.NewLine +
+                "熟成時間：" + (agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成") + Environment.NewLine +
+                "*****製程放大相關數據*****" + Environment.NewLine +
+                "1噸槽預估平均進料速率：" + string.Format("{0:N2}", avgFlow * 60 * Density * 1000 / ReactorSize) + " kg/hr" + Environment.NewLine +
+                "10噸槽預估平均進料速率：" + string.Format("{0:N2}", avgFlow * 60 * Density * 10000 / ReactorSize) + " kg/hr" + Environment.NewLine +
+                "預估生產成本：" + string.Format("{0:N2}", (totalTimeWithBlank + agingTime) / 60 * CostPerHour) + " USD";
+            return result;
         }
 
         #endregion

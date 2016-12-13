@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RecorderDrawer
 {
-    public partial class frmSetAxes : Form
+    public partial class frmDetailedSetting : Form
     {
         #region | Fields |
         //Controls
@@ -19,76 +12,68 @@ namespace RecorderDrawer
         private TextBox[] txtMin = new TextBox[6];
         private TextBox[] txtMax = new TextBox[6];
         private TextBox[] txtInterval = new TextBox[6];
-        //Variables
-        private AxesProp[] yProp = new AxesProp[6];
-        private int xType; //0: Text, 1: DateTime
-        private int xInterval;
-        private int xAngle;
-        #endregion
-
-        #region | Properties |
-        public AxesProp[] YProp { get { return (AxesProp[])yProp.Clone(); } }
-        public int XType { get { return xType; } }
-        public int XInterval { get { return xInterval; } }
-        public int XAngle { get { return xAngle; } }
         #endregion
 
         #region | Events |
 
-        public frmSetAxes(AxesProp[] yProp, int xType, int xInterval, int xAngle)
+        public frmDetailedSetting()
         {
             InitializeComponent();
             //Init. componment
             for (int i = 0; i < 6; i++)
             {
                 txtTitle[i] = new TextBox();
-                txtTitle[i].Text = yProp[i].Title;
+                txtTitle[i].Text = frmRecorderDrawer.YProp[i].Title;
                 txtTitle[i].MaxLength = 4;
                 txtTitle[i].TextAlign = HorizontalAlignment.Center;
                 tblMain.Controls.Add(txtTitle[i], 0, i + 1);
                 cboUnit[i] = new ComboBox();
                 cboUnit[i].Items.AddRange(frmRecorderDrawer.UNIT_TABLE);
-                cboUnit[i].SelectedIndex = yProp[i].Unit;
+                cboUnit[i].SelectedIndex = frmRecorderDrawer.YProp[i].Unit;
                 cboUnit[i].DropDownStyle = ComboBoxStyle.DropDownList;
                 tblMain.Controls.Add(cboUnit[i], 1, i + 1);
                 txtMin[i] = new TextBox();
-                txtMin[i].Text = yProp[i].Min.ToString(); ;
-                txtMin[i].KeyPress += txtProp_KeyPress;
+                txtMin[i].Text = frmRecorderDrawer.YProp[i].Min.ToString(); ;
+                txtMin[i].KeyPress += InputOnlyNumber;
                 txtMin[i].Dock = DockStyle.Fill;
                 txtMin[i].TextAlign = HorizontalAlignment.Center;
                 tblMain.Controls.Add(txtMin[i], 2, i + 1);
                 txtMax[i] = new TextBox();
-                txtMax[i].Text = yProp[i].Max.ToString();
-                txtMax[i].KeyPress += txtProp_KeyPress;
+                txtMax[i].Text = frmRecorderDrawer.YProp[i].Max.ToString();
+                txtMax[i].KeyPress += InputOnlyNumber;
                 txtMax[i].Dock = DockStyle.Fill;
                 txtMax[i].TextAlign = HorizontalAlignment.Center;
                 tblMain.Controls.Add(txtMax[i], 3, i + 1);
                 txtInterval[i] = new TextBox();
-                txtInterval[i].Text = yProp[i].Interval.ToString();
-                txtInterval[i].KeyPress += txtProp_KeyPress;
+                txtInterval[i].Text = frmRecorderDrawer.YProp[i].Interval.ToString();
+                txtInterval[i].KeyPress += InputOnlyNumber;
                 txtInterval[i].Dock = DockStyle.Fill;
                 txtInterval[i].TextAlign = HorizontalAlignment.Center;
                 tblMain.Controls.Add(txtInterval[i], 4, i + 1);
             }
             btnOk.DialogResult = DialogResult.OK;
             btnCancel.DialogResult = DialogResult.Cancel;
-            //Init. cboXAngle
+            //Init. general tab
+            txtMainTitle.Text = frmRecorderDrawer.TitleText;
+            //Init. axes tab
             cboXAngle.Items.Clear();
             for (int i = -90; i <= 90; i += 5)
                 cboXAngle.Items.Add(i);
-            this.yProp = (AxesProp[])yProp.Clone();
-            this.xType = xType;
-            this.xInterval = xInterval;
-            this.xAngle = xAngle;
-            cboXType.SelectedIndex = xType;
-            if (xInterval == 0)
+            cboXType.SelectedIndex = frmRecorderDrawer.XType;
+            if (frmRecorderDrawer.XInterval == 0)
                 cboXInterval.SelectedIndex = 0;
             else
-                cboXInterval.SelectedItem = (object)xInterval.ToString();
-            cboXAngle.SelectedItem = (object)xAngle;
+                cboXInterval.SelectedItem = frmRecorderDrawer.XInterval.ToString();
+            cboXAngle.SelectedItem = frmRecorderDrawer.XAngle;
+            //Init. time-period tab
+            dtpStart.Value = frmRecorderDrawer.StartTime;
+            dtpEnd.Value = frmRecorderDrawer.EndTime;
+            //Init. animation tab
+            txtPercentage.Text = frmRecorderDrawer.Percentage.ToString();
+            txtDuration.Text = frmRecorderDrawer.Duration.ToString();
         }
 
-        public void txtProp_KeyPress(object sender, KeyPressEventArgs e)
+        public void InputOnlyNumber(object sender, KeyPressEventArgs e)
         {
             //only allow integer (no decimal point)
             if (!char.IsDigit(e.KeyChar) && (e.KeyChar != '.') && (e.KeyChar != '-') && (e.KeyChar != 8))
@@ -103,16 +88,35 @@ namespace RecorderDrawer
                 e.Handled = true;
         }
 
+        private void InputOnlyPositiveInteger(object sender, KeyPressEventArgs e)
+        {
+            //only allow integer (no decimal point)
+            if (!char.IsDigit(e.KeyChar) && (e.KeyChar != '.') && (e.KeyChar != '-') && (e.KeyChar != 8))
+                e.Handled = true;
+        }
+
         private void btnOk_Click(object sender, EventArgs e)
         {
+            //General tab
+            frmRecorderDrawer.TitleText = txtMainTitle.Text;
+            if (frmRecorderDrawer.LimitedTimePeriod)
+            {
+                frmRecorderDrawer.StartTime = new DateTime(dtpStart.Value.Year, dtpStart.Value.Month, dtpStart.Value.Day, dtpStart.Value.Hour, dtpStart.Value.Minute, dtpStart.Value.Second);
+                frmRecorderDrawer.EndTime = new DateTime(dtpEnd.Value.Year, dtpEnd.Value.Month, dtpEnd.Value.Day, dtpEnd.Value.Hour, dtpEnd.Value.Minute, dtpEnd.Value.Second);
+            }
+            //Axes tab
             for (int i = 0; i < 6; i++)
-                this.yProp[i] = new AxesProp(txtTitle[i].Text, cboUnit[i].SelectedIndex, float.Parse(txtMin[i].Text), float.Parse(txtMax[i].Text), float.Parse(txtInterval[i].Text));
-            this.xType = cboXType.SelectedIndex;
+                frmRecorderDrawer.YProp[i] = new AxesProp(txtTitle[i].Text, cboUnit[i].SelectedIndex, float.Parse(txtMin[i].Text), float.Parse(txtMax[i].Text), float.Parse(txtInterval[i].Text));
+            frmRecorderDrawer.XType = cboXType.SelectedIndex;
             if (cboXInterval.SelectedIndex == 0)
-                this.xInterval = 0;
+                frmRecorderDrawer.XInterval = 0;
             else
-                this.xInterval = int.Parse(cboXInterval.SelectedItem.ToString());
-            this.xAngle = (int)cboXAngle.SelectedItem;
+                frmRecorderDrawer.XInterval = int.Parse(cboXInterval.SelectedItem.ToString());
+            frmRecorderDrawer.XAngle = (int)cboXAngle.SelectedItem;
+            //Animation tab
+            frmRecorderDrawer.Percentage = int.Parse(txtPercentage.Text);
+            frmRecorderDrawer.Duration = int.Parse(txtDuration.Text);
+            //Commit
             DialogResult = DialogResult.OK;
         }
 
@@ -135,6 +139,12 @@ namespace RecorderDrawer
             }
         }
 
+        private void TimePeriod_Changed(object sender, EventArgs e)
+        {
+            frmRecorderDrawer.LimitedTimePeriod = true;
+        }
+
         #endregion
+
     }
 }

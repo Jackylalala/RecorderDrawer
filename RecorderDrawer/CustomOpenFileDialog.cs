@@ -242,17 +242,8 @@ namespace RecorderDrawer
 
                     //and add the encodings we want to offer
                     SendMessage(comboHandle, CB_ADDSTRING, 0, "自動選擇");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "3L反應器(#2)");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "1L & 5L反應器(國華)(#4, #5)");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "2L反應器#201(#1, #3)");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "R1-CHPPO");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "R1-EOD");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "R2-CHPPO");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "R2-EOD(#7)");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "R3-CHPPO");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "R3-EOD");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "CHPPO Pilot");
-                    SendMessage(comboHandle, CB_ADDSTRING, 0, "2F遠東新反應器(#6)");
+                    foreach (string name in frmRecorderDrawer.REACTOR_LIST)
+                        SendMessage(comboHandle, CB_ADDSTRING, 0, name);
                     SendMessage(comboHandle, CB_SETCURSEL, m_SchemaType + 1, 0); //Schema type start with -1
 
                     //remember the handles of the controls we have created so we can destroy them after
