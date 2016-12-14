@@ -146,5 +146,17 @@ namespace RecorderDrawer
 
         #endregion
 
+        private void cboFluid_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (cboFluid.SelectedIndex)
+            {
+                case 0:
+                    frmRecorderDrawer.Density = 0.88F;
+                    break;
+                case 1:
+                    frmRecorderDrawer.Density = 0.83F;
+                    break;
+            }
+        }
     }
 }
