@@ -70,20 +70,7 @@ namespace RecorderDrawer
         private List<int> hiddenList = new List<int>(); //Hidden list of series
         private string rawFileName; //File name
         private Series[] trendSeries;
-        //Recorder type, -1 means auto detect
-        /*
-         * 0: 3L
-         * 1: 1L & 5L (國華)
-         * 2: 2L (#201)
-         * 3: R1-CHPPO
-         * 4: R1-EOD
-         * 5: R2-CHPPO
-         * 6: R2-EOD
-         * 7: R3-CHPPO
-         * 8: R3-EOD
-         * 9: CHPPO Pilot
-         * 10: 2F遠東新反應器(#7)
-         */
+        //Recorder type, -1 means auto detect, according to REACTOR_LIST
         private static int type;
         //Y axis properties
         private static AxesProp[][] yProp = new AxesProp[11][];
