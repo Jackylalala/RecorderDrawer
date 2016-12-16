@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace RecorderDrawer
@@ -12,9 +13,25 @@ namespace RecorderDrawer
         public frmTypeSelector()
         {
             InitializeComponent();
-            cboType.SelectedIndex = 0;
+            //Init. comboBox
             foreach (string name in frmRecorderDrawer.REACTOR_LIST)
                 cboType.Items.Add(name);
+            int maxSize = 0;
+            Graphics g = CreateGraphics();
+
+            for (int i = 0; i < cboType.Items.Count; i++)
+            {
+                cboType.SelectedIndex = i;
+                SizeF size = g.MeasureString(cboType.Text, cboType.Font);
+                if (maxSize < (int)size.Width)
+                {
+                    maxSize = (int)size.Width;
+                }
+            }
+            cboType.DropDownWidth = cboType.Width;
+            if (cboType.DropDownWidth < maxSize)
+                cboType.DropDownWidth = maxSize;
+            cboType.SelectedIndex = 0;
         }
 
         private void btnOK_Click(object sender, EventArgs e)

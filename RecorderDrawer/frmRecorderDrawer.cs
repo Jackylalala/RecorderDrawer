@@ -25,30 +25,34 @@ namespace RecorderDrawer
         #region | Field |
         //Reactor list
         public static string[] REACTOR_LIST = {
-            "3L反應器(#2)",
-            "1L & 5L反應器國華(#4, #5)",
-            "2L反應器#201(#1, #3)",
+            "控制器#1",
+            "控制器#2",
+            "控制器#2(6 channal version)",
+            "控制器#3",
+            "控制器#4",
+            "控制器#5",
+            "控制器#6",
             "R1-CHPPO",
             "R1-EOD",
             "R2-CHPPO",
-            "R2-EOD(#7)",
+            "控制器#7(R2-EOD)",
             "R3-CHPPO",
-            "R3-EOD","CHPPO Pilot",
-            "2F遠東新反應器(#6)"
+            "R3-EOD",
+            "CHPPO Pilot",
         };
         //Unit table
         public static string[] UNIT_TABLE = { "\u00b0C", "bar", "psi", "ml/min", "rpm", "Ncm", "%", "kg/cm\u00b2", "mm", "g/hr", "g", "h-1" };
         //Datetime format
-        private static string[] dateTimeList = { 
-                            "yyyy/M/d tt hh:mm:ss", 
-                            "yyyy/MM/dd tt hh:mm:ss", 
-                            "yyyy/M/d hh:mm:ss tt", 
+        private static string[] dateTimeList = {
+                            "yyyy/M/d tt hh:mm:ss",
+                            "yyyy/MM/dd tt hh:mm:ss",
+                            "yyyy/M/d hh:mm:ss tt",
                             "yyyy/MM/dd hh:mm:ss tt",
-                            "yyyy/MM/dd HH:mm:ss", 
+                            "yyyy/MM/dd HH:mm:ss",
                             "yy/MM/dd HH:mm:ss",
                             "yy/MM/d HH:mm:ss",
-                            "yyyy/M/d HH:mm:ss", 
-                            "yyyy/MM/dd H:m:s", 
+                            "yyyy/M/d HH:mm:ss",
+                            "yyyy/MM/dd H:m:s",
                             "yyyy/M/d H:m:s",
                             "yyyy/M/d tt hh:mm",
                             "yyyy/MM/dd tt hh:mm",
@@ -60,7 +64,7 @@ namespace RecorderDrawer
                             "yyyy/M/d HH:mm",
                             "yyyy/MM/dd H:m",
                             "yyyy/M/d H:m",
-                            "yyyy/M/d", 
+                            "yyyy/M/d",
                             "yyyy/MM/dd",
                             "M/d HH:mm:ss"
                         };
@@ -79,15 +83,15 @@ namespace RecorderDrawer
         private int dataCount;
         //Color of series
         private static readonly Color[] seriesColor =
-            new Color[] { 
-                Color.Red, Color.Lime, Color.Blue, Color.Gold, Color.Fuchsia, 
-                Color.Aqua, Color.Purple, Color.FromArgb(128, 64, 0), Color.FromArgb(251, 114, 13), Color.FromArgb(0, 128, 0), 
-                Color.FromArgb(250, 141, 171), Color.FromArgb(218, 151,240), Color.FromArgb(137,172,254), Color.FromArgb(1,201,101), Color.FromArgb(201,41,57), 
-                Color.FromArgb(133,92,150), Color.FromArgb(185,80,57), Color.FromArgb(112,131,112), Color.FromArgb(121,117,125), Color.FromArgb(87,36,206), 
+            new Color[] {
+                Color.Red, Color.Lime, Color.Blue, Color.Gold, Color.Fuchsia,
+                Color.Aqua, Color.Purple, Color.FromArgb(128, 64, 0), Color.FromArgb(251, 114, 13), Color.FromArgb(0, 128, 0),
+                Color.FromArgb(250, 141, 171), Color.FromArgb(218, 151,240), Color.FromArgb(137,172,254), Color.FromArgb(1,201,101), Color.FromArgb(201,41,57),
+                Color.FromArgb(133,92,150), Color.FromArgb(185,80,57), Color.FromArgb(112,131,112), Color.FromArgb(121,117,125), Color.FromArgb(87,36,206),
                 Color.FromArgb(27,159,216), Color.FromArgb(186,56,56), Color.FromArgb(194,203,39), Color.FromArgb(0,242,43) };
         private static readonly Color[] seriesSelectionBoxTextColor =
-            new Color[] { 
-                Color.Black, Color.Black, Color.White, Color.Black, Color.Black, 
+            new Color[] {
+                Color.Black, Color.Black, Color.White, Color.Black, Color.Black,
                 Color.Black, Color.White, Color.White, Color.Black, Color.White,
                 Color.White, Color.White, Color.White, Color.White, Color.White,
                 Color.White, Color.White, Color.White, Color.White, Color.White,
@@ -100,29 +104,41 @@ namespace RecorderDrawer
         private static object syncHandle = new object();
         //Series map (6 axes, 6 type)
         //Axes: 內溫, 外溫, 壓力, 流速(升溫), 轉速, 扭力 (Default)
-        private int[][][] seriesMap = new int[][][] { 
-            new int[][] { new int[] { 0, 1, 6 }, new int[] { 0, 4 }, new int[] { 0 },   //內溫(溫度)
-                new int[] { 2 }, new int[] { 2 }, new int[] { 5, 2 }, 
-                new int[] { 5, 2 }, new int[] { 2, 5 }, new int[] { 2, 5 },
-                new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20 }, new int[] { 0, 1, 6 }}, 
-            new int[][] { new int[] { 2, 3 }, new int[] { 1, 2, 3, 5 }, new int[] { 1, 4 },  //外溫(壓力)
-                new int[] { 4 }, new int[] { 4 }, new int[] { 3 }, 
-                new int[] { 3 }, new int[] { 3 }, new int[] { 3 },
-                new int[] { 10, 11, 12, 13, 14, 15, 18, 22 }, new int[] { 2, 3 }}, 
-            new int[][] { new int[] { 5 }, new int[] { 6 }, new int[] { 2 },   //壓力(液位)
-                new int[] { 1 }, new int[] { 1 }, new int[] { 1 }, 
+        private int[][][] seriesMap = new int[][][] {
+            new int[][] {
+                new int[] { 0 },  new int[] { 0, 1, 6 },  new int[] { 0, 1, 6 },    //內溫(溫度)
+                new int[] { 0 },  new int[] { 0, 4 },  new int[] { 0, 4 }, 
+                new int[] { 0, 1, 6 },  new int[] { 2 },  new int[] { 2 }, 
+                new int[] { 2, 5 },  new int[] { 2, 5 },  new int[] { 2, 5 }, 
+                new int[] { 2, 5 },  new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20} }, 
+            new int[][] {
+                new int[] { 1, 4 },  new int[] { 2, 3 },  new int[] { 2, 3 },   //外溫(壓力)
+                new int[] { 1, 4 },  new int[] { 1, 2, 3, 5 },  new int[] { 1, 2, 3, 5 }, 
+                new int[] { 2, 3 },  new int[] { 4 },  new int[] { 4 }, 
+                new int[] { 3 },  new int[] { 3 },  new int[] { 3 }, 
+                new int[] { 3 }, new int[] { 10, 11, 12, 13, 14, 15, 18, 22 } },
+            new int[][] {
+                new int[] { 2 }, new int[] { 5 }, new int[] { 5 },   //壓力(液位)
+                new int[] { 2 }, new int[] { 6 }, new int[] { 6 },
+                new int[] { 5 }, new int[] { 1 }, new int[] { 1 },
                 new int[] { 1 }, new int[] { 1 }, new int[] { 1 },
-                new int[] { 16 }, new int[] { 5 }}, 
-            new int[][] { new int[] { 4 }, new int[] { 9 }, new int[] { 5 },   //流速(升溫)(流量)
-                new int[] { 3 }, new int[] { 3 }, new int[] { 4 }, 
+                new int[] { 1 }, new int[] { 16 } },
+            new int[][] {
+                new int[] { 5 }, new int[] { 4, 8 }, new int[] { 4 },   //流速(升溫)(流量)
+                new int[] { 5 }, new int[] { 9 }, new int[] { 9 },
+                new int[] { 4 }, new int[] { 3 }, new int[] { 3 },
                 new int[] { 4 }, new int[] { 4 }, new int[] { 4 },
-                new int[] { 17, 19 }, new int[] { 4 }},  
-            new int[][] { new int[] { 7 }, new int[] { 7 }, new int[] { 3 },  //轉速(總量)
-                new int[] { 0 }, new int[] { 0 }, new int[] { 0 }, 
+                new int[] { 4 }, new int[] { 17, 19 } },
+            new int[][] {
+                new int[] { 3 }, new int[] { 7 }, new int[] { 7 },  //轉速(總量)
+                new int[] { 3 }, new int[] { 7 }, new int[] { 7 },
+                new int[] { 7 }, new int[] { 0 }, new int[] { 0 },
                 new int[] { 0 }, new int[] { 0 }, new int[] { 0 },
-                new int[] { 21 }, new int[] { 7 }},  
-            new int[][] { new int[] { }, new int[] { 8 }, new int[] { },  //扭力(WHSV)
-                new int[] { }, new int[] { }, new int[] { }, 
+                new int[] { 0 }, new int[] { 21 } },
+            new int[][] {
+                new int[] { }, new int[] { }, new int[] { },  //扭力(WHSV)
+                new int[] { }, new int[] { 8 }, new int[] { 8 },
+                new int[] { }, new int[] { }, new int[] { },
                 new int[] { }, new int[] { }, new int[] { },
                 new int[] { }, new int[] { }} }; //WHSV: Column 23尚未建立
         //Threshold
@@ -253,39 +269,42 @@ namespace RecorderDrawer
                 float verticalPadding = 1;
 
                 //Absolute dimensions of one legend "cell"
-                int maxItem = 8;
+                int maxItem;
                 switch (type)
                 {
-                    default:
+                    case 7:
+                    case 8:
+                        maxItem = 5;
+                        break;
                     case 0:
+                    case 3:
+                    case 9:
+                    case 10:
+                    case 11:
+                        maxItem = 6;
+                        break;
+                    default:
+                    case 2:
+                    case 6:
                         maxItem = 8;
                         break;
                     case 1:
+                        maxItem = 9;
+                        break;
+                    case 4:
+                    case 5:
                         maxItem = 10;
                         break;
-                    case 2:
-                        maxItem = 6;
-                        break;
-                    case 3:
-                    case 4:
-                        maxItem = 5;
-                        break;
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                        maxItem = 6;
-                        break;
-                    case 9:
+                    case 13:
                         maxItem = 23; //Including WHSV is 24
                         break;
                 }
                 //Determine max items in one row
-                float columnCount = maxItem - hiddenList.Count > 6 ? Math.Min(6, (int)(Math.Ceiling((maxItem - hiddenList.Count) / 2F))) : maxItem - hiddenList.Count;
+                float columnCount = maxItem - hiddenList.Count > 6 ? Math.Min(6, (int)( Math.Ceiling(( maxItem - hiddenList.Count ) / 2F) )) : maxItem - hiddenList.Count;
                 float rowCount = maxItem - hiddenList.Count > 6 ? 2 : 1;
-                float itemHeight = (pos.Height - (columnCount - 1) * verticalPadding) / rowCount;
+                float itemHeight = ( pos.Height - ( columnCount - 1 ) * verticalPadding ) / rowCount;
                 //Twice the colume count(line and text)
-                float itemWidth = (pos.Width - (rowCount - 1) * horizontalPadding) / (2 * columnCount);
+                float itemWidth = ( pos.Width - ( rowCount - 1 ) * horizontalPadding ) / ( 2 * columnCount );
 
                 //Draw a white box on top of the default legend to hide it
                 g.FillRectangle(Brushes.White, pos);
@@ -304,8 +323,8 @@ namespace RecorderDrawer
 
                         //Line
                         PointF startPoint = new PointF(
-                            pos.X + (itemWidth + horizontalPadding) * (counter % columnCount * 2),
-                            pos.Y + (itemHeight + verticalPadding) * (int)(counter / columnCount) + itemHeight / 3);
+                            pos.X + ( itemWidth + horizontalPadding ) * ( counter % columnCount * 2 ),
+                            pos.Y + ( itemHeight + verticalPadding ) * (int)( counter / columnCount ) + itemHeight / 3);
                         PointF endPoint = new PointF(
                             startPoint.X + itemWidth,
                             startPoint.Y);
@@ -313,8 +332,8 @@ namespace RecorderDrawer
 
                         //Text
                         startPoint = new PointF(
-                            pos.X + (itemWidth + horizontalPadding) * (counter % columnCount * 2 + 1),
-                            pos.Y + (itemHeight + verticalPadding) * (int)(counter / columnCount));
+                            pos.X + ( itemWidth + horizontalPadding ) * ( counter % columnCount * 2 + 1 ),
+                            pos.Y + ( itemHeight + verticalPadding ) * (int)( counter / columnCount ));
                         g.DrawString(item.Name, newLegandFont, Brushes.Black, startPoint.X, startPoint.Y);
                         counter++;
                     }
@@ -428,84 +447,105 @@ namespace RecorderDrawer
             {
                 Console.WriteLine(ex.StackTrace + ": " + ex.Message);
                 //Default value
-                yProp=new AxesProp[11][]{
-                    new AxesProp[6]{  //Type 0
-                        new AxesProp("內溫", 0, 0, 220, 20), 
-                        new AxesProp("外溫", 0, 0, 220, 20), 
-                        new AxesProp("壓力", 1, -2, 20, 2), 
-                        new AxesProp("流速", 3, 0, 22, 2), 
-                        new AxesProp("轉速", 4, 0, 1100, 100), 
-                        new AxesProp("", 5, 0, 220, 20)}, 
-                    new AxesProp[6]{  //Type 1
-                        new AxesProp("內溫", 0, 0, 220, 20), 
-                        new AxesProp("外溫", 0, 0, 220, 20), 
-                        new AxesProp("壓力", 1, -2, 20, 2), 
-                        new AxesProp("流速", 3, 0, 22, 2), 
-                        new AxesProp("轉速", 4, 0, 1100, 100), 
-                        new AxesProp("扭力", 5, 0, 220, 20)}, 
-                    new AxesProp[6]{  //Type 2
-                        new AxesProp("內溫", 0, 0, 220, 20), 
-                        new AxesProp("外溫", 0, 0, 220, 20), 
-                        new AxesProp("壓力", 1, -2, 20, 2), 
-                        new AxesProp("流速", 3, 0, 22, 2), 
-                        new AxesProp("轉速", 4, 0, 1100, 100), 
-                        new AxesProp("", 5, 0, 220, 20)}, 
-                    new AxesProp[6]{  //Type 3 R1-CHPPO
-                        new AxesProp("內溫", 0, 0, 150, 15), 
-                        new AxesProp("外溫", 0, 0, 150, 15), 
-                        new AxesProp("壓力", 2, 0, 500, 50), 
-                        new AxesProp("升溫", 6, 0, 10, 1), 
-                        new AxesProp("轉速", 4, 0, 600, 60), 
-                        new AxesProp("", 5, 0, 100, 10)}, 
-                    new AxesProp[6]{  //Type 4 R1-EOD
-                        new AxesProp("內溫", 0, 0, 150, 15), 
-                        new AxesProp("外溫", 0, 0, 200, 20), 
-                        new AxesProp("壓力", 2, 0, 150, 15), 
-                        new AxesProp("流速", 3, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 400, 40),
-                        new AxesProp("", 5, 0, 100, 10)},  
-                    new AxesProp[6]{  //Type 5 R2-CHPPO
-                        new AxesProp("內溫", 0, 0, 150, 15), 
-                        new AxesProp("外溫", 0, 0, 150, 15), 
-                        new AxesProp("壓力", 2, 0, 500, 50), 
-                        new AxesProp("升溫", 6, 0, 10, 1), 
-                        new AxesProp("轉速", 4, 0, 600, 60), 
-                        new AxesProp("", 5, 0, 100, 10)}, 
-                    new AxesProp[6]{  //Type 6 R2-EOD
-                        new AxesProp("內溫", 0, 0, 200, 20), 
-                        new AxesProp("外溫", 0, 0, 200, 20), 
-                        new AxesProp("壓力", 2, 0, 200, 20), 
-                        new AxesProp("流速", 3, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 1000, 100),
-                        new AxesProp("", 5, 0, 100, 10)}, 
-                    new AxesProp[6]{  //Type 7 R3-CHPPO
-                        new AxesProp("內溫", 0, 0, 150, 15), 
-                        new AxesProp("外溫", 0, 0, 150, 15), 
-                        new AxesProp("壓力", 2, 0, 500, 50), 
-                        new AxesProp("升溫", 6, 0, 10, 1), 
-                        new AxesProp("轉速", 4, 0, 600, 60), 
-                        new AxesProp("", 5, 0, 100, 10)}, 
-                    new AxesProp[6]{  //Type 8 R3-EOD
-                        new AxesProp("內溫", 0, 0, 150, 15), 
-                        new AxesProp("外溫", 0, 0, 200, 20), 
-                        new AxesProp("壓力", 2, 0, 150, 15), 
-                        new AxesProp("流速", 3, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 400, 40),
-                        new AxesProp("", 5, 0, 100, 10)}, 
-                    new AxesProp[6]{  //Type 9 CHPPO Pilot
-                        new AxesProp("溫度", 0, 0, 200, 20), 
-                        new AxesProp("壓力", 7, 0, 100, 10), 
-                        new AxesProp("液位", 8, 0, 500, 50),
-                        new AxesProp("流量", 9, 0, 250, 25),
-                        new AxesProp("總量", 10, 0, 300, 30),
-                        new AxesProp("WHSV", 11, 0, 15, 1.5F)},
-                    new AxesProp[6]{  //Type 10 2F遠東新反應器(#7)
+                yProp = new AxesProp[14][]{
+                    new AxesProp[6]{  //#1
                         new AxesProp("內溫", 0, 0, 220, 20),
                         new AxesProp("外溫", 0, 0, 220, 20),
                         new AxesProp("壓力", 1, -2, 20, 2),
                         new AxesProp("流速", 3, 0, 22, 2),
                         new AxesProp("轉速", 4, 0, 1100, 100),
                         new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#2
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                   new AxesProp[6]{  //#2(6 channal)
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#3
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#4
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("扭力", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#5
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("扭力", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#6
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //R1-CHPPO
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 150, 15),
+                        new AxesProp("壓力", 2, 0, 500, 50),
+                        new AxesProp("升溫", 6, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 600, 60),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R1-EOD
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 200, 20),
+                        new AxesProp("壓力", 2, 0, 150, 15),
+                        new AxesProp("流速", 3, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 400, 40),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R2-CHPPO
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 150, 15),
+                        new AxesProp("壓力", 2, 0, 500, 50),
+                        new AxesProp("升溫", 6, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 600, 60),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R2-EOD #7
+                        new AxesProp("內溫", 0, 0, 200, 20),
+                        new AxesProp("外溫", 0, 0, 200, 20),
+                        new AxesProp("壓力", 2, 0, 200, 20),
+                        new AxesProp("流速", 3, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 1000, 100),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R3-CHPPO
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 150, 15),
+                        new AxesProp("壓力", 2, 0, 500, 50),
+                        new AxesProp("升溫", 6, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 600, 60),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R3-EOD
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 200, 20),
+                        new AxesProp("壓力", 2, 0, 150, 15),
+                        new AxesProp("流速", 3, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 400, 40),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //CHPPO Pilot
+                        new AxesProp("溫度", 0, 0, 200, 20),
+                        new AxesProp("壓力", 7, 0, 100, 10),
+                        new AxesProp("液位", 8, 0, 500, 50),
+                        new AxesProp("流量", 9, 0, 250, 25),
+                        new AxesProp("總量", 10, 0, 300, 30),
+                        new AxesProp("WHSV", 11, 0, 15, 1.5F)}
                 };
             }
             XType = StrToIntDef(Properties.Settings.Default.xType, 0);
@@ -612,7 +652,7 @@ namespace RecorderDrawer
                             whiteBorder = 10;
                             break;
                     }
-                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(zoom, format)), (int)(whiteBorder * zoom));
+                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(zoom, format)), (int)( whiteBorder * zoom ));
                     image.Save(sfd.FileName);
                     MessageBox.Show("匯出圖片成功！");
                 }
@@ -626,7 +666,7 @@ namespace RecorderDrawer
         private void munToClip_Click(object sender, EventArgs e)
         {
             MemoryStream ms = new MemoryStream();
-            ms = SaveExpandedImg(5.0F,ImageFormat.Bmp);
+            ms = SaveExpandedImg(5.0F, ImageFormat.Bmp);
             if (ms != null)
             {
                 Bitmap bm = Trim(new Bitmap(ms), 25);
@@ -640,15 +680,15 @@ namespace RecorderDrawer
         private void txtThreshold_KeyPress(object sender, KeyPressEventArgs e)
         {
             //only allow integer (no decimal point)
-            if (!char.IsDigit(e.KeyChar) && (e.KeyChar != '.') && (e.KeyChar != '-') && (e.KeyChar != 8))
+            if (!char.IsDigit(e.KeyChar) && ( e.KeyChar != '.' ) && ( e.KeyChar != '-' ) && ( e.KeyChar != 8 ))
                 e.Handled = true;
             // only allow one decimal point
-            if ((e.KeyChar == '.') && ((sender as TextBox).Text.IndexOf('.') > -1))
+            if (( e.KeyChar == '.' ) && ( ( sender as TextBox ).Text.IndexOf('.') > -1 ))
                 e.Handled = true;
             // only allow sign symbol at first char
-            if ((e.KeyChar == '-') && ((sender as TextBox).Text.IndexOf('-') > -1))
+            if (( e.KeyChar == '-' ) && ( ( sender as TextBox ).Text.IndexOf('-') > -1 ))
                 e.Handled = true;
-            if ((e.KeyChar == '-') && !((sender as TextBox).Text.IndexOf('-') > -1) && ((sender as TextBox).SelectionStart != 0))
+            if (( e.KeyChar == '-' ) && !( ( sender as TextBox ).Text.IndexOf('-') > -1 ) && ( ( sender as TextBox ).SelectionStart != 0 ))
                 e.Handled = true;
         }
 
@@ -765,13 +805,13 @@ namespace RecorderDrawer
         private void ChangeOfPressure(object sender, EventArgs e)
         {
             //Calcd. derivation
-            int deltaTime = int.Parse(((ToolStripMenuItem)sender).Tag.ToString());
+            int deltaTime = int.Parse(( (ToolStripMenuItem)sender ).Tag.ToString());
             Series seriesPressureDeri = new Series();
             seriesPressureDeri.Name = "Change of Pressure (" + UNIT_TABLE[yProp[type][2].Unit] + "/" + deltaTime + "min)";
             seriesPressureDeri.ChartType = SeriesChartType.FastLine;
             seriesPressureDeri.Color = Color.Red;
             seriesPressureDeri.YAxisType = AxisType.Secondary;
-            int pointPerPeriod = (int)(dataCount / (rawData[rawData.Count - 1].Date - rawData[0].Date).TotalMinutes) * deltaTime;
+            int pointPerPeriod = (int)( dataCount / ( rawData[rawData.Count - 1].Date - rawData[0].Date ).TotalMinutes ) * deltaTime;
             for (int i = pointPerPeriod; i < rawData.Count; i++)
                 seriesPressureDeri.Points.AddXY(
                     rawData[i].Date,
@@ -791,9 +831,9 @@ namespace RecorderDrawer
 
         public void ChangeChartItems(object sender, EventArgs e)
         {
-            int index = int.Parse(((CheckBox)sender).Tag.ToString());
+            int index = int.Parse(( (CheckBox)sender ).Tag.ToString());
             //Modify hiddenlist
-            if (!((CheckBox)sender).Checked)
+            if (!( (CheckBox)sender ).Checked)
             {
                 if (!hiddenList.Contains(index))
                     hiddenList.Add(index);
@@ -812,13 +852,13 @@ namespace RecorderDrawer
             try
             {
                 //Load parameter
-                int outputType = int.Parse((e.Argument as object[])[0].ToString());
-                string fileName = (e.Argument as object[])[1].ToString();
-                string mailAddress = (e.Argument as object[])[2].ToString();
-                int percentage = int.Parse((e.Argument as object[])[3].ToString());
+                int outputType = int.Parse(( e.Argument as object[] )[0].ToString());
+                string fileName = ( e.Argument as object[] )[1].ToString();
+                string mailAddress = ( e.Argument as object[] )[2].ToString();
+                int percentage = int.Parse(( e.Argument as object[] )[3].ToString());
                 if (percentage < 1)
                     percentage = 1;
-                int duration = int.Parse((e.Argument as object[])[4].ToString());
+                int duration = int.Parse(( e.Argument as object[] )[4].ToString());
                 if (duration < 10)
                     duration = 10;
                 //Draw chart
@@ -829,20 +869,20 @@ namespace RecorderDrawer
                 chtDraw.Width = chtMain.Width;
                 chtDraw.Height = chtMain.Height;
                 List<MemoryStream> frameList = new List<MemoryStream>();
-                bgdWorkerAnimation.ReportProgress(30 * (frameList.Count + 1) / (1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero)), "Generate chart(1/" + (1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero)) + ")");
+                bgdWorkerAnimation.ReportProgress(30 * ( frameList.Count + 1 ) / ( 1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero) ), "Generate chart(1/" + ( 1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero) ) + ")");
                 if (SetFrameWork(1))
                     DrawChart(chtDraw);
                 frameList.Add(new MemoryStream());
                 chtDraw.SaveImage(frameList[frameList.Count - 1], ImageFormat.Jpeg);
                 for (readLimit = percentage; readLimit < 100; readLimit += percentage)
                 {
-                    bgdWorkerAnimation.ReportProgress(30 * (frameList.Count + 1) / (1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero)), "Generate chart(" + (frameList.Count + 1) + "/" + (1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero)) + ")");
+                    bgdWorkerAnimation.ReportProgress(30 * ( frameList.Count + 1 ) / ( 1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero) ), "Generate chart(" + ( frameList.Count + 1 ) + "/" + ( 1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero) ) + ")");
                     if (SetFrameWork(readLimit))
                         DrawChart(chtDraw);
                     frameList.Add(new MemoryStream());
                     chtDraw.SaveImage(frameList[frameList.Count - 1], ImageFormat.Jpeg);
                 }
-                bgdWorkerAnimation.ReportProgress(30 * (frameList.Count + 1) / (1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero)), "Generate chart(" + (frameList.Count + 1) + "/" + (1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero)) + ")");
+                bgdWorkerAnimation.ReportProgress(30 * ( frameList.Count + 1 ) / ( 1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero) ), "Generate chart(" + ( frameList.Count + 1 ) + "/" + ( 1 + (int)Math.Round(100F / percentage, 0, MidpointRounding.AwayFromZero) ) + ")");
                 if (SetFrameWork(100))
                     DrawChart(chtDraw);
                 frameList.Add(new MemoryStream());
@@ -855,7 +895,7 @@ namespace RecorderDrawer
                 aniGif.SetRepeat(0);
                 for (int i = 0; i < frameList.Count; i++)
                 {
-                    bgdWorkerAnimation.ReportProgress(30 + 70 * i / (frameList.Count - 1), "Add frame(" + (i + 1) + "/" + frameList.Count + ")");
+                    bgdWorkerAnimation.ReportProgress(30 + 70 * i / ( frameList.Count - 1 ), "Add frame(" + ( i + 1 ) + "/" + frameList.Count + ")");
                     aniGif.AddFrame(Image.FromStream(frameList[i]));
                 }
                 aniGif.Finish();
@@ -911,20 +951,20 @@ namespace RecorderDrawer
         {
             //Define stage
             //0: draw, 1: setFrameWork & draw, 2: all
-            int stage = int.Parse((e.Argument as object[])[0].ToString());
+            int stage = int.Parse(( e.Argument as object[] )[0].ToString());
             bgdWorkerDraw.ReportProgress(0, "Start");
             switch (stage)
             {
                 case 0:
                     bgdWorkerDraw.ReportProgress(99, "Draw chart");
-                    DrawChart((Chart)(e.Argument as object[])[1]);
+                    DrawChart((Chart)( e.Argument as object[] )[1]);
                     break;
                 case 1:
                     bgdWorkerDraw.ReportProgress(99, "Set framework");
                     if (SetFrameWork(100))
                     {
                         bgdWorkerDraw.ReportProgress(99, "Draw chart");
-                        DrawChart((Chart)(e.Argument as object[])[1]);
+                        DrawChart((Chart)( e.Argument as object[] )[1]);
                     }
                     break;
                 case 2:
@@ -935,7 +975,7 @@ namespace RecorderDrawer
                         if (SetFrameWork(100))
                         {
                             bgdWorkerDraw.ReportProgress(99, "Draw chart");
-                            DrawChart((Chart)(e.Argument as object[])[1]);
+                            DrawChart((Chart)( e.Argument as object[] )[1]);
                         }
                     }
                     break;
@@ -1027,7 +1067,7 @@ namespace RecorderDrawer
                             whiteBorder = 10;
                             break;
                     }
-                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(zoom, frmMailer.Format)), (int)(whiteBorder * zoom));
+                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(zoom, frmMailer.Format)), (int)( whiteBorder * zoom ));
                     //Convert to byte[] and mail
                     ImageConverter ic = new ImageConverter();
                     byte[] ba = (byte[])ic.ConvertTo(image, typeof(byte[]));
@@ -1117,7 +1157,7 @@ namespace RecorderDrawer
         private void bgdWorkerMail_DoWork(object sender, DoWorkEventArgs e)
         {
             bgdWorkerMail.ReportProgress(99, "Sending mail");
-            MailMessage myMail = (MailMessage)(e.Argument as object);
+            MailMessage myMail = (MailMessage)( e.Argument as object );
             try
             {
                 using (SmtpClient mySmtp = new SmtpClient())
@@ -1338,7 +1378,7 @@ namespace RecorderDrawer
             seriesCopy.Color = Color.Transparent;
             seriesCopy.BorderColor = Color.Transparent;
             seriesCopy.ChartArea = areaAxis.Name;
-            seriesCopy.YAxisType = (side == 0 ? AxisType.Primary : AxisType.Secondary);
+            seriesCopy.YAxisType = ( side == 0 ? AxisType.Primary : AxisType.Secondary );
 
             // Disable drid lines & tickmarks
             areaAxis.AxisX.LineWidth = 0;
@@ -1365,7 +1405,7 @@ namespace RecorderDrawer
             }
 
             // Adjust area position
-            areaAxis.Position.X += (side==0?-leftSideOffset[axisIndex-1]:rightSideOffset[axisIndex-1]);
+            areaAxis.Position.X += ( side == 0 ? -leftSideOffset[axisIndex - 1] : rightSideOffset[axisIndex - 1] );
 
         }
 
@@ -1411,7 +1451,7 @@ namespace RecorderDrawer
             seriesCopy.Color = Color.Transparent;
             seriesCopy.BorderColor = Color.Transparent;
             seriesCopy.ChartArea = areaAxis.Name;
-            seriesCopy.YAxisType = (side == 0 ? AxisType.Primary : AxisType.Secondary);
+            seriesCopy.YAxisType = ( side == 0 ? AxisType.Primary : AxisType.Secondary );
 
             // Disable drid lines & tickmarks
             areaAxis.AxisX.LineWidth = 0;
@@ -1430,7 +1470,7 @@ namespace RecorderDrawer
             }
 
             // Adjust area position
-            areaAxis.Position.X += (side == 0 ? -leftSideOffset[axisIndex - 1] : rightSideOffset[axisIndex - 1]);
+            areaAxis.Position.X += ( side == 0 ? -leftSideOffset[axisIndex - 1] : rightSideOffset[axisIndex - 1] );
 
         }
 
@@ -1443,8 +1483,8 @@ namespace RecorderDrawer
                 //Create new chart
                 Chart chtDraw = new Chart();
                 chtDraw.PostPaint += chtMain_PostPaint;
-                chtDraw.Width = (int)(chtMain.Width * zoom);
-                chtDraw.Height = (int)(chtMain.Height * zoom);
+                chtDraw.Width = (int)( chtMain.Width * zoom );
+                chtDraw.Height = (int)( chtMain.Height * zoom );
                 lblStatus.Text = "Read data";
                 Application.DoEvents();
                 if (ReadData())
@@ -1461,7 +1501,7 @@ namespace RecorderDrawer
                 foreach (Title item in chtDraw.Titles)
                 {
                     item.Font = new Font(item.Font.FontFamily, item.Font.Size * zoom, item.Font.Style);
-                    item.BorderWidth = (int)(item.BorderWidth * zoom);
+                    item.BorderWidth = (int)( item.BorderWidth * zoom );
                 }
                 foreach (Legend item in chtDraw.Legends)
                     item.Font = new Font(item.Font.FontFamily, item.Font.Size * zoom, item.Font.Style);
@@ -1470,16 +1510,16 @@ namespace RecorderDrawer
                     foreach (Axis axes in item.Axes)
                     {
                         axes.LabelStyle.Font = new Font(axes.LabelStyle.Font.FontFamily, axes.LabelStyle.Font.Size * zoom, axes.LabelStyle.Font.Style);
-                        axes.LineWidth = (int)(axes.LineWidth * zoom);
-                        axes.MajorGrid.LineWidth = (int)(axes.MajorGrid.LineWidth * zoom);
-                        axes.MinorGrid.LineWidth = (int)(axes.MinorGrid.LineWidth * zoom);
-                        axes.MajorTickMark.LineWidth = (int)(axes.MajorTickMark.LineWidth * zoom);
-                        axes.MinorTickMark.LineWidth = (int)(axes.MinorTickMark.LineWidth * zoom);
+                        axes.LineWidth = (int)( axes.LineWidth * zoom );
+                        axes.MajorGrid.LineWidth = (int)( axes.MajorGrid.LineWidth * zoom );
+                        axes.MinorGrid.LineWidth = (int)( axes.MinorGrid.LineWidth * zoom );
+                        axes.MajorTickMark.LineWidth = (int)( axes.MajorTickMark.LineWidth * zoom );
+                        axes.MinorTickMark.LineWidth = (int)( axes.MinorTickMark.LineWidth * zoom );
                     }
                 }
                 int lineWidth = trendSeries[0].BorderWidth;
                 foreach (Series item in chtDraw.Series)
-                    item.BorderWidth = (int)(item.BorderWidth * zoom);
+                    item.BorderWidth = (int)( item.BorderWidth * zoom );
                 //Save image
                 chtDraw.SaveImage(ms, format);
                 //Reset width of series, because they don't create new copy when add them to new chart
@@ -1516,7 +1556,7 @@ namespace RecorderDrawer
             SizeF sizef = g.MeasureString(target, font);
             g.Dispose(); // Necesary to destroy the graphics object
             return sizef.Width; // gets the width of the size object.
-        } 
+        }
 
         /// <summary>
         /// Remove bmp's white border
@@ -1539,8 +1579,8 @@ namespace RecorderDrawer
                 for (int y = 0; y < height; y++)
                 {
                     byte* color = (byte*)bData.Scan0 + x * 3 + y * bData.Stride;
-                    int R = *(color + 2);
-                    int G = *(color + 1);
+                    int R = *( color + 2 );
+                    int G = *( color + 1 );
                     int B = *color;
                     if (R != 255 || G != 255 || B != 255)
                     {
@@ -1559,8 +1599,8 @@ namespace RecorderDrawer
                 for (int x = 0; x < width; x++)
                 {
                     byte* color = (byte*)bData.Scan0 + x * 3 + y * bData.Stride;
-                    int R = *(color + 2);
-                    int G = *(color + 1);
+                    int R = *( color + 2 );
+                    int G = *( color + 1 );
                     int B = *color;
                     if (R != 255 || G != 255 || B != 255)
                     {
@@ -1580,8 +1620,8 @@ namespace RecorderDrawer
                 for (int x = 0; x < width; x++)
                 {
                     byte* color = (byte*)bData.Scan0 + x * 3 + y * bData.Stride;
-                    int R = *(color + 2);
-                    int G = *(color + 1);
+                    int R = *( color + 2 );
+                    int G = *( color + 1 );
                     int B = *color;
                     if (R != 255 || G != 255 || B != 255)
                     {
@@ -1603,8 +1643,8 @@ namespace RecorderDrawer
                 for (int y = 0; y < height; y++)
                 {
                     byte* color = (byte*)bData.Scan0 + x * 3 + y * bData.Stride;
-                    int R = *(color + 2);
-                    int G = *(color + 1);
+                    int R = *( color + 2 );
+                    int G = *( color + 1 );
                     int B = *color;
                     if (R != 255 || G != 255 || B != 255)
                     {
@@ -1632,14 +1672,14 @@ namespace RecorderDrawer
         protected bool GetFilename(out string filename, DragEventArgs e)
         {
             filename = String.Empty;
-            if ((e.AllowedEffect & DragDropEffects.Copy) == DragDropEffects.Copy)
+            if (( e.AllowedEffect & DragDropEffects.Copy ) == DragDropEffects.Copy)
             {
-                Array data = ((IDataObject)e.Data).GetData("FileNameW") as Array;
+                Array data = ( (IDataObject)e.Data ).GetData("FileNameW") as Array;
                 if (data != null)
                 {
-                    if ((data.Length == 1) && (data.GetValue(0) is String))
+                    if (( data.Length == 1 ) && ( data.GetValue(0) is String ))
                     {
-                        filename = ((string[])data)[0];
+                        filename = ( (string[])data )[0];
                         string ext = System.IO.Path.GetExtension(filename).ToLower();
                         if (ext.Equals(".csv")) //Only allow *.csv
                             return true;
@@ -1667,22 +1707,24 @@ namespace RecorderDrawer
                 //Determine schema type
                 if (type == -1)
                 {
-                    if (secondRow.Length == 9 && !secondRow[1].Equals(""))
-                        type = 0; //3L(#2)
+                    if (secondRow.Length == 10 && !secondRow[1].Equals(""))
+                        type = 1; //#2
+                    else if (secondRow.Length == 9 && !secondRow[1].Equals(""))
+                        type = 2; //#2 old
                     else if (secondRow.Length == 11)
-                        type = 1; //1L & 5L國華(#4 #5)
+                        type = 4; //#4 #5
                     else if (secondRow.Length == 8 && !secondRow[1].Equals(""))
-                        type = 2; //2L (#201)(#1 #3)
-                    else if (secondRow.Length == 9 && secondRow[1].Equals(""))
-                        type = 6; //R2-EOD (Default for type 3-8)
+                        type = 0; //#1 #3
+                    else if (secondRow.Length == 8 && secondRow[1].Equals(""))
+                        type = 10; //R2-EOD (Default for type 7-12)
                     else if (secondRow.Length > 20)
-                        type = 9; //CHPPO Pilot
+                        type = 13; //CHPPO Pilot
                     else
                         throw new Exception("資料格式不符");
                 }
                 //Data end flag, only for string X axis (because DateTime format will automatically sort)
                 //Parse data string, remember skip first row(no data)
-                int firstDataRow = (type >= 3 && type <= 8) ? 3 : 1; //The 1st data row for type 3~8 is 3rd row
+                int firstDataRow = ( type >= 7 && type <= 12 ) ? 3 : 1; //The 1st data row for type 7~12 is 3rd row
                 Parallel.For(firstDataRow, allLines.Count, i =>
                 {
                     string[] data = allLines[i].Split(',', '\t');
@@ -1693,7 +1735,7 @@ namespace RecorderDrawer
                         DateTime date = new DateTime();
                         //First column is date, following column(s) are parameter
                         string dateString;
-                        if (type >= 2 && type <= 9)
+                        if ( (type >= 7 && type <= 13) || type == 0 || type == 3 )
                             dateString = data[0] + " " + data[1];
                         else
                             dateString = data[0];
@@ -1704,13 +1746,14 @@ namespace RecorderDrawer
                         {
                             //Determine limit range of datetime
                             if (!LimitedTimePeriod ||
-                                (LimitedTimePeriod && date.CompareTo(StartTime) >= 0 && date.CompareTo(EndTime) <= 0))
+                                ( LimitedTimePeriod && date.CompareTo(StartTime) >= 0 && date.CompareTo(EndTime) <= 0 ))
                             {
                                 //Process numeric data
                                 for (int j = 1; j < data.Length; j++)
                                 {
-                                    if ((type >= 2 && type <= 9) && j == 1)
-                                        continue; //When type = 2 & 3, 2nd column is time
+                                    if (j == 1 &&
+                                        ( ( type >= 7 && type <= 13 ) || type == 0 || type == 3 ) )
+                                        continue; //2nd column is time
                                     float num = 0;
                                     if (float.TryParse(data[j], out num))
                                     {
@@ -1799,60 +1842,74 @@ namespace RecorderDrawer
                     switch (type)
                     {
                         case 0:
+                        case 3:
+                            trendSeries = new Series[6];
+                            paraTitle = new string[] { "內溫PV", "外溫PV", "壓力PV", "轉速PV", "外溫SV", "流速PV" };
+                            chkChartItem = new CheckBox[6];
+                            lblDataDisplay = new Label[6];
+                            break;
+                        case 1:
+                            trendSeries = new Series[9];
+                            paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "EO流速", "壓力PV", "程控SV", "轉速PV", "PO流速" };
+                            chkChartItem = new CheckBox[9];
+                            lblDataDisplay = new Label[9];
+                            break;
+                        case 2:
+                            trendSeries = new Series[8];
+                            paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "流速PV", "壓力PV", "程控SV", "轉速PV" };
+                            chkChartItem = new CheckBox[8];
+                            lblDataDisplay = new Label[8];
+                            break;
+                        case 4:
+                        case 5:
+                            trendSeries = new Series[10];
+                            paraTitle = new string[] { "釜溫PV", "油溫PV", "油出口PV", "油入口PV", "內溫SV", "油上限SV", "壓力PV", "轉速PV", "扭力PV", "流速PV" };
+                            chkChartItem = new CheckBox[10];
+                            lblDataDisplay = new Label[10];
+                            break;
+                        case 6:
                             trendSeries = new Series[8];
                             paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "流速PV", "壓力PV", "程控SV", "轉速PV", };
                             chkChartItem = new CheckBox[8];
                             lblDataDisplay = new Label[8];
                             break;
-                        case 1:
-                            trendSeries = new Series[10];
-                            paraTitle = new string[] { "釜溫PV", "油溫PV", "油出口PV", "油入口PV", "內溫SV", "油上限SV", "壓力PV", "轉速PV", "扭力PV", "流速PV", };
-                            chkChartItem = new CheckBox[10];
-                            lblDataDisplay = new Label[10];
-                            break;
-                        case 2:
-                            trendSeries = new Series[6];
-                            paraTitle = new string[] { "內溫PV", "外溫PV", "壓力PV", "轉速PV", "外溫SV", "流速PV", };
-                            chkChartItem = new CheckBox[6];
-                            lblDataDisplay = new Label[6];
-                            break;
-                        case 3:
+                        case 7:
                             trendSeries = new Series[5];
                             paraTitle = new string[] { "轉速", "壓力", "內溫", "升溫", "外溫" };
                             chkChartItem = new CheckBox[5];
                             lblDataDisplay = new Label[5];
                             break;
-                        case 4:
+                        case 8:
                             trendSeries = new Series[5];
                             paraTitle = new string[] { "轉速", "壓力", "內溫", "流速", "外溫" };
                             chkChartItem = new CheckBox[5];
                             lblDataDisplay = new Label[5];
                             break;
-                        case 5:
-                            trendSeries = new Series[6];
-                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "升溫", "內溫2" };
-                            chkChartItem = new CheckBox[6];
-                            lblDataDisplay = new Label[6];
-                            break;
-                        case 6:
-                            trendSeries = new Series[6];
-                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "流速", "內溫2" };
-                            chkChartItem = new CheckBox[6];
-                            lblDataDisplay = new Label[6];
-                            break;
-                        case 7:
-                            trendSeries = new Series[6];
-                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "升溫", "內溫2" };
-                            chkChartItem = new CheckBox[6];
-                            lblDataDisplay = new Label[6];
-                            break;
-                        case 8:
-                            trendSeries = new Series[6];
-                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "流速", "內溫2" };
-                            chkChartItem = new CheckBox[6];
-                            lblDataDisplay = new Label[6];
-                            break;
                         case 9:
+                            trendSeries = new Series[6];
+                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "升溫", "內溫2" };
+                            chkChartItem = new CheckBox[6];
+                            lblDataDisplay = new Label[6];
+                            break;
+                        case 10:
+                            trendSeries = new Series[6];
+                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "流速", "內溫2" };
+                            chkChartItem = new CheckBox[6];
+                            lblDataDisplay = new Label[6];
+                            break;
+                        case 11:
+                            trendSeries = new Series[6];
+                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "升溫", "內溫2" };
+                            chkChartItem = new CheckBox[6];
+                            lblDataDisplay = new Label[6];
+                            break;
+                        case 12:
+                            trendSeries = new Series[6];
+                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "流速", "內溫2" };
+                            chkChartItem = new CheckBox[6];
+                            lblDataDisplay = new Label[6];
+                            break;
+                        case 13:
                             showTooltip = true;
                             trendSeries = new Series[23]; //WHSV尚未建立，建立後則為24項目
                             paraTitle = new string[] { "TI-101", "TI-102", "TI-103", "TI-104", "TI-105", "TI-106", "TI-107", "TI-108", "TIC-101", "TI-301", "PI-201", "PI-101", "PI-102", "PI-103", "PI-301", "PI-104", "LI-301", "FIC-201", "PIC-101", "FI-101", "TIC-102", "FI-101 TR", "DPI-101" };
@@ -1860,29 +1917,23 @@ namespace RecorderDrawer
                             chkChartItem = new CheckBox[23];
                             lblDataDisplay = new Label[23];
                             break;
-                        case 10:
-                            trendSeries = new Series[8];
-                            paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "流速PV", "壓力PV", "程控SV", "轉速PV", };
-                            chkChartItem = new CheckBox[8];
-                            lblDataDisplay = new Label[8];
-                            break;
                         default:
                             throw new Exception("資料格式不符");
                     }
                     //Set chart item selection box and corresponding data display box
                     int boxWidth = 80;
-                    int padding = Math.Max((pnlChartItems.Width - boxWidth * chkChartItem.Length) / (chkChartItem.Length + 1), 5);
+                    int padding = Math.Max(( pnlChartItems.Width - boxWidth * chkChartItem.Length ) / ( chkChartItem.Length + 1 ), 5);
                     pnlChartItems.Controls.Clear();
                     if (chkChartItem.Length > 10)
                         pnlChartItems.HorizontalScroll.Visible = true;
-                    int panelExactHeight = pnlChartItems.Height - (chkChartItem.Length > 10 ? SystemInformation.HorizontalScrollBarHeight : 0);
+                    int panelExactHeight = pnlChartItems.Height - ( chkChartItem.Length > 10 ? SystemInformation.HorizontalScrollBarHeight : 0 );
                     for (int i = 0; i < chkChartItem.Length; i++)
                     {
                         chkChartItem[i] = new CheckBox();
                         chkChartItem[i].Text = paraTitle[i];
                         chkChartItem[i].Width = boxWidth;
-                        chkChartItem[i].Top = ((panelExactHeight - (chkChartItem[i].Height * 2 + 5)) / 2);
-                        chkChartItem[i].Left = padding + i * (boxWidth + padding);
+                        chkChartItem[i].Top = ( ( panelExactHeight - ( chkChartItem[i].Height * 2 + 5 ) ) / 2 );
+                        chkChartItem[i].Left = padding + i * ( boxWidth + padding );
                         chkChartItem[i].Font = new Font("微軟正黑體", Math.Min(StringWidth("內溫PV", chkChartItem[i].Font) / StringWidth(paraTitle[i], chkChartItem[i].Font) * 10F, 10F));
                         chkChartItem[i].BackColor = seriesColor[i];
                         chkChartItem[i].ForeColor = seriesSelectionBoxTextColor[i];
@@ -1902,7 +1953,7 @@ namespace RecorderDrawer
                         lblDataDisplay[i].BackColor = Color.White;
                         lblDataDisplay[i].Width = boxWidth;
                         lblDataDisplay[i].Top = chkChartItem[i].Top + chkChartItem[i].Height + 5;
-                        lblDataDisplay[i].Left = padding + i * (boxWidth + padding);
+                        lblDataDisplay[i].Left = padding + i * ( boxWidth + padding );
                         lblDataDisplay[i].Font = new Font("微軟正黑體", 10F);
                         pnlChartItems.Controls.Add(lblDataDisplay[i]);
                     }
@@ -2024,8 +2075,8 @@ namespace RecorderDrawer
                     targetChart.Legends.Add("");
                     targetChart.Legends[0].IsTextAutoFit = true;
                     targetChart.Legends[0].Position = new ElementPosition(20F, 8.75F, 50F, 11F);
-                    if ((type == 0 && hiddenList.Count == 8) || (type == 1 && hiddenList.Count == 10)) //All hide
-                        throw new Exception("未選取任何參數");
+                    //if (( type == 0 && hiddenList.Count == 8 ) || ( type == 1 && hiddenList.Count == 10 )) //All hide
+                        //throw new Exception("未選取任何參數");
                     //Add series
                     for (int i = 0; i < trendSeries.Length; i++)
                     {
@@ -2087,7 +2138,7 @@ namespace RecorderDrawer
                         Title labelTemp;
                         labelTemp = new Title(UNIT_TABLE[yProp[type][i].Unit]);
                         float labelWidth = Math.Max(3F, 3F * StringWidth(UNIT_TABLE[yProp[type][i].Unit], labelTemp.Font) / StringWidth("bar", labelTemp.Font));
-                        labelTemp.Position = new ElementPosition(yLabelXPos[yAxesCount] + (3 - labelWidth) / 2, yLabelYPos[yLabel.Count], labelWidth, 2.5F);
+                        labelTemp.Position = new ElementPosition(yLabelXPos[yAxesCount] + ( 3 - labelWidth ) / 2, yLabelYPos[yLabel.Count], labelWidth, 2.5F);
                         yLabel.Add(labelTemp);
                         for (int j = 0; j < seriesList.Count; j++)
                         {
@@ -2098,14 +2149,14 @@ namespace RecorderDrawer
                             else
                             {
                                 int colSplit = (int)Math.Ceiling(seriesList.Count / 4F);
-                                labelTemp.Position = new ElementPosition(yLabelXPos[yAxesCount] + ((int)(j / 4)) * (3F / colSplit + 0.2F), yLabelYPos[j % 4 + 1], 2.8F / colSplit, 2);
+                                labelTemp.Position = new ElementPosition(yLabelXPos[yAxesCount] + ( (int)( j / 4 ) ) * ( 3F / colSplit + 0.2F ), yLabelYPos[j % 4 + 1], 2.8F / colSplit, 2);
                             }
                             yLabel.Add(labelTemp);
                         }
                         labelTemp = new Title(yProp[type][i].Title);
                         labelWidth = Math.Max(3F, 3F * StringWidth(yProp[type][i].Title, labelTemp.Font) / StringWidth("bar", labelTemp.Font));
                         //Max label are 4
-                        labelTemp.Position = new ElementPosition(yLabelXPos[yAxesCount] + (3 - labelWidth) / 2, yLabelYPos[Math.Min(yLabel.Count, 5)], labelWidth, 2.5F);
+                        labelTemp.Position = new ElementPosition(yLabelXPos[yAxesCount] + ( 3 - labelWidth ) / 2, yLabelYPos[Math.Min(yLabel.Count, 5)], labelWidth, 2.5F);
                         yLabel.Add(labelTemp);
                         foreach (Title item in yLabel)
                             targetChart.Titles.Add(item);
@@ -2175,15 +2226,15 @@ namespace RecorderDrawer
                     startFlag = true;
                     pauseFlag = false;
                     totalFlow +=
-                        (rawData[i + 1].Parameter[seriesMap[3][type][0]]) *
-                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                        ( rawData[i + 1].Parameter[seriesMap[3][type][0]] ) *
+                        ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalPressure +=
-                        (rawData[i + 1].Parameter[seriesMap[2][type][0]]) *
-                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                        ( rawData[i + 1].Parameter[seriesMap[2][type][0]] ) *
+                        ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalInnerPV +=
-                        (rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]]) *
-                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
-                    totalTime += (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                        ( rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]] ) *
+                        ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
+                    totalTime += ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     if (rawData[i].Parameter[seriesMap[2][type][0]] > maxP)
                     {
                         maxP = rawData[i].Parameter[seriesMap[2][type][0]];
@@ -2201,13 +2252,13 @@ namespace RecorderDrawer
                         totalPressureDuringBlank.Add(0);
                     }
                     pauseFlag = true;
-                    blankTime[blankTime.Count - 1] += (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                    blankTime[blankTime.Count - 1] += ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalPressureDuringBlank[blankTime.Count - 1] +=
-                        (rawData[i + 1].Parameter[seriesMap[2][type][0]]) *
-                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                        ( rawData[i + 1].Parameter[seriesMap[2][type][0]] ) *
+                        ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalInnerPVDuringBlank[blankTime.Count - 1] +=
-                        (rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]]) *
-                        (new TimeSpan((rawData[i + 1].Date - rawData[i].Date).Ticks)).TotalMinutes;
+                        ( rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]] ) *
+                        ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                 }
             }
             //Final record
@@ -2243,9 +2294,9 @@ namespace RecorderDrawer
             int pointPerPeriod = 0;
             for (int i = 0; i < rawData.Count - 1; i++)
             {
-                if ((int)(20 / (rawData[i + 1].Date - rawData[i].Date).TotalMinutes) > 0)
+                if ((int)( 20 / ( rawData[i + 1].Date - rawData[i].Date ).TotalMinutes ) > 0)
                 {
-                    pointPerPeriod = (int)(20 / (rawData[i + 1].Date - rawData[i].Date).TotalMinutes);
+                    pointPerPeriod = (int)( 20 / ( rawData[i + 1].Date - rawData[i].Date ).TotalMinutes );
                     break;
                 }
             }
@@ -2260,7 +2311,7 @@ namespace RecorderDrawer
                     agingDone = true;
                     agingStart = rawData[lastFlowPoint].Date;
                     agingEnd = rawData[i - pointPerPeriod].Date;
-                    agingTime = (rawData[i - pointPerPeriod].Date - rawData[lastFlowPoint].Date).TotalMinutes;
+                    agingTime = ( rawData[i - pointPerPeriod].Date - rawData[lastFlowPoint].Date ).TotalMinutes;
                     break;
                 }
             }
@@ -2280,13 +2331,13 @@ namespace RecorderDrawer
                 "平均壓力(含暫停時間)：" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
                 "平均內溫(含暫停時間)：" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine + Environment.NewLine +
                 "*****熟成時間(20分鐘壓力變化等於0視為熟成完成)*****" + Environment.NewLine +
-                "熟成開始：" + (agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A") + Environment.NewLine +
-                "熟成結束：" + (agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A") + Environment.NewLine +
-                "熟成時間：" + (agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成") + Environment.NewLine +
+                "熟成開始：" + ( agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
+                "熟成結束：" + ( agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
+                "熟成時間：" + ( agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成" ) + Environment.NewLine +
                 "*****製程放大相關數據*****" + Environment.NewLine +
                 "1噸槽預估平均進料速率：" + string.Format("{0:N2}", avgFlow * 60 * Density * 1000 / ReactorSize) + " kg/hr" + Environment.NewLine +
                 "10噸槽預估平均進料速率：" + string.Format("{0:N2}", avgFlow * 60 * Density * 10000 / ReactorSize) + " kg/hr" + Environment.NewLine +
-                "預估生產成本：" + string.Format("{0:N2}", (totalTimeWithBlank + agingTime) / 60 * CostPerHour) + " USD";
+                "預估生產成本：" + string.Format("{0:N2}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD";
             return result;
         }
 
