@@ -42,6 +42,10 @@ namespace RecorderDrawer
         };
         //Unit table
         public static string[] UNIT_TABLE = { "\u00b0C", "bar", "psi", "ml/min", "rpm", "Ncm", "%", "kg/cm\u00b2", "mm", "g/hr", "g", "h-1" };
+        //Fluid Density
+        public static float[] FLUID_DENSITY = { 0.88F, 0.83F };
+        //Reactor size
+        public static float[] REACTOR_SIZE = { 1, 2, 3, 5, 100 };
         //Datetime format
         private static string[] dateTimeList = {
                             "yyyy/M/d tt hh:mm:ss",
@@ -179,9 +183,9 @@ namespace RecorderDrawer
         public static DateTime StartTime { get; set; }
         public static DateTime EndTime { get; set; }
         public static string TitleText { get; set; } = "";
-        public static float Density { get; set; }
+        public static int DensityIndex { get; set; }
         public static float CostPerHour { get; set; }
-        public static float ReactorSize { get; set; } //In Liter
+        public static int ReactorSizeIndex { get; set; } //In Liter
         public static int Percentage { get; set; }
         public static int Duration { get; set; }
         #endregion
@@ -190,6 +194,138 @@ namespace RecorderDrawer
         public frmRecorderDrawer()
         {
             InitializeComponent();
+            //Load the settings
+            try
+            {
+                string[] yPropString = Properties.Settings.Default.YProp.Split(',');
+                int counter = 0;
+                for (int i = 0; i < yProp.Length; i++)
+                {
+                    yProp[i] = new AxesProp[6];
+                    for (int j = 0; j < yProp[i].Length; j++)
+                    {
+                        yProp[i][j] = new AxesProp(
+                            yPropString[counter++],
+                            int.Parse(yPropString[counter++]),
+                            float.Parse(yPropString[counter++]),
+                            float.Parse(yPropString[counter++]),
+                            float.Parse(yPropString[counter++]));
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.StackTrace + ": " + ex.Message);
+                //Default value
+                yProp = new AxesProp[14][]{
+                    new AxesProp[6]{  //#1
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#2
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                   new AxesProp[6]{  //#2(6 channal)
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#3
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#4
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("扭力", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#5
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("扭力", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#6
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //R1-CHPPO
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 150, 15),
+                        new AxesProp("壓力", 2, 0, 500, 50),
+                        new AxesProp("升溫", 6, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 600, 60),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R1-EOD
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 200, 20),
+                        new AxesProp("壓力", 2, 0, 150, 15),
+                        new AxesProp("流速", 3, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 400, 40),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R2-CHPPO
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 150, 15),
+                        new AxesProp("壓力", 2, 0, 500, 50),
+                        new AxesProp("升溫", 6, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 600, 60),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R2-EOD #7
+                        new AxesProp("內溫", 0, 0, 200, 20),
+                        new AxesProp("外溫", 0, 0, 200, 20),
+                        new AxesProp("壓力", 2, 0, 200, 20),
+                        new AxesProp("流速", 3, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 1000, 100),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R3-CHPPO
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 150, 15),
+                        new AxesProp("壓力", 2, 0, 500, 50),
+                        new AxesProp("升溫", 6, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 600, 60),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //R3-EOD
+                        new AxesProp("內溫", 0, 0, 150, 15),
+                        new AxesProp("外溫", 0, 0, 200, 20),
+                        new AxesProp("壓力", 2, 0, 150, 15),
+                        new AxesProp("流速", 3, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 400, 40),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //CHPPO Pilot
+                        new AxesProp("溫度", 0, 0, 200, 20),
+                        new AxesProp("壓力", 7, 0, 100, 10),
+                        new AxesProp("液位", 8, 0, 500, 50),
+                        new AxesProp("流量", 9, 0, 250, 25),
+                        new AxesProp("總量", 10, 0, 300, 30),
+                        new AxesProp("WHSV", 11, 0, 15, 1.5F)}
+                };
+            }
+            XType = Properties.Settings.Default.XType;
+            XInterval = Properties.Settings.Default.XInterval;
+            XAngle = Properties.Settings.Default.XAngle;
+            CostPerHour = Properties.Settings.Default.CostPerHour;
+            DensityIndex = Properties.Settings.Default.DensityIndex;
+            ReactorSizeIndex = Properties.Settings.Default.ReactorSizeIndex;
+            chkXGrid.Checked = true;
+            chkYGrid.Checked = true;
         }
 
         private void munAbout_Click(object sender, EventArgs e)
@@ -422,139 +558,6 @@ namespace RecorderDrawer
                 bgdWorkerDraw.RunWorkerAsync(new object[] { 2, chtMain });
         }
 
-        private void frmRecorderDrawer_Load(object sender, EventArgs e)
-        {
-            //Load the settings
-            try
-            {
-                string[] yPropString = Properties.Settings.Default.yProp.Split(',');
-                int counter = 0;
-                for (int i = 0; i < yProp.Length; i++)
-                {
-                    yProp[i] = new AxesProp[6];
-                    for (int j = 0; j < yProp[i].Length; j++)
-                    {
-                        yProp[i][j] = new AxesProp(
-                            yPropString[counter++],
-                            int.Parse(yPropString[counter++]),
-                            float.Parse(yPropString[counter++]),
-                            float.Parse(yPropString[counter++]),
-                            float.Parse(yPropString[counter++]));
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.StackTrace + ": " + ex.Message);
-                //Default value
-                yProp = new AxesProp[14][]{
-                    new AxesProp[6]{  //#1
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
-                    new AxesProp[6]{  //#2
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
-                   new AxesProp[6]{  //#2(6 channal)
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
-                    new AxesProp[6]{  //#3
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
-                    new AxesProp[6]{  //#4
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("扭力", 5, 0, 220, 20)},
-                    new AxesProp[6]{  //#5
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("扭力", 5, 0, 220, 20)},
-                    new AxesProp[6]{  //#6
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
-                    new AxesProp[6]{  //R1-CHPPO
-                        new AxesProp("內溫", 0, 0, 150, 15),
-                        new AxesProp("外溫", 0, 0, 150, 15),
-                        new AxesProp("壓力", 2, 0, 500, 50),
-                        new AxesProp("升溫", 6, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 600, 60),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //R1-EOD
-                        new AxesProp("內溫", 0, 0, 150, 15),
-                        new AxesProp("外溫", 0, 0, 200, 20),
-                        new AxesProp("壓力", 2, 0, 150, 15),
-                        new AxesProp("流速", 3, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 400, 40),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //R2-CHPPO
-                        new AxesProp("內溫", 0, 0, 150, 15),
-                        new AxesProp("外溫", 0, 0, 150, 15),
-                        new AxesProp("壓力", 2, 0, 500, 50),
-                        new AxesProp("升溫", 6, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 600, 60),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //R2-EOD #7
-                        new AxesProp("內溫", 0, 0, 200, 20),
-                        new AxesProp("外溫", 0, 0, 200, 20),
-                        new AxesProp("壓力", 2, 0, 200, 20),
-                        new AxesProp("流速", 3, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 1000, 100),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //R3-CHPPO
-                        new AxesProp("內溫", 0, 0, 150, 15),
-                        new AxesProp("外溫", 0, 0, 150, 15),
-                        new AxesProp("壓力", 2, 0, 500, 50),
-                        new AxesProp("升溫", 6, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 600, 60),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //R3-EOD
-                        new AxesProp("內溫", 0, 0, 150, 15),
-                        new AxesProp("外溫", 0, 0, 200, 20),
-                        new AxesProp("壓力", 2, 0, 150, 15),
-                        new AxesProp("流速", 3, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 400, 40),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //CHPPO Pilot
-                        new AxesProp("溫度", 0, 0, 200, 20),
-                        new AxesProp("壓力", 7, 0, 100, 10),
-                        new AxesProp("液位", 8, 0, 500, 50),
-                        new AxesProp("流量", 9, 0, 250, 25),
-                        new AxesProp("總量", 10, 0, 300, 30),
-                        new AxesProp("WHSV", 11, 0, 15, 1.5F)}
-                };
-            }
-            XType = StrToIntDef(Properties.Settings.Default.xType, 0);
-            XInterval = StrToIntDef(Properties.Settings.Default.xInterval, 1000);
-            XAngle = StrToIntDef(Properties.Settings.Default.xAngle, 0);
-            chkXGrid.Checked = true;
-            chkYGrid.Checked = true;
-        }
-
         private void frmRecorderDrawer_FormClosing(object sender, FormClosingEventArgs e)
         {
             //Save settings
@@ -570,10 +573,13 @@ namespace RecorderDrawer
                     yPropString += Convert.ToString(yProp[i][j].Interval) + ",";
                 }
             }
-            Properties.Settings.Default.yProp = yPropString;
-            Properties.Settings.Default.xType = Convert.ToString(XType);
-            Properties.Settings.Default.xInterval = Convert.ToString(XInterval);
-            Properties.Settings.Default.xAngle = Convert.ToString(XAngle);
+            Properties.Settings.Default.YProp = yPropString;
+            Properties.Settings.Default.XType = XType;
+            Properties.Settings.Default.XInterval = XInterval;
+            Properties.Settings.Default.XAngle = XAngle;
+            Properties.Settings.Default.CostPerHour = CostPerHour;
+            Properties.Settings.Default.DensityIndex = DensityIndex;
+            Properties.Settings.Default.ReactorSizeIndex = ReactorSizeIndex;
             Properties.Settings.Default.Save();
         }
 
@@ -788,10 +794,10 @@ namespace RecorderDrawer
                 frmMsg.MaximizeBox = false;
                 frmMsg.MinimizeBox = false;
                 frmMsg.Controls.Add(txtMsg);
-                frmMsg.Width = 400;
-                frmMsg.Height = 400;
+                frmMsg.Width = 640;
+                frmMsg.Height = 480;
                 frmMsg.StartPosition = FormStartPosition.Manual;
-                frmMsg.Location = new Point(this.Location.X + this.Width / 2 - frmMsg.ClientSize.Width / 2, this.Location.Y + this.Height / 2 - frmMsg.ClientSize.Height / 2);
+                frmMsg.Location = new Point(Location.X + Width / 2 - frmMsg.ClientSize.Width / 2, Location.Y + Height / 2 - frmMsg.ClientSize.Height / 2);
                 frmMsg.ShowDialog();
             }
         }
@@ -1540,10 +1546,18 @@ namespace RecorderDrawer
             return ms;
         }
 
-        public static int StrToIntDef(string s, int @default)
+        public static int StrToNumWithDefault(string s, int @default)
         {
             int number;
             if (int.TryParse(s, out number))
+                return number;
+            return @default;
+        }
+
+        public static float StrToNumWithDefault(string s, float @default)
+        {
+            float number;
+            if (float.TryParse(s, out number))
                 return number;
             return @default;
         }
@@ -1758,7 +1772,7 @@ namespace RecorderDrawer
                                     if (float.TryParse(data[j], out num))
                                     {
                                         //Some column need to process with a factor
-                                        if (type == 0)
+                                        if (type == 1 || type == 2)
                                         {
                                             if (j == 5 || j == 6)
                                                 num /= 10;
@@ -2316,28 +2330,32 @@ namespace RecorderDrawer
                 }
             }
             //Return
-            string result = "*****僅計算流速大於0.1 ml/min(含)部分*****" + Environment.NewLine +
+            string result = 
+                "*****僅計算流速大於0.1 ml/min(含)部分*****" + Environment.NewLine +
                 "總時間：" + string.Format("{0:N2}", totalTime) + "分" + Environment.NewLine +
                 "總流量：" + string.Format("{0:N2}", totalFlow) + " ml" + Environment.NewLine +
                 "最高流速：" + string.Format("{0:N2}", maxFlow) + " ml/min" + Environment.NewLine +
                 "平均流速：" + string.Format("{0:N2}", avgFlow) + " ml/min" + Environment.NewLine +
                 "最高壓力：" + string.Format("{0:N2}", maxP) + " " + UNIT_TABLE[yProp[type][2].Unit] + " at " + maxPTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
                 "平均壓力：" + string.Format("{0:N2}", avgPressure) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
-                "平均內溫：" + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine + Environment.NewLine +
+                "平均內溫：" + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine 
+                + Environment.NewLine +
                 "*****中途暫停時間超過8小時不列入計算*****" + Environment.NewLine +
                 "暫停時間：" + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "分" + Environment.NewLine +
                 "總時間(含暫停時間)：" + string.Format("{0:N2}", totalTimeWithBlank) + "分" + Environment.NewLine +
                 "平均流速(含暫停時間)：" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
                 "平均壓力(含暫停時間)：" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
-                "平均內溫(含暫停時間)：" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine + Environment.NewLine +
+                "平均內溫(含暫停時間)：" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine 
+                + Environment.NewLine +
                 "*****熟成時間(20分鐘壓力變化等於0視為熟成完成)*****" + Environment.NewLine +
                 "熟成開始：" + ( agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
                 "熟成結束：" + ( agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
-                "熟成時間：" + ( agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成" ) + Environment.NewLine +
+                "熟成時間：" + ( agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成" ) + Environment.NewLine 
+                + Environment.NewLine +
                 "*****製程放大相關數據*****" + Environment.NewLine +
-                "1噸槽預估平均進料速率：" + string.Format("{0:N2}", avgFlow * 60 * Density * 1000 / ReactorSize) + " kg/hr" + Environment.NewLine +
-                "10噸槽預估平均進料速率：" + string.Format("{0:N2}", avgFlow * 60 * Density * 10000 / ReactorSize) + " kg/hr" + Environment.NewLine +
-                "預估生產成本：" + string.Format("{0:N2}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD";
+                "1噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 1000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
+                "10噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
+                "預估生產成本：" + string.Format("{0:N0}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD";
             return result;
         }
 

@@ -55,6 +55,11 @@ namespace RecorderDrawer
             btnCancel.DialogResult = DialogResult.Cancel;
             //Init. general tab
             txtMainTitle.Text = frmRecorderDrawer.TitleText;
+            cboFluid.SelectedIndex = 0;
+            cboReactorSize.SelectedIndex = 0;
+            cboFluid.SelectedIndex = frmRecorderDrawer.DensityIndex;
+            cboReactorSize.SelectedIndex = frmRecorderDrawer.ReactorSizeIndex;
+            txtCostPerHour.Text = frmRecorderDrawer.CostPerHour.ToString();
             //Init. axes tab
             cboXAngle.Items.Clear();
             for (int i = -90; i <= 90; i += 5)
@@ -104,6 +109,9 @@ namespace RecorderDrawer
                 frmRecorderDrawer.StartTime = new DateTime(dtpStart.Value.Year, dtpStart.Value.Month, dtpStart.Value.Day, dtpStart.Value.Hour, dtpStart.Value.Minute, dtpStart.Value.Second);
                 frmRecorderDrawer.EndTime = new DateTime(dtpEnd.Value.Year, dtpEnd.Value.Month, dtpEnd.Value.Day, dtpEnd.Value.Hour, dtpEnd.Value.Minute, dtpEnd.Value.Second);
             }
+            frmRecorderDrawer.DensityIndex = cboFluid.SelectedIndex;
+            frmRecorderDrawer.ReactorSizeIndex = cboReactorSize.SelectedIndex;
+            frmRecorderDrawer.CostPerHour = float.Parse(txtCostPerHour.Text);
             //Axes tab
             for (int i = 0; i < 6; i++)
                 frmRecorderDrawer.YProp[i] = new AxesProp(txtTitle[i].Text, cboUnit[i].SelectedIndex, float.Parse(txtMin[i].Text), float.Parse(txtMax[i].Text), float.Parse(txtInterval[i].Text));
@@ -146,17 +154,5 @@ namespace RecorderDrawer
 
         #endregion
 
-        private void cboFluid_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            switch (cboFluid.SelectedIndex)
-            {
-                case 0:
-                    frmRecorderDrawer.Density = 0.88F;
-                    break;
-                case 1:
-                    frmRecorderDrawer.Density = 0.83F;
-                    break;
-            }
-        }
     }
 }

@@ -44,6 +44,10 @@
             this.btnOk = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabGeneral = new System.Windows.Forms.TabPage();
+            this.label16 = new System.Windows.Forms.Label();
+            this.cboReactorSize = new System.Windows.Forms.ComboBox();
+            this.txtCostPerHour = new System.Windows.Forms.TextBox();
+            this.cboFluid = new System.Windows.Forms.ComboBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
@@ -59,9 +63,6 @@
             this.txtPercentage = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
-            this.cboFluid = new System.Windows.Forms.ComboBox();
-            this.txtCostPerHour = new System.Windows.Forms.TextBox();
-            this.cboReactorSize = new System.Windows.Forms.ComboBox();
             this.tblMain.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabGeneral.SuspendLayout();
@@ -300,6 +301,7 @@
             // 
             // tabGeneral
             // 
+            this.tabGeneral.Controls.Add(this.label16);
             this.tabGeneral.Controls.Add(this.cboReactorSize);
             this.tabGeneral.Controls.Add(this.txtCostPerHour);
             this.tabGeneral.Controls.Add(this.cboFluid);
@@ -320,6 +322,53 @@
             this.tabGeneral.TabIndex = 1;
             this.tabGeneral.Text = "一般設定";
             this.tabGeneral.UseVisualStyleBackColor = true;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label16.Location = new System.Drawing.Point(215, 139);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(53, 17);
+            this.label16.TabIndex = 40;
+            this.label16.Text = "USD/hr";
+            // 
+            // cboReactorSize
+            // 
+            this.cboReactorSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboReactorSize.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboReactorSize.FormattingEnabled = true;
+            this.cboReactorSize.Items.AddRange(new object[] {
+            "1L",
+            "2L",
+            "3L",
+            "5L",
+            "100L"});
+            this.cboReactorSize.Location = new System.Drawing.Point(92, 167);
+            this.cboReactorSize.Name = "cboReactorSize";
+            this.cboReactorSize.Size = new System.Drawing.Size(176, 24);
+            this.cboReactorSize.TabIndex = 39;
+            // 
+            // txtCostPerHour
+            // 
+            this.txtCostPerHour.Location = new System.Drawing.Point(92, 135);
+            this.txtCostPerHour.Name = "txtCostPerHour";
+            this.txtCostPerHour.Size = new System.Drawing.Size(117, 25);
+            this.txtCostPerHour.TabIndex = 38;
+            this.txtCostPerHour.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.InputOnlyPositiveInteger);
+            // 
+            // cboFluid
+            // 
+            this.cboFluid.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboFluid.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboFluid.FormattingEnabled = true;
+            this.cboFluid.Items.AddRange(new object[] {
+            "Ethylene Oxide",
+            "Propylene Oxide"});
+            this.cboFluid.Location = new System.Drawing.Point(92, 104);
+            this.cboFluid.Name = "cboFluid";
+            this.cboFluid.Size = new System.Drawing.Size(176, 24);
+            this.cboFluid.TabIndex = 37;
             // 
             // label15
             // 
@@ -482,44 +531,6 @@
             this.label12.TabIndex = 35;
             this.label12.Text = "Percentage per frame(%)：";
             // 
-            // cboFluid
-            // 
-            this.cboFluid.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboFluid.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.cboFluid.FormattingEnabled = true;
-            this.cboFluid.Items.AddRange(new object[] {
-            "Ethylene Oxide",
-            "Propylene Oxide"});
-            this.cboFluid.Location = new System.Drawing.Point(92, 104);
-            this.cboFluid.Name = "cboFluid";
-            this.cboFluid.Size = new System.Drawing.Size(176, 24);
-            this.cboFluid.TabIndex = 37;
-            this.cboFluid.SelectedIndexChanged += new System.EventHandler(this.cboFluid_SelectedIndexChanged);
-            // 
-            // txtCostPerHour
-            // 
-            this.txtCostPerHour.Location = new System.Drawing.Point(92, 135);
-            this.txtCostPerHour.Name = "txtCostPerHour";
-            this.txtCostPerHour.Size = new System.Drawing.Size(176, 25);
-            this.txtCostPerHour.TabIndex = 38;
-            this.txtCostPerHour.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.InputOnlyPositiveInteger);
-            // 
-            // cboReactorSize
-            // 
-            this.cboReactorSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboReactorSize.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.cboReactorSize.FormattingEnabled = true;
-            this.cboReactorSize.Items.AddRange(new object[] {
-            "1L",
-            "2L",
-            "3L",
-            "5L",
-            "100L"});
-            this.cboReactorSize.Location = new System.Drawing.Point(92, 167);
-            this.cboReactorSize.Name = "cboReactorSize";
-            this.cboReactorSize.Size = new System.Drawing.Size(176, 24);
-            this.cboReactorSize.TabIndex = 39;
-            // 
             // frmDetailedSetting
             // 
             this.AcceptButton = this.btnOk;
@@ -583,5 +594,6 @@
         private System.Windows.Forms.ComboBox cboReactorSize;
         private System.Windows.Forms.TextBox txtCostPerHour;
         private System.Windows.Forms.ComboBox cboFluid;
+        private System.Windows.Forms.Label label16;
     }
 }

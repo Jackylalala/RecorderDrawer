@@ -213,7 +213,7 @@ namespace RecorderDrawer
 
                     //create the label
                     int labelHandle = CreateWindowEx(0, "STATIC", "mylabel", WS_VISIBLE | WS_CHILD | WS_TABSTOP, point.X, point.Y + 12, 200, 100, parent, 0, 0, 0);
-                    SetWindowText(labelHandle, "數據表架構(&S):");
+                    SetWindowText(labelHandle, "控制器類型(&S):");
 
                     int fontHandle = SendMessage(fileTypeWindow, WM_GETFONT, 0, 0);
                     SendMessage(labelHandle, WM_SETFONT, fontHandle, 0);

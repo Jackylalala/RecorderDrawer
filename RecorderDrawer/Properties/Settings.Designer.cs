@@ -12,7 +12,7 @@ namespace RecorderDrawer.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "11.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "14.0.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -26,48 +26,108 @@ namespace RecorderDrawer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public string xType {
+        public int XType {
             get {
-                return ((string)(this["xType"]));
+                return ((int)(this["XType"]));
             }
             set {
-                this["xType"] = value;
+                this["XType"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public string xInterval {
+        public int XInterval {
             get {
-                return ((string)(this["xInterval"]));
+                return ((int)(this["XInterval"]));
             }
             set {
-                this["xInterval"] = value;
+                this["XInterval"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public string xAngle {
+        public int XAngle {
             get {
-                return ((string)(this["xAngle"]));
+                return ((int)(this["XAngle"]));
             }
             set {
-                this["xAngle"] = value;
+                this["XAngle"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(",")]
-        public string yProp {
+        public string YProp {
             get {
-                return ((string)(this["yProp"]));
+                return ((string)(this["YProp"]));
             }
             set {
-                this["yProp"] = value;
+                this["YProp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Percentage {
+            get {
+                return ((int)(this["Percentage"]));
+            }
+            set {
+                this["Percentage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Duration {
+            get {
+                return ((int)(this["Duration"]));
+            }
+            set {
+                this["Duration"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int DensityIndex {
+            get {
+                return ((int)(this["DensityIndex"]));
+            }
+            set {
+                this["DensityIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int ReactorSizeIndex {
+            get {
+                return ((int)(this["ReactorSizeIndex"]));
+            }
+            set {
+                this["ReactorSizeIndex"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public float CostPerHour {
+            get {
+                return ((float)(this["CostPerHour"]));
+            }
+            set {
+                this["CostPerHour"] = value;
             }
         }
     }

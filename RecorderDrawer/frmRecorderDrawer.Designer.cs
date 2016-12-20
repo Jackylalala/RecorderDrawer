@@ -122,14 +122,14 @@
             // munTitle
             // 
             this.munTitle.Name = "munTitle";
-            this.munTitle.Size = new System.Drawing.Size(152, 22);
+            this.munTitle.Size = new System.Drawing.Size(139, 22);
             this.munTitle.Text = "設定標題(&T)";
             this.munTitle.Click += new System.EventHandler(this.munTitle_Click);
             // 
             // munDetailedSetting
             // 
             this.munDetailedSetting.Name = "munDetailedSetting";
-            this.munDetailedSetting.Size = new System.Drawing.Size(152, 22);
+            this.munDetailedSetting.Size = new System.Drawing.Size(139, 22);
             this.munDetailedSetting.Text = "詳細設定(&D)";
             this.munDetailedSetting.Click += new System.EventHandler(this.munDetailedSetting_Click);
             // 
@@ -403,7 +403,6 @@
             this.Name = "frmRecorderDrawer";
             this.Text = "反應槽繪圖器";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmRecorderDrawer_FormClosing);
-            this.Load += new System.EventHandler(this.frmRecorderDrawer_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.frmRecorderDrawer_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.frmRecorderDrawer_DragEnter);
             this.menuStrip1.ResumeLayout(false);
