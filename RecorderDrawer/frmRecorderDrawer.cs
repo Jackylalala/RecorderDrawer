@@ -6,16 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Threading;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Globalization;
 using System.Net.Mail;
 using System.Net;
-using System.Xml.Serialization;
-using System.Xml;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
+using ZXing;
+using ZXing.QrCode;
 
 namespace RecorderDrawer
 {
@@ -44,6 +42,8 @@ namespace RecorderDrawer
         public static string[] UNIT_TABLE = { "\u00b0C", "bar", "psi", "ml/min", "rpm", "Ncm", "%", "kg/cm\u00b2", "mm", "g/hr", "g", "h-1" };
         //Fluid Density
         public static float[] FLUID_DENSITY = { 0.88F, 0.83F };
+        //Fluid list
+        public static string[] FLUID_LIST = { "Ethylene Oxide", "Propylene Oxide" };
         //Reactor size
         public static float[] REACTOR_SIZE = { 1, 2, 3, 5, 100 };
         //Datetime format
@@ -77,6 +77,7 @@ namespace RecorderDrawer
         private static readonly float[] yLabelYPos = new float[] { 15F, 12.5F, 10F, 7.5F, 5F, 2.5F };
         private List<int> hiddenList = new List<int>(); //Hidden list of series
         private string rawFileName; //File name
+        private int fileType; //0: csv, 1: krf
         private Series[] trendSeries;
         //Recorder type, -1 means auto detect, according to REACTOR_LIST
         private static int type;
@@ -100,8 +101,9 @@ namespace RecorderDrawer
                 Color.White, Color.White, Color.White, Color.White, Color.White,
                 Color.White, Color.White, Color.White, Color.White, Color.White,
                 Color.White, Color.White, Color.Black, Color.Black};
-        //Chart item selection box
+        //Chart item selection box and title
         private CheckBox[] chkChartItem;
+        private string[] paraTitle = new string[] { };
         //Chart data display box
         private Label[] lblDataDisplay;
         //Synchronization lock
@@ -110,16 +112,16 @@ namespace RecorderDrawer
         //Axes: 內溫, 外溫, 壓力, 流速(升溫), 轉速, 扭力 (Default)
         private int[][][] seriesMap = new int[][][] {
             new int[][] {
-                new int[] { 0 },  new int[] { 0, 1, 6 },  new int[] { 0, 1, 6 },    //內溫(溫度)
-                new int[] { 0 },  new int[] { 0, 4 },  new int[] { 0, 4 }, 
-                new int[] { 0, 1, 6 },  new int[] { 2 },  new int[] { 2 }, 
-                new int[] { 2, 5 },  new int[] { 2, 5 },  new int[] { 2, 5 }, 
-                new int[] { 2, 5 },  new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20} }, 
+                new int[] { 0 },  new int[] { 1, 0, 6 },  new int[] { 1, 0, 6 },    //內溫(溫度)
+                new int[] { 0 },  new int[] { 0, 4 },  new int[] { 0, 4 },
+                new int[] { 0, 1, 6 },  new int[] { 2 },  new int[] { 2 },
+                new int[] { 2, 5 },  new int[] { 2, 5 },  new int[] { 2, 5 },
+                new int[] { 2, 5 },  new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20} },
             new int[][] {
                 new int[] { 1, 4 },  new int[] { 2, 3 },  new int[] { 2, 3 },   //外溫(壓力)
-                new int[] { 1, 4 },  new int[] { 1, 2, 3, 5 },  new int[] { 1, 2, 3, 5 }, 
-                new int[] { 2, 3 },  new int[] { 4 },  new int[] { 4 }, 
-                new int[] { 3 },  new int[] { 3 },  new int[] { 3 }, 
+                new int[] { 1, 4 },  new int[] { 1, 2, 3, 5 },  new int[] { 1, 2, 3, 5 },
+                new int[] { 2, 3 },  new int[] { 4 },  new int[] { 4 },
+                new int[] { 3 },  new int[] { 3 },  new int[] { 3 },
                 new int[] { 3 }, new int[] { 10, 11, 12, 13, 14, 15, 18, 22 } },
             new int[][] {
                 new int[] { 2 }, new int[] { 5 }, new int[] { 5 },   //壓力(液位)
@@ -193,6 +195,11 @@ namespace RecorderDrawer
         #region | Event |
         public frmRecorderDrawer()
         {
+            if (!File.Exists("zxing.dll"))
+            {
+                MessageBox.Show("缺少zxing.dll，請確認該函式庫存在且位於程式啟動目錄");
+                Environment.Exit(0);
+            }
             InitializeComponent();
             //Load the settings
             try
@@ -338,13 +345,24 @@ namespace RecorderDrawer
         {
             CustomOpenFileDialog ofd = new CustomOpenFileDialog();
             ofd.Title = "選擇數據檔";
-            ofd.Filter = "逗號分隔值的文字檔案(*.csv)|*.csv";
+            ofd.Filter = "所有支援的檔案格式|*.csv;*.krf|逗號分隔值的文字檔案(*.csv)|*.csv|KR2000(*.krf)|*.krf";
             ofd.SchemaType = -1;
             try
             {
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     rawFileName = ofd.FileName;
+                    string ext = Path.GetExtension(ofd.FileName).ToLower();
+                    switch (ext)
+                    {
+                        default:
+                        case ".csv":
+                            fileType = 0;
+                            break;
+                        case ".krf":
+                            fileType = 1;
+                            break;
+                    }
                     type = ofd.SchemaType;
                     txtFilePath.Text = "來源檔案︰" + rawFileName;
                     munAnalysis.Enabled = true;
@@ -677,7 +695,7 @@ namespace RecorderDrawer
             {
                 Bitmap bm = Trim(new Bitmap(ms), 25);
                 Clipboard.SetImage(bm);
-                MessageBox.Show("圖片已複製到剪貼簿");
+                MessageBox.Show("圖片已複製到剪貼簿(最佳化bitmap)");
             }
             else
                 MessageBox.Show("圖片產生失敗");
@@ -727,12 +745,12 @@ namespace RecorderDrawer
                 munAnalysis.Enabled = true;
                 LimitedTimePeriod = false;
                 //Type select
-                frmTypeSelector frmTypeSelector = new frmTypeSelector();
+                frmTypeSelector frmTypeSelector = new frmTypeSelector(new string[] { "自動選擇" }.Union(REACTOR_LIST).ToArray(), "控制器編號");
                 frmTypeSelector.StartPosition = FormStartPosition.Manual;
                 frmTypeSelector.Location = new Point(this.Location.X + this.Width / 2 - frmTypeSelector.ClientSize.Width / 2, this.Location.Y + this.Height / 2 - frmTypeSelector.ClientSize.Height / 2);
                 if (frmTypeSelector.ShowDialog() == DialogResult.OK)
                 {
-                    type = frmTypeSelector.Type;
+                    type = frmTypeSelector.Type - 1;
                     //Draw chart
                     bgdWorkerDraw.RunWorkerAsync(new object[] { 2, chtMain });
                 }
@@ -771,15 +789,25 @@ namespace RecorderDrawer
 
         private void munStatList_Click(object sender, EventArgs e)
         {
-            if (type == 9)
-            {
+            if (type == 13)
                 MessageBox.Show("不適用此功能");
-                return;
-            }
-            if (rawData == null)
+            else if (rawData == null)
                 MessageBox.Show("沒有數據！");
             else
             {
+                List<string> availableFluid = new List<string>();
+                int fluidType = 0;
+                if (seriesMap[3][type].Length > 1)
+                {
+                    foreach (int fluidIndex in seriesMap[3][type])
+                        availableFluid.Add(paraTitle[fluidIndex]);
+                    //Type select
+                    frmTypeSelector frmTypeSelector = new frmTypeSelector(availableFluid.ToArray(), "目標通道");
+                    frmTypeSelector.StartPosition = FormStartPosition.Manual;
+                    frmTypeSelector.Location = new Point(Location.X + Width / 2 - frmTypeSelector.ClientSize.Width / 2, Location.Y + Height / 2 - frmTypeSelector.ClientSize.Height / 2);
+                    if (frmTypeSelector.ShowDialog() == DialogResult.OK)
+                        fluidType = frmTypeSelector.Type;
+                }
                 //Cal. & Show
                 Form frmMsg = new Form();
                 TextBox txtMsg = new TextBox();
@@ -789,7 +817,7 @@ namespace RecorderDrawer
                 txtMsg.TabStop = false;
                 txtMsg.Font = new Font("微軟正黑體", 10);
                 txtMsg.ScrollBars = ScrollBars.Vertical;
-                txtMsg.Text = calculate();
+                txtMsg.Text = calculate(fluidType);
                 frmMsg.Text = "統計數據";
                 frmMsg.MaximizeBox = false;
                 frmMsg.MinimizeBox = false;
@@ -808,34 +836,7 @@ namespace RecorderDrawer
                 munAnalysis_Click(null, new EventArgs());
         }
 
-        private void ChangeOfPressure(object sender, EventArgs e)
-        {
-            //Calcd. derivation
-            int deltaTime = int.Parse(( (ToolStripMenuItem)sender ).Tag.ToString());
-            Series seriesPressureDeri = new Series();
-            seriesPressureDeri.Name = "Change of Pressure (" + UNIT_TABLE[yProp[type][2].Unit] + "/" + deltaTime + "min)";
-            seriesPressureDeri.ChartType = SeriesChartType.FastLine;
-            seriesPressureDeri.Color = Color.Red;
-            seriesPressureDeri.YAxisType = AxisType.Secondary;
-            int pointPerPeriod = (int)( dataCount / ( rawData[rawData.Count - 1].Date - rawData[0].Date ).TotalMinutes ) * deltaTime;
-            for (int i = pointPerPeriod; i < rawData.Count; i++)
-                seriesPressureDeri.Points.AddXY(
-                    rawData[i].Date,
-                    (double)Math.Round(rawData[i].Parameter[seriesMap[2][type][0]] - rawData[i - pointPerPeriod].Parameter[seriesMap[2][type][0]], 2));
-            Series seriesPressureCopy = new Series();
-            seriesPressureCopy.Name = "Pressure (" + UNIT_TABLE[yProp[type][2].Unit] + ")";
-            seriesPressureCopy.ChartType = SeriesChartType.FastLine;
-            seriesPressureCopy.Color = Color.Blue;
-            seriesPressureCopy.XValueType = ChartValueType.DateTime;
-            seriesPressureCopy.YAxisType = AxisType.Primary;
-            foreach (RecordData item in rawData)
-                seriesPressureCopy.Points.AddXY(item.Date, item.Parameter[seriesMap[2][type][0]]);
-            //Show results
-            frmAnalysis frmAnalysis = new frmAnalysis(seriesPressureCopy, seriesPressureDeri, yProp[type][2], deltaTime);
-            frmAnalysis.Show();
-        }
-
-        public void ChangeChartItems(object sender, EventArgs e)
+        private void ChangeChartItems(object sender, EventArgs e)
         {
             int index = int.Parse(( (CheckBox)sender ).Tag.ToString());
             //Modify hiddenlist
@@ -1511,6 +1512,26 @@ namespace RecorderDrawer
                 }
                 foreach (Legend item in chtDraw.Legends)
                     item.Font = new Font(item.Font.FontFamily, item.Font.Size * zoom, item.Font.Style);
+                //QR
+                chtDraw.Annotations.Clear();
+                chtDraw.Images.Clear();
+                BarcodeWriter writer = new BarcodeWriter();
+                writer.Format = BarcodeFormat.QR_CODE;
+                writer.Options = new QrCodeEncodingOptions()
+                {
+                    Width = (int)( chtMain.Images["qrcode"].Image.Width * zoom ),
+                    Height = (int)( chtMain.Images["qrcode"].Image.Height * zoom ),
+                    CharacterSet = "UTF-8",
+                };
+                NamedImage qrcode = new NamedImage("qrcode", writer.Write(calculate(0, true)));
+                chtDraw.Images.Add(qrcode);
+                ImageAnnotation qrImage = new ImageAnnotation()
+                {
+                    X = 2,
+                    Y = 83,
+                    Image = "qrcode"
+                };
+                chtDraw.Annotations.Add(qrImage);
                 foreach (ChartArea item in chtDraw.ChartAreas)
                 {
                     foreach (Axis axes in item.Axes)
@@ -1695,8 +1716,17 @@ namespace RecorderDrawer
                     {
                         filename = ( (string[])data )[0];
                         string ext = System.IO.Path.GetExtension(filename).ToLower();
-                        if (ext.Equals(".csv")) //Only allow *.csv
+                        //Only allow *.csv and *.krf
+                        if (ext.Equals(".csv"))
+                        {
+                            fileType = 0;
                             return true;
+                        }
+                        if (ext.Equals(".krf"))
+                        {
+                            fileType = 1;
+                            return true;
+                        }
                     }
                 }
             }
@@ -1710,98 +1740,133 @@ namespace RecorderDrawer
                 if (!File.Exists(rawFileName))
                     throw new Exception("來源數據檔不存在！");
                 rawData.Clear();
-                //Read all lines from file
-                List<string> allLines = new List<string>();
-                FileStream fs = new FileStream(rawFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-                StreamReader sr = new StreamReader(fs, Encoding.Default);
-                while (!sr.EndOfStream)
-                    allLines.Add(sr.ReadLine());
-                //Check the type of data
-                string[] secondRow = allLines[1].Split(',', '\t');
-                //Determine schema type
-                if (type == -1)
+                switch (fileType)
                 {
-                    if (secondRow.Length == 10 && !secondRow[1].Equals(""))
-                        type = 1; //#2
-                    else if (secondRow.Length == 9 && !secondRow[1].Equals(""))
-                        type = 2; //#2 old
-                    else if (secondRow.Length == 11)
-                        type = 4; //#4 #5
-                    else if (secondRow.Length == 8 && !secondRow[1].Equals(""))
-                        type = 0; //#1 #3
-                    else if (secondRow.Length == 8 && secondRow[1].Equals(""))
-                        type = 10; //R2-EOD (Default for type 7-12)
-                    else if (secondRow.Length > 20)
-                        type = 13; //CHPPO Pilot
-                    else
-                        throw new Exception("資料格式不符");
-                }
-                //Data end flag, only for string X axis (because DateTime format will automatically sort)
-                //Parse data string, remember skip first row(no data)
-                int firstDataRow = ( type >= 7 && type <= 12 ) ? 3 : 1; //The 1st data row for type 7~12 is 3rd row
-                Parallel.For(firstDataRow, allLines.Count, i =>
-                {
-                    string[] data = allLines[i].Split(',', '\t');
-                    if (data.Length > 7)
-                    {
-                        //Convert to number
-                        List<float> dataNum = new List<float>();
-                        DateTime date = new DateTime();
-                        //First column is date, following column(s) are parameter
-                        string dateString;
-                        if ( (type >= 7 && type <= 13) || type == 0 || type == 3 )
-                            dateString = data[0] + " " + data[1];
-                        else
-                            dateString = data[0];
-                        dateString = dateString.Replace("上午", "AM");
-                        dateString = dateString.Replace("下午", "PM");
-                        //Try to parse date
-                        if (DateTime.TryParseExact(dateString, dateTimeList, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out date))
+                    case 0: //csv file
+                            //Read all lines from file
+                        List<string> allLines = new List<string>();
+                        using (FileStream fs = new FileStream(rawFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
-                            //Determine limit range of datetime
-                            if (!LimitedTimePeriod ||
-                                ( LimitedTimePeriod && date.CompareTo(StartTime) >= 0 && date.CompareTo(EndTime) <= 0 ))
+                            using (StreamReader sr = new StreamReader(fs, Encoding.Default))
                             {
-                                //Process numeric data
-                                for (int j = 1; j < data.Length; j++)
-                                {
-                                    if (j == 1 &&
-                                        ( ( type >= 7 && type <= 13 ) || type == 0 || type == 3 ) )
-                                        continue; //2nd column is time
-                                    float num = 0;
-                                    if (float.TryParse(data[j], out num))
-                                    {
-                                        //Some column need to process with a factor
-                                        if (type == 1 || type == 2)
-                                        {
-                                            if (j == 5 || j == 6)
-                                                num /= 10;
-                                            else if (j == 8)
-                                                num *= 10;
-                                        }
-                                        if (chkThreshold.Checked)
-                                        {
-                                            if (num < minLimit || num > maxLimit)
-                                                dataNum.Add(0);
-                                            else
-                                                dataNum.Add(num);
-                                        }
-                                        else
-                                            dataNum.Add(num);
-                                    }
-                                    else //Not valid number
-                                        dataNum.Add(0);
-                                }
-                                lock (syncHandle)
-                                {
-                                    rawData.Add(new RecordData(date, dataNum));
-                                }
+                                while (!sr.EndOfStream)
+                                    allLines.Add(sr.ReadLine());
                             }
                         }
-                    }
-                });
+                        //Check the type of data
+                        string[] secondRow = allLines[1].Split(',', '\t');
+                        //Determine schema type
+                        if (type == -1)
+                        {
+                            if (secondRow.Length == 10 && !secondRow[1].Equals(""))
+                                type = 1; //#2
+                            else if (secondRow.Length == 9 && !secondRow[1].Equals(""))
+                                type = 2; //#2 old
+                            else if (secondRow.Length == 11)
+                                type = 4; //#4 #5
+                            else if (secondRow.Length == 8 && !secondRow[1].Equals(""))
+                                type = 0; //#1 #3
+                            else if (secondRow.Length == 8 && secondRow[1].Equals(""))
+                                type = 10; //R2-EOD (Default for type 7-12)
+                            else if (secondRow.Length > 20)
+                                type = 13; //CHPPO Pilot
+                            else
+                                throw new Exception("資料格式不符");
+                        }
+                        //Data end flag, only for string X axis (because DateTime format will automatically sort)
+                        //Parse data string, remember skip first row(no data)
+                        int firstDataRow = ( type >= 7 && type <= 12 ) ? 3 : 1; //The 1st data row for type 7~12 is 3rd row
+                        Parallel.For(firstDataRow, allLines.Count, i =>
+                        {
+                            string[] data = allLines[i].Split(',', '\t');
+                            if (data.Length > 7)
+                            {
+                                //Convert to number
+                                List<float> dataNum = new List<float>();
+                                DateTime date = new DateTime();
+                                //First column is date, following column(s) are parameter
+                                string dateString;
+                                if (( type >= 7 && type <= 13 ) || type == 0 || type == 3)
+                                    dateString = data[0] + " " + data[1];
+                                else
+                                    dateString = data[0];
+                                dateString = dateString.Replace("上午", "AM");
+                                dateString = dateString.Replace("下午", "PM");
+                                //Try to parse date
+                                if (DateTime.TryParseExact(dateString, dateTimeList, CultureInfo.InvariantCulture, DateTimeStyles.AllowWhiteSpaces, out date))
+                                {
+                                    //Determine limit range of datetime
+                                    if (!LimitedTimePeriod ||
+                                            ( LimitedTimePeriod && date.CompareTo(StartTime) >= 0 && date.CompareTo(EndTime) <= 0 ))
+                                    {
+                                        //Process numeric data
+                                        for (int j = 1; j < data.Length; j++)
+                                        {
+                                            if (j == 1 &&
+                                                ( ( type >= 7 && type <= 13 ) || type == 0 || type == 3 ))
+                                                continue; //2nd column is time
+                                            float num = 0;
+                                            if (float.TryParse(data[j], out num))
+                                            {
+                                                //Some column need to process with a factor
+                                                if (type == 1 || type == 2)
+                                                {
+                                                    if (j == 5 || j == 6)
+                                                        num /= 10;
+                                                    else if (j == 8)
+                                                        num *= 10;
+                                                }
+                                                if (chkThreshold.Checked)
+                                                {
+                                                    if (num < minLimit || num > maxLimit)
+                                                        dataNum.Add(0);
+                                                    else
+                                                        dataNum.Add(num);
+                                                }
+                                                else
+                                                    dataNum.Add(num);
+                                            }
+                                            else //Not valid number
+                                                dataNum.Add(0);
+                                        }
+                                        lock (syncHandle)
+                                        {
+                                            rawData.Add(new RecordData(date, dataNum));
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        break;
+                    case 1: //krf file
+                        type = 0;
+                        byte[] binaryData;
+                        using (FileStream fs = File.OpenRead(rawFileName))
+                        {
+                            using (BinaryReader br = new BinaryReader(fs))
+                                binaryData = br.ReadBytes((int)fs.Length);
+                        }
+                        //Check file
+                        if (!Encoding.ASCII.GetString(binaryData, 0, 3).Equals("KR2"))
+                            throw new Exception("資料格式不符");
+                        //Read start datetimme and interval
+                        DateTime start = new DateTime(2000, 1, 1).AddMilliseconds((long)BitConverter.ToInt32(binaryData, 0x20) * 1000);
+                        int interval = BitConverter.ToInt16(binaryData, 0x28) * 100 + BitConverter.ToInt16(binaryData, 0x2a) * 86400000; //In millsecond
+                        for (int i = 0x8bc; i <= binaryData.Length - 24; i += 24)
+                        {
+                            List<float> dataNum2 = new List<float>();
+                            dataNum2.Add((float)BitConverter.ToInt16(binaryData, i) / 10);
+                            dataNum2.Add((float)BitConverter.ToInt16(binaryData, i + 4) / 100);
+                            dataNum2.Add((float)BitConverter.ToInt16(binaryData, i + 8) / 100);
+                            dataNum2.Add((float)BitConverter.ToInt16(binaryData, i + 12) / 10);
+                            dataNum2.Add((float)BitConverter.ToInt16(binaryData, i + 16) / 10);
+                            dataNum2.Add((float)BitConverter.ToInt16(binaryData, i + 20) / 100);
+                            rawData.Add(new RecordData(start.AddMilliseconds(interval * ( i - 0x8bc ) / 24), dataNum2));
+                        }
+                        break;
+                }
                 if (rawData.Count == 0)
-                    throw new Exception("資料讀取錯誤，請檢查格式");
+                    throw new Exception("資料格式不符");
                 //Sort
                 rawData.Sort();
                 return true;
@@ -1815,12 +1880,12 @@ namespace RecorderDrawer
                         munAnalysis.Enabled = true;
                         LimitedTimePeriod = false;
                         //Type select
-                        frmTypeSelector frmTypeSelector = new frmTypeSelector();
+                        frmTypeSelector frmTypeSelector = new frmTypeSelector(new string[] { "自動選擇" }.Union(REACTOR_LIST).ToArray(), "控制器編號");
                         frmTypeSelector.StartPosition = FormStartPosition.Manual;
-                        frmTypeSelector.Location = new Point(Location.X + Width / 2 - frmTypeSelector.ClientSize.Width / 2, this.Location.Y + this.Height / 2 - frmTypeSelector.ClientSize.Height / 2);
+                        frmTypeSelector.Location = new Point(Location.X + Width / 2 - frmTypeSelector.ClientSize.Width / 2, Location.Y + Height / 2 - frmTypeSelector.ClientSize.Height / 2);
                         if (frmTypeSelector.ShowDialog() == DialogResult.OK)
                         {
-                            type = frmTypeSelector.Type;
+                            type = frmTypeSelector.Type - 1;
                             //Draw chart
                             return ReadData();
                         }
@@ -1844,7 +1909,6 @@ namespace RecorderDrawer
             {
                 try
                 {
-                    string[] paraTitle = new string[] { };
                     ToolTip tooltip = new ToolTip();
                     tooltip.ToolTipTitle = "參數說明";
                     tooltip.UseAnimation = true;
@@ -2039,6 +2103,8 @@ namespace RecorderDrawer
                     targetChart.ChartAreas.Clear();
                     targetChart.Legends.Clear();
                     targetChart.Titles.Clear();
+                    targetChart.Images.Clear();
+                    targetChart.Annotations.Clear();
                     //Create title
                     Title chartTitle = new Title(TitleText);
                     chartTitle.Name = "Main";
@@ -2090,7 +2156,7 @@ namespace RecorderDrawer
                     targetChart.Legends[0].IsTextAutoFit = true;
                     targetChart.Legends[0].Position = new ElementPosition(20F, 8.75F, 50F, 11F);
                     //if (( type == 0 && hiddenList.Count == 8 ) || ( type == 1 && hiddenList.Count == 10 )) //All hide
-                        //throw new Exception("未選取任何參數");
+                    //throw new Exception("未選取任何參數");
                     //Add series
                     for (int i = 0; i < trendSeries.Length; i++)
                     {
@@ -2205,6 +2271,24 @@ namespace RecorderDrawer
                     }
                     //Result
                     targetChart.Visible = true;
+                    //QR
+                    BarcodeWriter writer = new BarcodeWriter();
+                    writer.Format = BarcodeFormat.QR_CODE;
+                    writer.Options = new QrCodeEncodingOptions()
+                    {
+                        Width = 90,
+                        Height = 90,
+                        CharacterSet = "UTF-8",
+                    };
+                    NamedImage qrcode = new NamedImage("qrcode", writer.Write(calculate(0, true)));
+                    targetChart.Images.Add(qrcode);
+                    ImageAnnotation qrImage = new ImageAnnotation()
+                    {
+                        X = 2,
+                        Y = 83,
+                        Image = "qrcode"
+                    };
+                    targetChart.Annotations.Add(qrImage);
                     return true;
                 }
                 catch (Exception ex)
@@ -2216,8 +2300,10 @@ namespace RecorderDrawer
             }
         }
 
-        private string calculate()
+        private string calculate(int fluidType = 0, bool simple = false)
         {
+            if (type == 13 || rawData == null)
+                return "No available information";
             //Integration
             double totalTime = 0;
             List<double> blankTime = new List<double>();
@@ -2234,19 +2320,19 @@ namespace RecorderDrawer
             int lastFlowPoint = 0; //Last point with flow large than 0.1
             for (int i = 0; i < rawData.Count - 1; i++)
             {
-                if (rawData[i + 1].Parameter[seriesMap[3][type][0]] >= 0.1)
+                if (rawData[i + 1].Parameter[seriesMap[3][type][fluidType]] >= 0.1)
                 {
                     lastFlowPoint = i + 1;
                     startFlag = true;
                     pauseFlag = false;
                     totalFlow +=
-                        ( rawData[i + 1].Parameter[seriesMap[3][type][0]] ) *
+                        ( rawData[i + 1].Parameter[seriesMap[3][type][fluidType]] ) *
                         ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalPressure +=
                         ( rawData[i + 1].Parameter[seriesMap[2][type][0]] ) *
                         ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalInnerPV +=
-                        ( rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]] ) *
+                        ( rawData[i + 1].Parameter[seriesMap[0][type][0]] ) *
                         ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalTime += ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     if (rawData[i].Parameter[seriesMap[2][type][0]] > maxP)
@@ -2254,8 +2340,8 @@ namespace RecorderDrawer
                         maxP = rawData[i].Parameter[seriesMap[2][type][0]];
                         maxPTime = rawData[i].Date;
                     }
-                    if (rawData[i].Parameter[seriesMap[3][type][0]] > maxFlow)
-                        maxFlow = rawData[i].Parameter[seriesMap[3][type][0]];
+                    if (rawData[i].Parameter[seriesMap[3][type][fluidType]] > maxFlow)
+                        maxFlow = rawData[i].Parameter[seriesMap[3][type][fluidType]];
                 }
                 else if (startFlag)
                 {
@@ -2271,20 +2357,20 @@ namespace RecorderDrawer
                         ( rawData[i + 1].Parameter[seriesMap[2][type][0]] ) *
                         ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                     totalInnerPVDuringBlank[blankTime.Count - 1] +=
-                        ( rawData[i + 1].Parameter[seriesMap[0][type][type == 0 ? 1 : 0]] ) *
+                        ( rawData[i + 1].Parameter[seriesMap[0][type][0]] ) *
                         ( new TimeSpan(( rawData[i + 1].Date - rawData[i].Date ).Ticks) ).TotalMinutes;
                 }
             }
             //Final record
-            if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] >= 0.1)
+            if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][fluidType]] >= 0.1)
             {
                 if (rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]] > maxP)
                 {
                     maxP = rawData[rawData.Count - 1].Parameter[seriesMap[2][type][0]];
                     maxPTime = rawData[rawData.Count - 1].Date;
                 }
-                if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]] > maxFlow)
-                    maxFlow = rawData[rawData.Count - 1].Parameter[seriesMap[3][type][0]];
+                if (rawData[rawData.Count - 1].Parameter[seriesMap[3][type][fluidType]] > maxFlow)
+                    maxFlow = rawData[rawData.Count - 1].Parameter[seriesMap[3][type][fluidType]];
             }
             double avgFlow = totalFlow / totalTime;
             double avgPressure = totalPressure / totalTime;
@@ -2330,32 +2416,69 @@ namespace RecorderDrawer
                 }
             }
             //Return
-            string result = 
-                "*****僅計算流速大於0.1 ml/min(含)部分*****" + Environment.NewLine +
-                "總時間：" + string.Format("{0:N2}", totalTime) + "分" + Environment.NewLine +
-                "總流量：" + string.Format("{0:N2}", totalFlow) + " ml" + Environment.NewLine +
-                "最高流速：" + string.Format("{0:N2}", maxFlow) + " ml/min" + Environment.NewLine +
-                "平均流速：" + string.Format("{0:N2}", avgFlow) + " ml/min" + Environment.NewLine +
-                "最高壓力：" + string.Format("{0:N2}", maxP) + " " + UNIT_TABLE[yProp[type][2].Unit] + " at " + maxPTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
-                "平均壓力：" + string.Format("{0:N2}", avgPressure) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
-                "平均內溫：" + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine 
-                + Environment.NewLine +
-                "*****中途暫停時間超過8小時不列入計算*****" + Environment.NewLine +
-                "暫停時間：" + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "分" + Environment.NewLine +
-                "總時間(含暫停時間)：" + string.Format("{0:N2}", totalTimeWithBlank) + "分" + Environment.NewLine +
-                "平均流速(含暫停時間)：" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
-                "平均壓力(含暫停時間)：" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
-                "平均內溫(含暫停時間)：" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine 
-                + Environment.NewLine +
-                "*****熟成時間(20分鐘壓力變化等於0視為熟成完成)*****" + Environment.NewLine +
-                "熟成開始：" + ( agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
-                "熟成結束：" + ( agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
-                "熟成時間：" + ( agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成" ) + Environment.NewLine 
-                + Environment.NewLine +
-                "*****製程放大相關數據*****" + Environment.NewLine +
-                "1噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 1000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
-                "10噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
-                "預估生產成本：" + string.Format("{0:N0}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD";
+            string result;
+            if (!simple)
+            {
+                result =
+                    ( totalTimeWithBlank > 0 ?
+                    "計算目標通道：" + paraTitle[seriesMap[3][type][fluidType]] + Environment.NewLine +
+                    Environment.NewLine +
+                    "*****僅計算流速大於0.1 ml/min(含)部分*****" + Environment.NewLine +
+                    "總時間：" + string.Format("{0:N2}", totalTime) + "分" + Environment.NewLine +
+                    "總流量：" + string.Format("{0:N2}", totalFlow) + " ml" + Environment.NewLine +
+                    "最高流速：" + string.Format("{0:N2}", maxFlow) + " ml/min" + Environment.NewLine +
+                    "平均流速：" + string.Format("{0:N2}", avgFlow) + " ml/min" + Environment.NewLine +
+                    "最高壓力：" + string.Format("{0:N2}", maxP) + " " + UNIT_TABLE[yProp[type][2].Unit] + " at " + maxPTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
+                    "平均壓力：" + string.Format("{0:N2}", avgPressure) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
+                    "平均內溫：" + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine +
+                    Environment.NewLine +
+                    "*****中途暫停時間超過8小時不列入計算*****" + Environment.NewLine +
+                    "暫停時間：" + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "分" + Environment.NewLine +
+                    "總時間(含暫停時間)：" + string.Format("{0:N2}", totalTimeWithBlank) + "分" + Environment.NewLine +
+                    "平均流速(含暫停時間)：" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
+                    "平均壓力(含暫停時間)：" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
+                    "平均內溫(含暫停時間)：" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine +
+                    Environment.NewLine +
+                    "*****熟成時間(20分鐘壓力變化等於0視為熟成完成)*****" + Environment.NewLine +
+                    "熟成開始：" + ( agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
+                    "熟成結束：" + ( agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
+                    "熟成時間：" + ( agingDone ? string.Format("{0:N2}", agingTime) + "分" : "熟成未完成" ) + Environment.NewLine +
+                    Environment.NewLine +
+                    "*****製程放大相關數據*****" + Environment.NewLine +
+                    "1噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 1000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
+                    "10噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
+                    "預估生產成本：" + string.Format("{0:N0}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD"
+                    : "所選範圍內無流速資訊" );
+            }
+            else
+            {
+                result =
+                    ( totalTimeWithBlank > 0 ?
+                    "Target channal: " + paraTitle[seriesMap[3][type][fluidType]] + Environment.NewLine +
+                    Environment.NewLine +
+                    "Total time: " + string.Format("{0:N2}", totalTime) + "min" + Environment.NewLine +
+                    "Total flow: " + string.Format("{0:N2}", totalFlow) + " ml" + Environment.NewLine +
+                    "Max flow: " + string.Format("{0:N2}", maxFlow) + " ml/min" + Environment.NewLine +
+                    "Avg. flow: " + string.Format("{0:N2}", avgFlow) + " ml/min" + Environment.NewLine +
+                    "Max P: " + string.Format("{0:N2}", maxP) + " " + UNIT_TABLE[yProp[type][2].Unit] + " at " + maxPTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
+                    "Avg. P: " + string.Format("{0:N2}", avgPressure) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
+                    "Avg. temp.: " + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine +
+                    Environment.NewLine +
+                    "Pause time: " + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "min" + Environment.NewLine +
+                    "Total time(include pause): " + string.Format("{0:N2}", totalTimeWithBlank) + "min" + Environment.NewLine +
+                    "Avg. flow(include pause):" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
+                    "Avg. P(include pause):" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
+                    "Avg. temp.(include pause):" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine +
+                    Environment.NewLine +
+                    "Aging start: " + ( agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
+                    "Aging end: " + ( agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
+                    "Aging time: " + ( agingDone ? string.Format("{0:N2}", agingTime) + "min" : "Aging doesn't finish" ) + Environment.NewLine +
+                    Environment.NewLine +
+                    "Avg. flow for 1 MT: " + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 1000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
+                    "Avg. flow for 10 MT: " + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
+                    "Cost: " + string.Format("{0:N0}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD"
+                    : "No available information" );
+            }
             return result;
         }
 

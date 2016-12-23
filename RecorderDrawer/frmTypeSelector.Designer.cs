@@ -28,20 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblType = new System.Windows.Forms.Label();
             this.cboType = new System.Windows.Forms.ComboBox();
             this.btnOK = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // label1
+            // lblType
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(21, 8);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(138, 17);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "請選擇數據表架構類型";
+            this.lblType.AutoSize = true;
+            this.lblType.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblType.Location = new System.Drawing.Point(21, 8);
+            this.lblType.Name = "lblType";
+            this.lblType.Size = new System.Drawing.Size(138, 17);
+            this.lblType.TabIndex = 0;
+            this.lblType.Text = "請選擇數據表架構類型";
             // 
             // cboType
             // 
@@ -73,7 +73,7 @@
             this.ClientSize = new System.Drawing.Size(180, 87);
             this.Controls.Add(this.btnOK);
             this.Controls.Add(this.cboType);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblType);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -86,7 +86,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblType;
         private System.Windows.Forms.ComboBox cboType;
         private System.Windows.Forms.Button btnOK;
     }

@@ -10,11 +10,15 @@ namespace RecorderDrawer
 
         public int Type { get { return type; } }
 
-        public frmTypeSelector()
+        public frmTypeSelector(string[] typeList, string typeString)
         {
             InitializeComponent();
+            //Init. description
+            Text = "選擇" + typeString;
+            lblType.Text= "請選擇" + typeString;
+            lblType.Left = ClientSize.Width / 2 - lblType.Width / 2;
             //Init. comboBox
-            foreach (string name in frmRecorderDrawer.REACTOR_LIST)
+            foreach (string name in typeList)
                 cboType.Items.Add(name);
             int maxSize = 0;
             Graphics g = CreateGraphics();
@@ -24,9 +28,7 @@ namespace RecorderDrawer
                 cboType.SelectedIndex = i;
                 SizeF size = g.MeasureString(cboType.Text, cboType.Font);
                 if (maxSize < (int)size.Width)
-                {
                     maxSize = (int)size.Width;
-                }
             }
             cboType.DropDownWidth = cboType.Width;
             if (cboType.DropDownWidth < maxSize)
@@ -36,7 +38,7 @@ namespace RecorderDrawer
 
         private void btnOK_Click(object sender, EventArgs e)
         {
-            type = cboType.SelectedIndex - 1;
+            type = cboType.SelectedIndex;
             DialogResult = DialogResult.OK;
         }
     }
