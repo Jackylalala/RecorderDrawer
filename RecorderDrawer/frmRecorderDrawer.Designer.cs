@@ -76,8 +76,8 @@
             this.munAnalysis,
             this.munStatList,
             this.munSetting,
-            this.munExportImg,
             this.munToClip,
+            this.munExportImg,
             this.munExportAnimation,
             this.munAbout});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);

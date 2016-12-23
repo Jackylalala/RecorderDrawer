@@ -197,7 +197,7 @@ namespace RecorderDrawer
         {
             if (!File.Exists("zxing.dll"))
             {
-                MessageBox.Show("缺少zxing.dll，請確認該函式庫存在且位於程式啟動目錄");
+                MessageBox.Show("缺少zxing.dll，請確認該函式庫存在且位於程式啟動目錄", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Environment.Exit(0);
             }
             InitializeComponent();
@@ -372,7 +372,7 @@ namespace RecorderDrawer
             }
             catch (Exception)
             {
-                MessageBox.Show("請選擇數據檔");
+                MessageBox.Show("請選擇數據檔", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -609,7 +609,6 @@ namespace RecorderDrawer
                 sfd.Title = "匯出圖片";
                 sfd.Filter = @"Bitmap(*.bmp)|*.bmp|Jpeg(*.jpg,*.jpeg)|*.jpg;*.jpeg|GIF(*.gif)|*.gif|PNG(*.png)|*.png|TIFF(*.tif,*.tiff)|*.tif;*.tiff";
                 sfd.FilterIndex = 2;
-                sfd.ResolutionType = ResolutionType.extreme;
                 sfd.BorderType = BorderType.medium;
                 //使用者按下確認之後紀錄檔名
                 if (sfd.ShowDialog() == DialogResult.OK)
@@ -641,25 +640,6 @@ namespace RecorderDrawer
                             return;
                     }
                     //存為圖片
-                    float zoom = 1;
-                    switch (sfd.ResolutionType)
-                    {
-                        case ResolutionType.normal:
-                            zoom = 1;
-                            break;
-                        case ResolutionType.medium:
-                            zoom = 2;
-                            break;
-                        case ResolutionType.high:
-                            zoom = 3;
-                            break;
-                        case ResolutionType.extreme:
-                            zoom = 5;
-                            break;
-                        case ResolutionType.extremehigh:
-                            zoom = 10;
-                            break;
-                    }
                     int whiteBorder = 0;
                     switch (sfd.BorderType)
                     {
@@ -667,23 +647,24 @@ namespace RecorderDrawer
                             whiteBorder = 0;
                             break;
                         case BorderType.small:
-                            whiteBorder = 2;
-                            break;
-                        case BorderType.medium:
-                            whiteBorder = 5;
-                            break;
-                        case BorderType.large:
                             whiteBorder = 10;
                             break;
+                        case BorderType.medium:
+                            whiteBorder = 25;
+                            break;
+                        case BorderType.large:
+                            whiteBorder = 50;
+                            break;
                     }
-                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(zoom, format)), (int)( whiteBorder * zoom ));
+                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(5.0F, format)), whiteBorder);
                     image.Save(sfd.FileName);
                     MessageBox.Show("匯出圖片成功！");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Console.WriteLine(ex.StackTrace + ": " + ex.Message);
             }
         }
 
@@ -790,9 +771,9 @@ namespace RecorderDrawer
         private void munStatList_Click(object sender, EventArgs e)
         {
             if (type == 13)
-                MessageBox.Show("不適用此功能");
+                MessageBox.Show("不適用此功能", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else if (rawData == null)
-                MessageBox.Show("沒有數據！");
+                MessageBox.Show("沒有數據！", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else
             {
                 List<string> availableFluid = new List<string>();
@@ -1512,18 +1493,16 @@ namespace RecorderDrawer
                 }
                 foreach (Legend item in chtDraw.Legends)
                     item.Font = new Font(item.Font.FontFamily, item.Font.Size * zoom, item.Font.Style);
-                //QR
-                chtDraw.Annotations.Clear();
-                chtDraw.Images.Clear();
+                //Add QR code
                 BarcodeWriter writer = new BarcodeWriter();
                 writer.Format = BarcodeFormat.QR_CODE;
                 writer.Options = new QrCodeEncodingOptions()
                 {
-                    Width = (int)( chtMain.Images["qrcode"].Image.Width * zoom ),
-                    Height = (int)( chtMain.Images["qrcode"].Image.Height * zoom ),
+                    Width = (int)( 90 * zoom ),
+                    Height = (int)( 90 * zoom ),
                     CharacterSet = "UTF-8",
                 };
-                NamedImage qrcode = new NamedImage("qrcode", writer.Write(calculate(0, true)));
+                NamedImage qrcode = new NamedImage("qrcode", writer.Write(calculate(0, false)+ calculate(0, false)));
                 chtDraw.Images.Add(qrcode);
                 ImageAnnotation qrImage = new ImageAnnotation()
                 {
@@ -1555,7 +1534,7 @@ namespace RecorderDrawer
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Console.WriteLine(ex.StackTrace + ": " + ex.Message);
             }
             finally
@@ -1875,7 +1854,7 @@ namespace RecorderDrawer
             {
                 if (ex.Message.Equals("資料格式不符"))
                 {
-                    if (MessageBox.Show(ex.Message + "，是否手動選擇資料格式？", "資料格式錯誤", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (MessageBox.Show(ex.Message + "，是否手動選擇資料格式？", "資料格式錯誤", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk) == DialogResult.Yes)
                     {
                         munAnalysis.Enabled = true;
                         LimitedTimePeriod = false;
@@ -1893,7 +1872,7 @@ namespace RecorderDrawer
                 }
                 else
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Console.WriteLine(ex.StackTrace + ": " + ex.Message);
                 }
             }
@@ -2081,7 +2060,7 @@ namespace RecorderDrawer
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Console.WriteLine(ex.StackTrace + ": " + ex.Message);
                 }
                 return false;
@@ -2271,30 +2250,12 @@ namespace RecorderDrawer
                     }
                     //Result
                     targetChart.Visible = true;
-                    //QR
-                    BarcodeWriter writer = new BarcodeWriter();
-                    writer.Format = BarcodeFormat.QR_CODE;
-                    writer.Options = new QrCodeEncodingOptions()
-                    {
-                        Width = 90,
-                        Height = 90,
-                        CharacterSet = "UTF-8",
-                    };
-                    NamedImage qrcode = new NamedImage("qrcode", writer.Write(calculate(0, true)));
-                    targetChart.Images.Add(qrcode);
-                    ImageAnnotation qrImage = new ImageAnnotation()
-                    {
-                        X = 2,
-                        Y = 83,
-                        Image = "qrcode"
-                    };
-                    targetChart.Annotations.Add(qrImage);
                     return true;
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.StackTrace + ": " + ex.Message);
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 return false;
             }

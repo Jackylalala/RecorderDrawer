@@ -5,14 +5,6 @@ using System.Windows.Forms;
 
 namespace RecorderDrawer
 {
-    public enum ResolutionType : int
-    {
-        normal = 0,
-        medium = 1,
-        high = 2,
-        extreme = 3,
-        extremehigh = 4
-    }
 
     public enum BorderType : int
     {
@@ -28,9 +20,7 @@ namespace RecorderDrawer
         private delegate int OFNHookProcDelegate(int hdlg, int msg, int wParam, int lParam);
 
         private int m_LabelHandle = 0;
-        private int m_LabelHandle2 = 0;
         private int m_ComboHandle = 0;
-        private int m_ComboHandle2 = 0;
 
         private string m_Filter = "";
         private string m_DefaultExt = "";
@@ -38,7 +28,6 @@ namespace RecorderDrawer
         private string m_Title = "";
         private string m_FileName = "";
 
-        private ResolutionType m_ResolutionType;
         private BorderType m_BorderType;
         private Screen m_ActiveScreen;
 
@@ -47,7 +36,6 @@ namespace RecorderDrawer
         public int FilterIndex { get { return m_FilterIndex; } set { m_FilterIndex = value; } }
         public string FileName { get { return m_FileName; } set { m_FileName = value; } }
         public string Title { get { return m_Title; } set { m_Title = value; } }
-        public ResolutionType ResolutionType { get { return m_ResolutionType; } set { m_ResolutionType = value; } }
         public BorderType BorderType { get { return m_BorderType; } set { m_BorderType = value; } }
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
@@ -218,15 +206,10 @@ namespace RecorderDrawer
 
                         //create the label
                         int labelHandle = CreateWindowEx(0, "STATIC", "mylabel", WS_VISIBLE | WS_CHILD | WS_TABSTOP, point.X, point.Y + 12, 200, 100, parent, 0, 0, 0);
-                        SetWindowText(labelHandle, "圖片解析度(&R):");
+                        SetWindowText(labelHandle, "邊框留白寬度(&B):");
 
                         int fontHandle = SendMessage(fileTypeWindow, WM_GETFONT, 0, 0);
                         SendMessage(labelHandle, WM_SETFONT, fontHandle, 0);
-
-                        int labelHandle2 = CreateWindowEx(0, "STATIC", "mylabel2", WS_VISIBLE | WS_CHILD | WS_TABSTOP, point.X, point.Y + 36, 200, 100, parent, 0, 0, 0);
-                        SetWindowText(labelHandle2, "邊框留白寬度(&B):");
-
-                        SendMessage(labelHandle2, WM_SETFONT, fontHandle, 0);
 
                         //we now need to find the combo-box to position the new combo-box under
 
@@ -251,28 +234,15 @@ namespace RecorderDrawer
                         SendMessage(comboHandle, WM_SETFONT, fontHandle, 0);
 
                         //and add the encodings we want to offer
+                        SendMessage(comboHandle, CB_ADDSTRING, 0, "無");
+                        SendMessage(comboHandle, CB_ADDSTRING, 0, "窄");
                         SendMessage(comboHandle, CB_ADDSTRING, 0, "普通");
-                        SendMessage(comboHandle, CB_ADDSTRING, 0, "中");
-                        SendMessage(comboHandle, CB_ADDSTRING, 0, "高");
-                        SendMessage(comboHandle, CB_ADDSTRING, 0, "最佳");
-                        SendMessage(comboHandle, CB_ADDSTRING, 0, "極高");
-                        SendMessage(comboHandle, CB_SETCURSEL, (int)m_ResolutionType, 0);
-
-                        int comboHandle2 = CreateWindowEx(0, "ComboBox", "mycombobox2", WS_VISIBLE | WS_CHILD | CBS_HASSTRINGS | CBS_DROPDOWNLIST | WS_TABSTOP, point.X, point.Y + 29, rightPoint.X - point.X, 100, parent, 0, 0, 0);
-                        SendMessage(comboHandle2, WM_SETFONT, fontHandle, 0);
-
-                        //and add the encodings we want to offer
-                        SendMessage(comboHandle2, CB_ADDSTRING, 0, "無");
-                        SendMessage(comboHandle2, CB_ADDSTRING, 0, "窄");
-                        SendMessage(comboHandle2, CB_ADDSTRING, 0, "普通");
-                        SendMessage(comboHandle2, CB_ADDSTRING, 0, "寬");
-                        SendMessage(comboHandle2, CB_SETCURSEL, (int)m_BorderType, 0);
+                        SendMessage(comboHandle, CB_ADDSTRING, 0, "寬");
+                        SendMessage(comboHandle, CB_SETCURSEL, (int)m_BorderType, 0);
 
                         //remember the handles of the controls we have created so we can destroy them after
                         m_LabelHandle = labelHandle;
-                        m_LabelHandle2 = labelHandle2;
                         m_ComboHandle = comboHandle;
-                        m_ComboHandle2 = comboHandle2;
 
                         break;
                     case WM_DESTROY:
@@ -286,19 +256,9 @@ namespace RecorderDrawer
                         {
                             DestroyWindow(m_LabelHandle);
                         }
-                        if (m_ComboHandle2 != 0)
-                        {
-                            DestroyWindow(m_ComboHandle2);
-                        }
-
-                        if (m_LabelHandle2 != 0)
-                        {
-                            DestroyWindow(m_LabelHandle2);
-                        }
                         break;
                     case WM_NOTIFY:
-                        m_ResolutionType = (ResolutionType)SendMessage(m_ComboHandle, CB_GETCURSEL, 0, 0);
-                        m_BorderType = (BorderType)SendMessage(m_ComboHandle2, CB_GETCURSEL, 0, 0);
+                        m_BorderType = (BorderType)SendMessage(m_ComboHandle, CB_GETCURSEL, 0, 0);
                         break;
 
                 }
