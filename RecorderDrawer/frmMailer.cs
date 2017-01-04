@@ -7,20 +7,12 @@ namespace RecorderDrawer
 {
     public partial class frmMailer : Form
     {
-        #region | Field |
-        private string mailAddress;
-        private string fileName;
-        private int resolutionType;
-        private int borderType;
-        private ImageFormat format;
-        #endregion
 
         #region | Properties |
-        public string MailAddress { get { return mailAddress; } }
-        public string FileName { get { return fileName; } }
-        public int ResolutionType { get { return resolutionType; } }
-        public int BorderType { get { return borderType; } }
-        public ImageFormat Format { get { return format; } }
+        public string MailAddress { get; set; }
+        public string FileName { get; set; }
+        public int BorderType { get; set; }
+        public ImageFormat Format { get; set; }
         #endregion
 
         public frmMailer(bool advancedOption)
@@ -28,13 +20,11 @@ namespace RecorderDrawer
             InitializeComponent();
             cboBorder.SelectedIndex = 2;
             cboImageFormat.SelectedIndex = 1;
-            cboResolution.SelectedIndex = 3;
             txtMailAddress.Focus();
             if (!advancedOption)
             {
                 cboBorder.Enabled = false;
                 cboImageFormat.Enabled = false;
-                cboResolution.Enabled = false;
             }
         }
 
@@ -43,35 +33,34 @@ namespace RecorderDrawer
             //Check mail address
             if (!IsValid(txtMailAddress.Text))
             {
-                MessageBox.Show("郵件地址錯誤，請更正。", "Alert");
+                MessageBox.Show("郵件地址錯誤，請更正。", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             //Check file name
             if (!System.Text.RegularExpressions.Regex.IsMatch(txtFileName.Text, @"^[\w\-. ]+$"))
             {
-                MessageBox.Show("檔案名稱錯誤，請更正。", "Alert");
+                MessageBox.Show("檔案名稱錯誤，請更正。", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            mailAddress = txtMailAddress.Text;
-            fileName = txtFileName.Text;
-            resolutionType = cboResolution.SelectedIndex;
-            borderType = cboBorder.SelectedIndex;
+            MailAddress = txtMailAddress.Text;
+            FileName = txtFileName.Text;
+            BorderType = cboBorder.SelectedIndex;
             switch (cboImageFormat.SelectedIndex)
             {
                 case 0:
-                    format = ImageFormat.Bmp;
+                    Format = ImageFormat.Bmp;
                     break;
                 case 1:
-                    format = ImageFormat.Jpeg;
+                    Format = ImageFormat.Jpeg;
                     break;
                 case 2:
-                    format = ImageFormat.Gif;
+                    Format = ImageFormat.Gif;
                     break;
                 case 3:
-                    format = ImageFormat.Png;
+                    Format = ImageFormat.Png;
                     break;
                 case 4:
-                    format = ImageFormat.Tiff;
+                    Format = ImageFormat.Tiff;
                     break;
             }
             DialogResult = DialogResult.OK;

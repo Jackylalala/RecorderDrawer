@@ -48,28 +48,30 @@ namespace RecorderDrawer
         public static float[] REACTOR_SIZE = { 1, 2, 3, 5, 100 };
         //Datetime format
         private static string[] dateTimeList = {
-                            "yyyy/M/d tt hh:mm:ss",
                             "yyyy/MM/dd tt hh:mm:ss",
-                            "yyyy/M/d hh:mm:ss tt",
                             "yyyy/MM/dd hh:mm:ss tt",
+                            "yyyy/M/d tt hh:mm:ss",
+                            "yyyy/M/d hh:mm:ss tt",
+                            "yyyy/MM/dd tt hh:mm",
+                            "yyyy/MM/dd hh:mm tt",
+                            "yyyy/M/d tt hh:mm",
+                            "yyyy/M/d hh:mm tt",
                             "yyyy/MM/dd HH:mm:ss",
+                            "yyyy/MM/dd H:m:s",
+                            "yyyy/M/d HH:mm:ss",
+                            "yyyy/M/d H:m:s",
+                            "yyyy/MM/dd HH:mm",
+                            "yyyy/MM/dd H:m",
+                            "yyyy/M/d HH:mm",
+                            "yyyy/M/d H:m",
+                            "yyyy/MM/dd",
+                            "yyyy/M/d",
                             "yy/MM/dd HH:mm:ss",
                             "yy/MM/d HH:mm:ss",
-                            "yyyy/M/d HH:mm:ss",
-                            "yyyy/MM/dd H:m:s",
-                            "yyyy/M/d H:m:s",
-                            "yyyy/M/d tt hh:mm",
-                            "yyyy/MM/dd tt hh:mm",
-                            "yyyy/M/d hh:mm tt",
-                            "yyyy/MM/dd hh:mm tt",
-                            "yyyy/MM/dd HH:mm",
+                            "yy/M/d HH:mm:ss",
                             "yy/MM/dd HH:mm",
                             "yy/MM/d HH:mm",
-                            "yyyy/M/d HH:mm",
-                            "yyyy/MM/dd H:m",
-                            "yyyy/M/d H:m",
-                            "yyyy/M/d",
-                            "yyyy/MM/dd",
+                            "yy/M/d HH:mm",
                             "M/d HH:mm:ss"
                         };
         //X position of y axis label
@@ -1020,25 +1022,6 @@ namespace RecorderDrawer
                 if (frmMailer.ShowDialog() == DialogResult.OK)
                 {
                     //存為圖片
-                    float zoom = 1;
-                    switch (frmMailer.ResolutionType)
-                    {
-                        case 0:
-                            zoom = 1;
-                            break;
-                        case 1:
-                            zoom = 2;
-                            break;
-                        case 2:
-                            zoom = 3;
-                            break;
-                        case 3:
-                            zoom = 5;
-                            break;
-                        case 4:
-                            zoom = 10;
-                            break;
-                    }
                     int whiteBorder = 0;
                     switch (frmMailer.BorderType)
                     {
@@ -1046,16 +1029,16 @@ namespace RecorderDrawer
                             whiteBorder = 0;
                             break;
                         case 1:
-                            whiteBorder = 2;
-                            break;
-                        case 2:
-                            whiteBorder = 5;
-                            break;
-                        case 3:
                             whiteBorder = 10;
                             break;
+                        case 2:
+                            whiteBorder = 25;
+                            break;
+                        case 3:
+                            whiteBorder = 50;
+                            break;
                     }
-                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(zoom, frmMailer.Format)), (int)( whiteBorder * zoom ));
+                    Bitmap image = Trim(new Bitmap(SaveExpandedImg(5.0F, frmMailer.Format)), whiteBorder);
                     //Convert to byte[] and mail
                     ImageConverter ic = new ImageConverter();
                     byte[] ba = (byte[])ic.ConvertTo(image, typeof(byte[]));
@@ -1502,7 +1485,10 @@ namespace RecorderDrawer
                     Height = (int)( 90 * zoom ),
                     CharacterSet = "UTF-8",
                 };
-                NamedImage qrcode = new NamedImage("qrcode", writer.Write(calculate(0, false)+ calculate(0, false)));
+                string statInfo="";
+                for (int i = 0; i < seriesMap[3][type].Length; i++)
+                    statInfo += calculate(i, true) + Environment.NewLine;
+                NamedImage qrcode = new NamedImage("qrcode", writer.Write(statInfo));
                 chtDraw.Images.Add(qrcode);
                 ImageAnnotation qrImage = new ImageAnnotation()
                 {
@@ -2409,7 +2395,7 @@ namespace RecorderDrawer
                     "1噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 1000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
                     "10噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
                     "預估生產成本：" + string.Format("{0:N0}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD"
-                    : "所選範圍內無流速資訊" );
+                    : "通道" + paraTitle[seriesMap[3][type][fluidType]] + "無可用資訊" );
             }
             else
             {
@@ -2425,7 +2411,7 @@ namespace RecorderDrawer
                     "Avg. P: " + string.Format("{0:N2}", avgPressure) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
                     "Avg. temp.: " + string.Format("{0:N2}", avgInnerPV) + " \u00B0C" + Environment.NewLine +
                     Environment.NewLine +
-                    "Pause time: " + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "min" + Environment.NewLine +
+                    "Pause time(less than 8hr): " + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "min" + Environment.NewLine +
                     "Total time(include pause): " + string.Format("{0:N2}", totalTimeWithBlank) + "min" + Environment.NewLine +
                     "Avg. flow(include pause):" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
                     "Avg. P(include pause):" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
@@ -2438,7 +2424,7 @@ namespace RecorderDrawer
                     "Avg. flow for 1 MT: " + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 1000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
                     "Avg. flow for 10 MT: " + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
                     "Cost: " + string.Format("{0:N0}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD"
-                    : "No available information" );
+                    : "No available information for channal " + paraTitle[seriesMap[3][type][fluidType]] );
             }
             return result;
         }

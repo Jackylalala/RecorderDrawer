@@ -32,8 +32,6 @@
             this.cboImageFormat = new System.Windows.Forms.ComboBox();
             this.cboBorder = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.cboResolution = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtMailAddress = new System.Windows.Forms.TextBox();
             this.btnOk = new System.Windows.Forms.Button();
@@ -78,7 +76,7 @@
             "窄",
             "普通",
             "寬"});
-            this.cboBorder.Location = new System.Drawing.Point(117, 139);
+            this.cboBorder.Location = new System.Drawing.Point(117, 107);
             this.cboBorder.Name = "cboBorder";
             this.cboBorder.Size = new System.Drawing.Size(291, 25);
             this.cboBorder.TabIndex = 11;
@@ -87,37 +85,11 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label2.Location = new System.Drawing.Point(14, 143);
+            this.label2.Location = new System.Drawing.Point(14, 111);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(99, 17);
             this.label2.TabIndex = 2;
             this.label2.Text = "邊框留白寬度：";
-            // 
-            // cboResolution
-            // 
-            this.cboResolution.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboResolution.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.cboResolution.FormattingEnabled = true;
-            this.cboResolution.Items.AddRange(new object[] {
-            "普通",
-            "中",
-            "高",
-            "最佳",
-            "極高"});
-            this.cboResolution.Location = new System.Drawing.Point(117, 107);
-            this.cboResolution.Name = "cboResolution";
-            this.cboResolution.Size = new System.Drawing.Size(291, 25);
-            this.cboResolution.TabIndex = 10;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label3.Location = new System.Drawing.Point(14, 111);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(86, 17);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "圖片解析度：";
             // 
             // label4
             // 
@@ -140,7 +112,7 @@
             // btnOk
             // 
             this.btnOk.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnOk.Location = new System.Drawing.Point(235, 184);
+            this.btnOk.Location = new System.Drawing.Point(235, 142);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(173, 31);
             this.btnOk.TabIndex = 31;
@@ -152,7 +124,7 @@
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnCancel.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnCancel.Location = new System.Drawing.Point(17, 184);
+            this.btnCancel.Location = new System.Drawing.Point(17, 142);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(173, 31);
             this.btnCancel.TabIndex = 32;
@@ -182,15 +154,13 @@
             this.AcceptButton = this.btnOk;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(422, 230);
+            this.ClientSize = new System.Drawing.Size(422, 181);
             this.Controls.Add(this.txtFileName);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.txtMailAddress);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.cboResolution);
-            this.Controls.Add(this.label3);
             this.Controls.Add(this.cboBorder);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cboImageFormat);
@@ -211,8 +181,6 @@
         private System.Windows.Forms.ComboBox cboImageFormat;
         private System.Windows.Forms.ComboBox cboBorder;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox cboResolution;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox txtMailAddress;
         private System.Windows.Forms.Button btnOk;
