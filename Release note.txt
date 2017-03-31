@@ -1,8 +1,16 @@
-Version:7.0.6213.29198
-MD5: 7ce63aa5ff26d9300b84169b29f2589f (Exe file)
-SHA-1: e42684c46f7718be18197825bd990021f88e68c5 (Exe file)
+Version:7.3.0.28295
+MD5: 97EF7F951468A68DE0284E61565F6906 (Exe file)
 
 Release Note
+7.3.0
+- 控制器編號重整(by 佑哥)
+
+7.2.1
+- 修正控制器類型選擇錯誤
+
+7.2.0
+- Fix some bug
+
 7.1.0
 - QR code僅在匯出的圖檔出現，改善效能
 - 修正日期讀取錯誤問題

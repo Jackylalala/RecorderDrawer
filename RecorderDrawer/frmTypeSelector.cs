@@ -41,5 +41,13 @@ namespace RecorderDrawer
             type = cboType.SelectedIndex;
             DialogResult = DialogResult.OK;
         }
+
+        private void btnRecorderFig_Click(object sender, EventArgs e)
+        {
+            frmRecorderFigure frmRecorderFigure = new frmRecorderFigure();
+            frmRecorderFigure.StartPosition = FormStartPosition.Manual;
+            frmRecorderFigure.Location = new Point(Location.X + Width / 2 - frmRecorderFigure.ClientSize.Width / 2, Location.Y + Height / 2 - frmRecorderFigure.ClientSize.Height / 2);
+            frmRecorderFigure.ShowDialog();
+        }
     }
 }

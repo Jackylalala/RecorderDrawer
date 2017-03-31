@@ -25,18 +25,18 @@ namespace RecorderDrawer
         public static string[] REACTOR_LIST = {
             "控制器#1",
             "控制器#2",
-            "控制器#2(6 channal version)",
             "控制器#3",
             "控制器#4",
             "控制器#5",
             "控制器#6",
+            "控制器#7",
+            "控制器#8",
             "R1-CHPPO",
             "R1-EOD",
-            "R2-CHPPO",
-            "控制器#7(R2-EOD)",
             "R3-CHPPO",
             "R3-EOD",
             "CHPPO Pilot",
+            "控制器#7(6 channal)",
         };
         //Unit table
         public static string[] UNIT_TABLE = { "\u00b0C", "bar", "psi", "ml/min", "rpm", "Ncm", "%", "kg/cm\u00b2", "mm", "g/hr", "g", "h-1" };
@@ -84,7 +84,7 @@ namespace RecorderDrawer
         //Recorder type, -1 means auto detect, according to REACTOR_LIST
         private static int type;
         //Y axis properties
-        private static AxesProp[][] yProp = new AxesProp[11][];
+        private static AxesProp[][] yProp = new AxesProp[14][];
         //Data information
         private List<RecordData> rawData = new List<RecordData>();
         private int dataCount;
@@ -114,38 +114,38 @@ namespace RecorderDrawer
         //Axes: 內溫, 外溫, 壓力, 流速(升溫), 轉速, 扭力 (Default)
         private int[][][] seriesMap = new int[][][] {
             new int[][] {
-                new int[] { 0 },  new int[] { 1, 0, 6 },  new int[] { 1, 0, 6 },    //內溫(溫度)
-                new int[] { 0 },  new int[] { 0, 4 },  new int[] { 0, 4 },
-                new int[] { 0, 1, 6 },  new int[] { 2 },  new int[] { 2 },
-                new int[] { 2, 5 },  new int[] { 2, 5 },  new int[] { 2, 5 },
-                new int[] { 2, 5 },  new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20} },
+                new int[] { 0, 4 }, new int[] { 0, 4 }, new int[] { 0, 1, 6 },    //內溫(溫度)
+                new int[] { 0, 1, 6 }, new int[] { 2, 5 }, new int[] { 0 },
+                new int[] { 0, 1, 6 }, new int[] { 0 }, new int[] { 2 },
+                new int[] { 2 }, new int[] { 2, 5 }, new int[] { 2, 5 },
+                new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 20}, new int[] { 0, 1, 6 } },
             new int[][] {
-                new int[] { 1, 4 },  new int[] { 2, 3 },  new int[] { 2, 3 },   //外溫(壓力)
-                new int[] { 1, 4 },  new int[] { 1, 2, 3, 5 },  new int[] { 1, 2, 3, 5 },
-                new int[] { 2, 3 },  new int[] { 4 },  new int[] { 4 },
-                new int[] { 3 },  new int[] { 3 },  new int[] { 3 },
-                new int[] { 3 }, new int[] { 10, 11, 12, 13, 14, 15, 18, 22 } },
-            new int[][] {
-                new int[] { 2 }, new int[] { 5 }, new int[] { 5 },   //壓力(液位)
-                new int[] { 2 }, new int[] { 6 }, new int[] { 6 },
-                new int[] { 5 }, new int[] { 1 }, new int[] { 1 },
-                new int[] { 1 }, new int[] { 1 }, new int[] { 1 },
-                new int[] { 1 }, new int[] { 16 } },
-            new int[][] {
-                new int[] { 5 }, new int[] { 4, 8 }, new int[] { 4 },   //流速(升溫)(流量)
-                new int[] { 5 }, new int[] { 9 }, new int[] { 9 },
+                new int[] { 1, 2, 3, 5 }, new int[] { 1, 2, 3, 5 }, new int[] { 2, 3 },   //外溫(壓力)
+                new int[] { 2, 3 }, new int[] { 3 }, new int[] { 1, 4 },
+                new int[] { 2, 3 }, new int[] { 1, 4 }, new int[] { 4 },
                 new int[] { 4 }, new int[] { 3 }, new int[] { 3 },
-                new int[] { 4 }, new int[] { 4 }, new int[] { 4 },
-                new int[] { 4 }, new int[] { 17, 19 } },
+                new int[] { 10, 11, 12, 13, 14, 15, 18, 22 }, new int[] { 2, 3 } },
             new int[][] {
-                new int[] { 3 }, new int[] { 7 }, new int[] { 7 },  //轉速(總量)
-                new int[] { 3 }, new int[] { 7 }, new int[] { 7 },
-                new int[] { 7 }, new int[] { 0 }, new int[] { 0 },
+                new int[] { 6 }, new int[] { 6 }, new int[] { 5 },   //壓力(液位)
+                new int[] { 5 }, new int[] { 1 }, new int[] { 2 },
+                new int[] { 5 }, new int[] { 2 }, new int[] { 1 },
+                new int[] { 1 }, new int[] { 1 }, new int[] { 1 },
+                new int[] { 16 }, new int[] { 5 } },
+            new int[][] {
+                new int[] { 9 }, new int[] { 9 }, new int[] { 4, 8 },   //流速(升溫)(流量)
+                new int[] { 4, 8 }, new int[] { 4 }, new int[] { 5 },
+                new int[] { 4, 8 }, new int[] { 5 }, new int[] { 3 },
+                new int[] { 3 }, new int[] { 4 }, new int[] { 4 },
+                new int[] { 17, 19 }, new int[] { 4 } },
+            new int[][] {
+                new int[] { 7 }, new int[] { 7 }, new int[] { 7 },  //轉速(總量)
+                new int[] { 7 }, new int[] { 0 }, new int[] { 3 },
+                new int[] { 7 }, new int[] { 3 }, new int[] { 0 },
                 new int[] { 0 }, new int[] { 0 }, new int[] { 0 },
-                new int[] { 0 }, new int[] { 21 } },
+                new int[] { 21 }, new int[] { 7 } },
             new int[][] {
-                new int[] { }, new int[] { }, new int[] { },  //扭力(WHSV)
-                new int[] { }, new int[] { 8 }, new int[] { 8 },
+                new int[] { 8 }, new int[] { 8 }, new int[] { },  //扭力(WHSV)
+                new int[] { }, new int[] { }, new int[] { },
                 new int[] { }, new int[] { }, new int[] { },
                 new int[] { }, new int[] { }, new int[] { },
                 new int[] { }, new int[] { }} }; //WHSV: Column 23尚未建立
@@ -233,21 +233,14 @@ namespace RecorderDrawer
                         new AxesProp("壓力", 1, -2, 20, 2),
                         new AxesProp("流速", 3, 0, 22, 2),
                         new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
+                        new AxesProp("扭力", 5, 0, 220, 20)},
                     new AxesProp[6]{  //#2
                         new AxesProp("內溫", 0, 0, 220, 20),
                         new AxesProp("外溫", 0, 0, 220, 20),
                         new AxesProp("壓力", 1, -2, 20, 2),
                         new AxesProp("流速", 3, 0, 22, 2),
                         new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
-                   new AxesProp[6]{  //#2(6 channal)
-                        new AxesProp("內溫", 0, 0, 220, 20),
-                        new AxesProp("外溫", 0, 0, 220, 20),
-                        new AxesProp("壓力", 1, -2, 20, 2),
-                        new AxesProp("流速", 3, 0, 22, 2),
-                        new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("", 5, 0, 220, 20)},
+                        new AxesProp("扭力", 5, 0, 220, 20)},
                     new AxesProp[6]{  //#3
                         new AxesProp("內溫", 0, 0, 220, 20),
                         new AxesProp("外溫", 0, 0, 220, 20),
@@ -261,15 +254,29 @@ namespace RecorderDrawer
                         new AxesProp("壓力", 1, -2, 20, 2),
                         new AxesProp("流速", 3, 0, 22, 2),
                         new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("扭力", 5, 0, 220, 20)},
+                        new AxesProp("", 5, 0, 220, 20)},
                     new AxesProp[6]{  //#5
+                        new AxesProp("內溫", 0, 0, 200, 20),
+                        new AxesProp("外溫", 0, 0, 200, 20),
+                        new AxesProp("壓力", 2, 0, 200, 20),
+                        new AxesProp("流速", 3, 0, 10, 1),
+                        new AxesProp("轉速", 4, 0, 1000, 100),
+                        new AxesProp("", 5, 0, 100, 10)},
+                    new AxesProp[6]{  //#6
                         new AxesProp("內溫", 0, 0, 220, 20),
                         new AxesProp("外溫", 0, 0, 220, 20),
                         new AxesProp("壓力", 1, -2, 20, 2),
                         new AxesProp("流速", 3, 0, 22, 2),
                         new AxesProp("轉速", 4, 0, 1100, 100),
-                        new AxesProp("扭力", 5, 0, 220, 20)},
-                    new AxesProp[6]{  //#6
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#7
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)},
+                    new AxesProp[6]{  //#8
                         new AxesProp("內溫", 0, 0, 220, 20),
                         new AxesProp("外溫", 0, 0, 220, 20),
                         new AxesProp("壓力", 1, -2, 20, 2),
@@ -289,20 +296,6 @@ namespace RecorderDrawer
                         new AxesProp("壓力", 2, 0, 150, 15),
                         new AxesProp("流速", 3, 0, 10, 1),
                         new AxesProp("轉速", 4, 0, 400, 40),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //R2-CHPPO
-                        new AxesProp("內溫", 0, 0, 150, 15),
-                        new AxesProp("外溫", 0, 0, 150, 15),
-                        new AxesProp("壓力", 2, 0, 500, 50),
-                        new AxesProp("升溫", 6, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 600, 60),
-                        new AxesProp("", 5, 0, 100, 10)},
-                    new AxesProp[6]{  //R2-EOD #7
-                        new AxesProp("內溫", 0, 0, 200, 20),
-                        new AxesProp("外溫", 0, 0, 200, 20),
-                        new AxesProp("壓力", 2, 0, 200, 20),
-                        new AxesProp("流速", 3, 0, 10, 1),
-                        new AxesProp("轉速", 4, 0, 1000, 100),
                         new AxesProp("", 5, 0, 100, 10)},
                     new AxesProp[6]{  //R3-CHPPO
                         new AxesProp("內溫", 0, 0, 150, 15),
@@ -324,7 +317,14 @@ namespace RecorderDrawer
                         new AxesProp("液位", 8, 0, 500, 50),
                         new AxesProp("流量", 9, 0, 250, 25),
                         new AxesProp("總量", 10, 0, 300, 30),
-                        new AxesProp("WHSV", 11, 0, 15, 1.5F)}
+                        new AxesProp("WHSV", 11, 0, 15, 1.5F)},
+                    new AxesProp[6]{  //#7 old (6 channal)
+                        new AxesProp("內溫", 0, 0, 220, 20),
+                        new AxesProp("外溫", 0, 0, 220, 20),
+                        new AxesProp("壓力", 1, -2, 20, 2),
+                        new AxesProp("流速", 3, 0, 22, 2),
+                        new AxesProp("轉速", 4, 0, 1100, 100),
+                        new AxesProp("", 5, 0, 220, 20)}
                 };
             }
             XType = Properties.Settings.Default.XType;
@@ -428,30 +428,31 @@ namespace RecorderDrawer
                 int maxItem;
                 switch (type)
                 {
-                    case 7:
                     case 8:
+                    case 9:
                         maxItem = 5;
                         break;
-                    case 0:
-                    case 3:
-                    case 9:
+                    case 4:
+                    case 5:
+                    case 7:
                     case 10:
                     case 11:
                         maxItem = 6;
                         break;
                     default:
-                    case 2:
-                    case 6:
+                    case 13:
                         maxItem = 8;
                         break;
-                    case 1:
+                    case 2:
+                    case 3:
+                    case 6:
                         maxItem = 9;
                         break;
-                    case 4:
-                    case 5:
+                    case 0:
+                    case 1:
                         maxItem = 10;
                         break;
-                    case 13:
+                    case 12:
                         maxItem = 23; //Including WHSV is 24
                         break;
                 }
@@ -992,7 +993,7 @@ namespace RecorderDrawer
         {
             lblStatus.Text = "Idle";
             lblProcessing.Visible = false;
-            if (!e.Cancelled && e.Error == null)
+            if (!e.Cancelled && e.Error == null && rawData.Count > 0)
             {
                 StartTime = rawData[0].Date;
                 EndTime = rawData[rawData.Count - 1].Date;
@@ -1162,6 +1163,14 @@ namespace RecorderDrawer
         private void bgdWorkerMail_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             pgbProcess.Visible = false;
+        }
+
+        private void munRecorderFig_Click(object sender, EventArgs e)
+        {
+            frmRecorderFigure frmRecorderFigure = new frmRecorderFigure();
+            frmRecorderFigure.StartPosition = FormStartPosition.Manual;
+            frmRecorderFigure.Location = new Point(Location.X + Width / 2 - frmRecorderFigure.ClientSize.Width / 2, Location.Y + Height / 2 - frmRecorderFigure.ClientSize.Height / 2);
+            frmRecorderFigure.ShowDialog();
         }
         #endregion
 
@@ -1718,29 +1727,31 @@ namespace RecorderDrawer
                                     allLines.Add(sr.ReadLine());
                             }
                         }
+                        if (allLines.Count == 0)
+                            throw new Exception("數據檔為空");
                         //Check the type of data
                         string[] secondRow = allLines[1].Split(',', '\t');
                         //Determine schema type
                         if (type == -1)
                         {
                             if (secondRow.Length == 10 && !secondRow[1].Equals(""))
-                                type = 1; //#2
+                                type = 2; //#3 #4 #7
                             else if (secondRow.Length == 9 && !secondRow[1].Equals(""))
-                                type = 2; //#2 old
+                                type = 13; //#7 old (6 channal)
                             else if (secondRow.Length == 11)
-                                type = 4; //#4 #5
+                                type = 0; //#1 #2
                             else if (secondRow.Length == 8 && !secondRow[1].Equals(""))
-                                type = 0; //#1 #3
+                                type = 5; //#6 #8
                             else if (secondRow.Length == 8 && secondRow[1].Equals(""))
-                                type = 10; //R2-EOD (Default for type 7-12)
+                                type = 4; //#5 (Default for #5, R1, R3)
                             else if (secondRow.Length > 20)
-                                type = 13; //CHPPO Pilot
+                                type = 12; //CHPPO Pilot
                             else
                                 throw new Exception("資料格式不符");
                         }
                         //Data end flag, only for string X axis (because DateTime format will automatically sort)
                         //Parse data string, remember skip first row(no data)
-                        int firstDataRow = ( type >= 7 && type <= 12 ) ? 3 : 1; //The 1st data row for type 7~12 is 3rd row
+                        int firstDataRow = ( type == 4 || (type >= 8 && type <= 11) ) ? 3 : 1; //The 1st data row for type 4, 8~11 is 3rd row
                         Parallel.For(firstDataRow, allLines.Count, i =>
                         {
                             string[] data = allLines[i].Split(',', '\t');
@@ -1751,7 +1762,7 @@ namespace RecorderDrawer
                                 DateTime date = new DateTime();
                                 //First column is date, following column(s) are parameter
                                 string dateString;
-                                if (( type >= 7 && type <= 13 ) || type == 0 || type == 3)
+                                if (type == 4 || (type >= 8 && type <= 12) || type == 5 || type == 7)
                                     dateString = data[0] + " " + data[1];
                                 else
                                     dateString = data[0];
@@ -1768,13 +1779,13 @@ namespace RecorderDrawer
                                         for (int j = 1; j < data.Length; j++)
                                         {
                                             if (j == 1 &&
-                                                ( ( type >= 7 && type <= 13 ) || type == 0 || type == 3 ))
+                                               (type == 4 || (type >= 8 && type <= 12) || type == 5 || type == 7))
                                                 continue; //2nd column is time
                                             float num = 0;
                                             if (float.TryParse(data[j], out num))
                                             {
                                                 //Some column need to process with a factor
-                                                if (type == 1 || type == 2)
+                                                if (type == 6 || type == 13)
                                                 {
                                                     if (j == 5 || j == 6)
                                                         num /= 10;
@@ -1804,7 +1815,7 @@ namespace RecorderDrawer
                         });
                         break;
                     case 1: //krf file
-                        type = 0;
+                        type = 5;
                         byte[] binaryData;
                         using (FileStream fs = File.OpenRead(rawFileName))
                         {
@@ -1884,75 +1895,65 @@ namespace RecorderDrawer
                     //Set series parameter
                     switch (type)
                     {
-                        case 0:
-                        case 3:
+                        case 5:
+                        case 7:
                             trendSeries = new Series[6];
                             paraTitle = new string[] { "內溫PV", "外溫PV", "壓力PV", "轉速PV", "外溫SV", "流速PV" };
                             chkChartItem = new CheckBox[6];
                             lblDataDisplay = new Label[6];
                             break;
-                        case 1:
+                        case 2:
+                        case 3:
+                        case 6:
                             trendSeries = new Series[9];
                             paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "EO流速", "壓力PV", "程控SV", "轉速PV", "PO流速" };
                             chkChartItem = new CheckBox[9];
                             lblDataDisplay = new Label[9];
                             break;
-                        case 2:
+                        case 13:
                             trendSeries = new Series[8];
                             paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "流速PV", "壓力PV", "程控SV", "轉速PV" };
                             chkChartItem = new CheckBox[8];
                             lblDataDisplay = new Label[8];
                             break;
-                        case 4:
-                        case 5:
+                        case 0:
+                        case 1:
                             trendSeries = new Series[10];
                             paraTitle = new string[] { "釜溫PV", "油溫PV", "油出口PV", "油入口PV", "內溫SV", "油上限SV", "壓力PV", "轉速PV", "扭力PV", "流速PV" };
                             chkChartItem = new CheckBox[10];
                             lblDataDisplay = new Label[10];
                             break;
-                        case 6:
-                            trendSeries = new Series[8];
-                            paraTitle = new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "流速PV", "壓力PV", "程控SV", "轉速PV", };
-                            chkChartItem = new CheckBox[8];
-                            lblDataDisplay = new Label[8];
+                        case 4:
+                            trendSeries = new Series[6];
+                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "流速", "內溫2" };
+                            chkChartItem = new CheckBox[6];
+                            lblDataDisplay = new Label[6];
                             break;
-                        case 7:
+                        case 8:
                             trendSeries = new Series[5];
                             paraTitle = new string[] { "轉速", "壓力", "內溫", "升溫", "外溫" };
                             chkChartItem = new CheckBox[5];
                             lblDataDisplay = new Label[5];
                             break;
-                        case 8:
+                        case 9:
                             trendSeries = new Series[5];
                             paraTitle = new string[] { "轉速", "壓力", "內溫", "流速", "外溫" };
                             chkChartItem = new CheckBox[5];
                             lblDataDisplay = new Label[5];
                             break;
-                        case 9:
-                            trendSeries = new Series[6];
-                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "升溫", "內溫2" };
-                            chkChartItem = new CheckBox[6];
-                            lblDataDisplay = new Label[6];
-                            break;
                         case 10:
                             trendSeries = new Series[6];
-                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "流速", "內溫2" };
+                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "升溫", "內溫2" };
                             chkChartItem = new CheckBox[6];
                             lblDataDisplay = new Label[6];
                             break;
                         case 11:
                             trendSeries = new Series[6];
-                            paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "升溫", "內溫2" };
-                            chkChartItem = new CheckBox[6];
-                            lblDataDisplay = new Label[6];
-                            break;
-                        case 12:
-                            trendSeries = new Series[6];
                             paraTitle = new string[] { "轉速", "壓力", "內溫1", "外溫", "流速", "內溫2" };
                             chkChartItem = new CheckBox[6];
                             lblDataDisplay = new Label[6];
                             break;
-                        case 13:
+                        case 12:
                             showTooltip = true;
                             trendSeries = new Series[23]; //WHSV尚未建立，建立後則為24項目
                             paraTitle = new string[] { "TI-101", "TI-102", "TI-103", "TI-104", "TI-105", "TI-106", "TI-107", "TI-108", "TIC-101", "TI-301", "PI-201", "PI-101", "PI-102", "PI-103", "PI-301", "PI-104", "LI-301", "FIC-201", "PIC-101", "FI-101", "TIC-102", "FI-101 TR", "DPI-101" };
@@ -2249,7 +2250,7 @@ namespace RecorderDrawer
 
         private string calculate(int fluidType = 0, bool simple = false)
         {
-            if (type == 13 || rawData == null)
+            if (type == 12 || rawData == null)
                 return "No available information";
             //Integration
             double totalTime = 0;

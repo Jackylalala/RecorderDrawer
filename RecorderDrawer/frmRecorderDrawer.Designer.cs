@@ -39,10 +39,10 @@
             this.munSetting = new System.Windows.Forms.ToolStripMenuItem();
             this.munTitle = new System.Windows.Forms.ToolStripMenuItem();
             this.munDetailedSetting = new System.Windows.Forms.ToolStripMenuItem();
+            this.munToClip = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImg = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImgToFile = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImgToMail = new System.Windows.Forms.ToolStripMenuItem();
-            this.munToClip = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportAnimation = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportAnimationToFile = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportAnimationToMail = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,6 +64,7 @@
             this.bgdWorkerAnimation = new System.ComponentModel.BackgroundWorker();
             this.bgdWorkerDraw = new System.ComponentModel.BackgroundWorker();
             this.bgdWorkerMail = new System.ComponentModel.BackgroundWorker();
+            this.munRecorderFig = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chtMain)).BeginInit();
@@ -79,7 +80,8 @@
             this.munToClip,
             this.munExportImg,
             this.munExportAnimation,
-            this.munAbout});
+            this.munAbout,
+            this.munRecorderFig});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1005, 24);
@@ -133,6 +135,14 @@
             this.munDetailedSetting.Text = "詳細設定(&D)";
             this.munDetailedSetting.Click += new System.EventHandler(this.munDetailedSetting_Click);
             // 
+            // munToClip
+            // 
+            this.munToClip.Enabled = false;
+            this.munToClip.Name = "munToClip";
+            this.munToClip.Size = new System.Drawing.Size(131, 20);
+            this.munToClip.Text = "複製圖片到剪貼簿(&C)";
+            this.munToClip.Click += new System.EventHandler(this.munToClip_Click);
+            // 
             // munExportImg
             // 
             this.munExportImg.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -156,14 +166,6 @@
             this.munExportImgToMail.Size = new System.Drawing.Size(155, 22);
             this.munExportImgToMail.Text = "以Mail寄出(&M)";
             this.munExportImgToMail.Click += new System.EventHandler(this.munExportImgToMail_Click);
-            // 
-            // munToClip
-            // 
-            this.munToClip.Enabled = false;
-            this.munToClip.Name = "munToClip";
-            this.munToClip.Size = new System.Drawing.Size(131, 20);
-            this.munToClip.Text = "複製圖片到剪貼簿(&C)";
-            this.munToClip.Click += new System.EventHandler(this.munToClip_Click);
             // 
             // munExportAnimation
             // 
@@ -200,7 +202,7 @@
             // 
             this.txtFilePath.BackColor = System.Drawing.SystemColors.Window;
             this.txtFilePath.Enabled = false;
-            this.txtFilePath.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtFilePath.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtFilePath.Location = new System.Drawing.Point(10, 27);
             this.txtFilePath.Name = "txtFilePath";
             this.txtFilePath.Size = new System.Drawing.Size(632, 25);
@@ -264,7 +266,7 @@
             // lblProcessing
             // 
             this.lblProcessing.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblProcessing.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblProcessing.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblProcessing.ForeColor = System.Drawing.Color.White;
             this.lblProcessing.Location = new System.Drawing.Point(361, 323);
             this.lblProcessing.Name = "lblProcessing";
@@ -279,7 +281,7 @@
             this.lblTimeDisplay.BackColor = System.Drawing.Color.White;
             this.lblTimeDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblTimeDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lblTimeDisplay.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblTimeDisplay.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblTimeDisplay.Location = new System.Drawing.Point(10, 142);
             this.lblTimeDisplay.Name = "lblTimeDisplay";
             this.lblTimeDisplay.Size = new System.Drawing.Size(986, 23);
@@ -289,7 +291,7 @@
             // chkThreshold
             // 
             this.chkThreshold.AutoSize = true;
-            this.chkThreshold.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.chkThreshold.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.chkThreshold.Location = new System.Drawing.Point(773, 29);
             this.chkThreshold.Name = "chkThreshold";
             this.chkThreshold.Size = new System.Drawing.Size(53, 21);
@@ -323,7 +325,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label1.Location = new System.Drawing.Point(901, 31);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(18, 17);
@@ -333,7 +335,7 @@
             // chkYGrid
             // 
             this.chkYGrid.AutoSize = true;
-            this.chkYGrid.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.chkYGrid.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.chkYGrid.Location = new System.Drawing.Point(710, 29);
             this.chkYGrid.Name = "chkYGrid";
             this.chkYGrid.Size = new System.Drawing.Size(61, 21);
@@ -345,7 +347,7 @@
             // chkXGrid
             // 
             this.chkXGrid.AutoSize = true;
-            this.chkXGrid.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.chkXGrid.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.chkXGrid.Location = new System.Drawing.Point(648, 29);
             this.chkXGrid.Name = "chkXGrid";
             this.chkXGrid.Size = new System.Drawing.Size(61, 21);
@@ -376,6 +378,13 @@
             this.bgdWorkerMail.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgdWorkerMail_DoWork);
             this.bgdWorkerMail.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgdWorkerMail_ProgressChanged);
             this.bgdWorkerMail.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgdWorkerMail_RunWorkerCompleted);
+            // 
+            // munRecorderFig
+            // 
+            this.munRecorderFig.Name = "munRecorderFig";
+            this.munRecorderFig.Size = new System.Drawing.Size(105, 20);
+            this.munRecorderFig.Text = "控制器編號圖(&F)";
+            this.munRecorderFig.Click += new System.EventHandler(this.munRecorderFig_Click);
             // 
             // frmRecorderDrawer
             // 
@@ -449,6 +458,7 @@
         private System.ComponentModel.BackgroundWorker bgdWorkerMail;
         private System.Windows.Forms.ToolStripMenuItem munTitle;
         private System.Windows.Forms.ToolStripMenuItem munDetailedSetting;
+        private System.Windows.Forms.ToolStripMenuItem munRecorderFig;
     }
 }
 
