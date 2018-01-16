@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace RecorderDrawer
 {
-    class RecordData : IComparable<RecordData>
+    public class RecordData : IComparable<RecordData>
     {
         private DateTime date;
         private List<float> parameter; 

@@ -4,15 +4,6 @@ namespace RecorderDrawer
 {
     public partial class frmAnimation : Form
     {
-        #region | Field |
-        private int percentage = 2;
-        private int duration = 2000;
-        #endregion
-
-        #region | Properties |
-        public int Percentage { get { return percentage; } }
-        public int Duration { get { return duration; } }
-        #endregion
         public frmAnimation()
         {
             InitializeComponent();
@@ -34,8 +25,8 @@ namespace RecorderDrawer
 
         private void btnOk_Click(object sender, System.EventArgs e)
         {
-            percentage = int.Parse(txtPercentage.Text);
-            duration = int.Parse(txtDuration.Text);
+            frmRecorderDrawer.Percentage = int.Parse(txtPercentage.Text);
+            frmRecorderDrawer.Duration = int.Parse(txtDuration.Text);
             DialogResult = DialogResult.OK;
         }
     }

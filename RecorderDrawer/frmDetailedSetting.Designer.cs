@@ -111,7 +111,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label4.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label4.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label4.Location = new System.Drawing.Point(228, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(69, 25);
@@ -123,7 +123,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label3.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label3.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label3.Location = new System.Drawing.Point(153, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(69, 25);
@@ -135,7 +135,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label1.Location = new System.Drawing.Point(78, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(69, 25);
@@ -148,7 +148,7 @@
             this.tblMain.SetColumnSpan(this.cboXAngle, 3);
             this.cboXAngle.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboXAngle.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboXAngle.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboXAngle.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboXAngle.FormattingEnabled = true;
             this.cboXAngle.Items.AddRange(new object[] {
             "自動",
@@ -170,7 +170,7 @@
             this.tblMain.SetColumnSpan(this.cboXInterval, 3);
             this.cboXInterval.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboXInterval.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboXInterval.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboXInterval.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboXInterval.FormattingEnabled = true;
             this.cboXInterval.Items.AddRange(new object[] {
             "自動",
@@ -192,7 +192,7 @@
             this.tblMain.SetColumnSpan(this.cboXType, 3);
             this.cboXType.Dock = System.Windows.Forms.DockStyle.Fill;
             this.cboXType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboXType.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboXType.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboXType.FormattingEnabled = true;
             this.cboXType.Items.AddRange(new object[] {
             "文字",
@@ -208,7 +208,7 @@
             this.lblXInterval.AutoSize = true;
             this.tblMain.SetColumnSpan(this.lblXInterval, 2);
             this.lblXInterval.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lblXInterval.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblXInterval.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblXInterval.Location = new System.Drawing.Point(3, 200);
             this.lblXInterval.Name = "lblXInterval";
             this.lblXInterval.Size = new System.Drawing.Size(144, 25);
@@ -221,7 +221,7 @@
             this.label6.AutoSize = true;
             this.tblMain.SetColumnSpan(this.label6, 2);
             this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label6.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label6.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label6.Location = new System.Drawing.Point(3, 175);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(144, 25);
@@ -234,7 +234,7 @@
             this.label7.AutoSize = true;
             this.tblMain.SetColumnSpan(this.label7, 2);
             this.label7.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label7.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label7.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label7.Location = new System.Drawing.Point(3, 225);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(144, 30);
@@ -246,7 +246,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label2.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label2.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label2.Location = new System.Drawing.Point(3, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 25);
@@ -258,7 +258,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label5.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label5.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label5.Location = new System.Drawing.Point(303, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(71, 25);
@@ -269,7 +269,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnCancel.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnCancel.Location = new System.Drawing.Point(6, 292);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(186, 31);
@@ -279,7 +279,7 @@
             // 
             // btnOk
             // 
-            this.btnOk.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.btnOk.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.btnOk.Location = new System.Drawing.Point(207, 292);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(186, 31);
@@ -314,7 +314,7 @@
             this.tabGeneral.Controls.Add(this.label9);
             this.tabGeneral.Controls.Add(this.dtpEnd);
             this.tabGeneral.Controls.Add(this.dtpStart);
-            this.tabGeneral.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.tabGeneral.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.tabGeneral.Location = new System.Drawing.Point(4, 22);
             this.tabGeneral.Name = "tabGeneral";
             this.tabGeneral.Padding = new System.Windows.Forms.Padding(3);
@@ -326,7 +326,7 @@
             // label16
             // 
             this.label16.AutoSize = true;
-            this.label16.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label16.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label16.Location = new System.Drawing.Point(215, 139);
             this.label16.Name = "label16";
             this.label16.Size = new System.Drawing.Size(53, 17);
@@ -336,7 +336,7 @@
             // cboReactorSize
             // 
             this.cboReactorSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboReactorSize.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboReactorSize.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboReactorSize.FormattingEnabled = true;
             this.cboReactorSize.Items.AddRange(new object[] {
             "1L",
@@ -360,7 +360,7 @@
             // cboFluid
             // 
             this.cboFluid.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboFluid.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.cboFluid.Font = new System.Drawing.Font("微軟正黑體", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboFluid.FormattingEnabled = true;
             this.cboFluid.Items.AddRange(new object[] {
             "Ethylene Oxide",
@@ -373,7 +373,7 @@
             // label15
             // 
             this.label15.AutoSize = true;
-            this.label15.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label15.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label15.Location = new System.Drawing.Point(6, 171);
             this.label15.Name = "label15";
             this.label15.Size = new System.Drawing.Size(86, 17);
@@ -383,7 +383,7 @@
             // label14
             // 
             this.label14.AutoSize = true;
-            this.label14.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label14.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label14.Location = new System.Drawing.Point(6, 139);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(73, 17);
@@ -393,7 +393,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label13.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label13.Location = new System.Drawing.Point(6, 108);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(73, 17);
@@ -410,7 +410,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label10.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label10.Location = new System.Drawing.Point(6, 12);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(73, 17);
@@ -420,7 +420,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label8.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label8.Location = new System.Drawing.Point(6, 76);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(73, 17);
@@ -430,7 +430,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label9.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label9.Location = new System.Drawing.Point(6, 44);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(73, 17);
@@ -440,7 +440,7 @@
             // dtpEnd
             // 
             this.dtpEnd.CustomFormat = " MM月dd日 HH時mm分ss秒";
-            this.dtpEnd.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.dtpEnd.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.dtpEnd.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpEnd.Location = new System.Drawing.Point(92, 72);
             this.dtpEnd.Name = "dtpEnd";
@@ -452,7 +452,7 @@
             // dtpStart
             // 
             this.dtpStart.CustomFormat = " MM月dd日 HH時mm分ss秒";
-            this.dtpStart.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.dtpStart.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.dtpStart.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
             this.dtpStart.Location = new System.Drawing.Point(92, 40);
             this.dtpStart.Name = "dtpStart";
@@ -464,7 +464,7 @@
             // tabAxes
             // 
             this.tabAxes.Controls.Add(this.tblMain);
-            this.tabAxes.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.tabAxes.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.tabAxes.Location = new System.Drawing.Point(4, 22);
             this.tabAxes.Name = "tabAxes";
             this.tabAxes.Padding = new System.Windows.Forms.Padding(3);
@@ -479,7 +479,7 @@
             this.tabAnimation.Controls.Add(this.txtPercentage);
             this.tabAnimation.Controls.Add(this.label11);
             this.tabAnimation.Controls.Add(this.label12);
-            this.tabAnimation.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.tabAnimation.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.tabAnimation.Location = new System.Drawing.Point(4, 22);
             this.tabAnimation.Name = "tabAnimation";
             this.tabAnimation.Size = new System.Drawing.Size(383, 261);
@@ -489,7 +489,7 @@
             // 
             // txtDuration
             // 
-            this.txtDuration.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtDuration.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtDuration.Location = new System.Drawing.Point(175, 42);
             this.txtDuration.MaxLength = 10;
             this.txtDuration.Name = "txtDuration";
@@ -501,7 +501,7 @@
             // 
             // txtPercentage
             // 
-            this.txtPercentage.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtPercentage.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtPercentage.Location = new System.Drawing.Point(175, 11);
             this.txtPercentage.MaxLength = 10;
             this.txtPercentage.Name = "txtPercentage";
@@ -514,7 +514,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label11.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label11.Location = new System.Drawing.Point(6, 45);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(162, 17);
@@ -524,7 +524,7 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label12.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label12.Location = new System.Drawing.Point(6, 14);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(169, 17);

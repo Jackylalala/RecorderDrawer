@@ -10,9 +10,15 @@ namespace RecorderDrawer
 
         public int Type { get { return type; } }
 
-        public frmTypeSelector(string[] typeList, string typeString)
+        public frmTypeSelector(string[] typeList, string typeString, bool showHelpFig)
         {
             InitializeComponent();
+            //Help figure button
+            if (!showHelpFig)
+            {
+                btnRecorderFig.Visible = false;
+                cboType.Width = btnOK.Width;
+            }
             //Init. description
             Text = "選擇" + typeString;
             lblType.Text= "請選擇" + typeString;

@@ -153,6 +153,5 @@ namespace RecorderDrawer
         }
 
         #endregion
-
     }
 }

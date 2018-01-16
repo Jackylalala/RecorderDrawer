@@ -11,7 +11,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("RecorderDrawer")]
-[assembly: AssemblyCopyright("Mon-Wei Hsiao Copyright ©  2015 - 2016")]
+[assembly: AssemblyCopyright("Mon-Wei Hsiao Copyright ©  2015 - 2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("7.3.0.*")]
-[assembly: AssemblyFileVersion("7.3.0")]
+[assembly: AssemblyVersion("7.6.5.*")]
+[assembly: AssemblyFileVersion("7.6.5")]
 [assembly: NeutralResourcesLanguageAttribute("zh-TW")]

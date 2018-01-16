@@ -48,7 +48,7 @@
             // 
             this.cboType.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboType.FormattingEnabled = true;
-            this.cboType.Location = new System.Drawing.Point(16, 30);
+            this.cboType.Location = new System.Drawing.Point(12, 30);
             this.cboType.Name = "cboType";
             this.cboType.Size = new System.Drawing.Size(121, 25);
             this.cboType.TabIndex = 1;
@@ -67,9 +67,9 @@
             // btnRecorderFig
             // 
             this.btnRecorderFig.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.btnRecorderFig.Location = new System.Drawing.Point(144, 30);
+            this.btnRecorderFig.Location = new System.Drawing.Point(139, 30);
             this.btnRecorderFig.Name = "btnRecorderFig";
-            this.btnRecorderFig.Size = new System.Drawing.Size(20, 24);
+            this.btnRecorderFig.Size = new System.Drawing.Size(25, 24);
             this.btnRecorderFig.TabIndex = 3;
             this.btnRecorderFig.Text = "?";
             this.btnRecorderFig.UseVisualStyleBackColor = true;

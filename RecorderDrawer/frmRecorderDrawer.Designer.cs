@@ -39,6 +39,7 @@
             this.munSetting = new System.Windows.Forms.ToolStripMenuItem();
             this.munTitle = new System.Windows.Forms.ToolStripMenuItem();
             this.munDetailedSetting = new System.Windows.Forms.ToolStripMenuItem();
+            this.munRawdata = new System.Windows.Forms.ToolStripMenuItem();
             this.munToClip = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImg = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportImgToFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -46,14 +47,14 @@
             this.munExportAnimation = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportAnimationToFile = new System.Windows.Forms.ToolStripMenuItem();
             this.munExportAnimationToMail = new System.Windows.Forms.ToolStripMenuItem();
+            this.munRecorderFig = new System.Windows.Forms.ToolStripMenuItem();
             this.munAbout = new System.Windows.Forms.ToolStripMenuItem();
             this.txtFilePath = new System.Windows.Forms.TextBox();
             this.pnlChartItems = new System.Windows.Forms.Panel();
-            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.pgbProcess = new System.Windows.Forms.ToolStripProgressBar();
+            this.lblInformation = new System.Windows.Forms.ToolStripStatusLabel();
             this.chtMain = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            this.lblProcessing = new System.Windows.Forms.Label();
+            this.lblProcessingInfo = new System.Windows.Forms.Label();
             this.lblTimeDisplay = new System.Windows.Forms.Label();
             this.chkThreshold = new System.Windows.Forms.CheckBox();
             this.txtMinLimit = new System.Windows.Forms.TextBox();
@@ -64,10 +65,11 @@
             this.bgdWorkerAnimation = new System.ComponentModel.BackgroundWorker();
             this.bgdWorkerDraw = new System.ComponentModel.BackgroundWorker();
             this.bgdWorkerMail = new System.ComponentModel.BackgroundWorker();
-            this.munRecorderFig = new System.Windows.Forms.ToolStripMenuItem();
+            this.pnlChartSetting = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chtMain)).BeginInit();
+            this.pnlChartSetting.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -77,11 +79,12 @@
             this.munAnalysis,
             this.munStatList,
             this.munSetting,
+            this.munRawdata,
             this.munToClip,
             this.munExportImg,
             this.munExportAnimation,
-            this.munAbout,
-            this.munRecorderFig});
+            this.munRecorderFig,
+            this.munAbout});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1005, 24);
@@ -134,6 +137,14 @@
             this.munDetailedSetting.Size = new System.Drawing.Size(139, 22);
             this.munDetailedSetting.Text = "詳細設定(&D)";
             this.munDetailedSetting.Click += new System.EventHandler(this.munDetailedSetting_Click);
+            // 
+            // munRawdata
+            // 
+            this.munRawdata.Enabled = false;
+            this.munRawdata.Name = "munRawdata";
+            this.munRawdata.Size = new System.Drawing.Size(83, 20);
+            this.munRawdata.Text = "數據列表(&R)";
+            this.munRawdata.Click += new System.EventHandler(this.munRawdata_Click);
             // 
             // munToClip
             // 
@@ -191,6 +202,13 @@
             this.munExportAnimationToMail.Text = "以Mail寄出(&M)";
             this.munExportAnimationToMail.Click += new System.EventHandler(this.munExportAnimationToMail_Click);
             // 
+            // munRecorderFig
+            // 
+            this.munRecorderFig.Name = "munRecorderFig";
+            this.munRecorderFig.Size = new System.Drawing.Size(105, 20);
+            this.munRecorderFig.Text = "控制器編號圖(&F)";
+            this.munRecorderFig.Click += new System.EventHandler(this.munRecorderFig_Click);
+            // 
             // munAbout
             // 
             this.munAbout.Name = "munAbout";
@@ -218,28 +236,21 @@
             this.pnlChartItems.Size = new System.Drawing.Size(985, 81);
             this.pnlChartItems.TabIndex = 0;
             // 
-            // lblStatus
-            // 
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(28, 17);
-            this.lblStatus.Text = "Idle";
-            // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pgbProcess,
-            this.lblStatus});
+            this.lblInformation});
             this.statusStrip1.Location = new System.Drawing.Point(0, 756);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1005, 22);
             this.statusStrip1.TabIndex = 21;
             this.statusStrip1.Text = "statusStrip1";
             // 
-            // pgbProcess
+            // lblInformation
             // 
-            this.pgbProcess.Name = "pgbProcess";
-            this.pgbProcess.Size = new System.Drawing.Size(100, 16);
-            this.pgbProcess.Visible = false;
+            this.lblInformation.Name = "lblInformation";
+            this.lblInformation.Size = new System.Drawing.Size(128, 17);
+            this.lblInformation.Text = "toolStripStatusLabel1";
             // 
             // chtMain
             // 
@@ -263,18 +274,20 @@
             this.chtMain.MouseMove += new System.Windows.Forms.MouseEventHandler(this.chtMain_MouseMove);
             this.chtMain.MouseUp += new System.Windows.Forms.MouseEventHandler(this.chtMain_MouseUp);
             // 
-            // lblProcessing
+            // lblProcessingInfo
             // 
-            this.lblProcessing.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblProcessing.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.lblProcessing.ForeColor = System.Drawing.Color.White;
-            this.lblProcessing.Location = new System.Drawing.Point(361, 323);
-            this.lblProcessing.Name = "lblProcessing";
-            this.lblProcessing.Size = new System.Drawing.Size(271, 81);
-            this.lblProcessing.TabIndex = 25;
-            this.lblProcessing.Text = "Rendering, please wait...";
-            this.lblProcessing.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            this.lblProcessing.Visible = false;
+            this.lblProcessingInfo.BackColor = System.Drawing.SystemColors.ControlDarkDark;
+            this.lblProcessingInfo.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblProcessingInfo.ForeColor = System.Drawing.Color.White;
+            this.lblProcessingInfo.Location = new System.Drawing.Point(367, 368);
+            this.lblProcessingInfo.Name = "lblProcessingInfo";
+            this.lblProcessingInfo.Size = new System.Drawing.Size(271, 36);
+            this.lblProcessingInfo.TabIndex = 25;
+            this.lblProcessingInfo.Text = "Now Processing";
+            this.lblProcessingInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblProcessingInfo.Visible = false;
+            this.lblProcessingInfo.TextChanged += new System.EventHandler(this.lblProcessingInfo_TextChanged);
+            this.lblProcessingInfo.VisibleChanged += new System.EventHandler(this.lblProcessingInfo_VisibleChanged);
             // 
             // lblTimeDisplay
             // 
@@ -292,7 +305,7 @@
             // 
             this.chkThreshold.AutoSize = true;
             this.chkThreshold.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.chkThreshold.Location = new System.Drawing.Point(773, 29);
+            this.chkThreshold.Location = new System.Drawing.Point(127, 2);
             this.chkThreshold.Name = "chkThreshold";
             this.chkThreshold.Size = new System.Drawing.Size(53, 21);
             this.chkThreshold.TabIndex = 27;
@@ -302,7 +315,7 @@
             // 
             // txtMinLimit
             // 
-            this.txtMinLimit.Location = new System.Drawing.Point(825, 28);
+            this.txtMinLimit.Location = new System.Drawing.Point(180, 1);
             this.txtMinLimit.MaxLength = 8;
             this.txtMinLimit.Name = "txtMinLimit";
             this.txtMinLimit.Size = new System.Drawing.Size(70, 22);
@@ -313,7 +326,7 @@
             // 
             // txtMaxLimit
             // 
-            this.txtMaxLimit.Location = new System.Drawing.Point(925, 28);
+            this.txtMaxLimit.Location = new System.Drawing.Point(280, 1);
             this.txtMaxLimit.MaxLength = 8;
             this.txtMaxLimit.Name = "txtMaxLimit";
             this.txtMaxLimit.Size = new System.Drawing.Size(70, 22);
@@ -326,7 +339,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.label1.Location = new System.Drawing.Point(901, 31);
+            this.label1.Location = new System.Drawing.Point(256, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(18, 17);
             this.label1.TabIndex = 30;
@@ -336,7 +349,7 @@
             // 
             this.chkYGrid.AutoSize = true;
             this.chkYGrid.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.chkYGrid.Location = new System.Drawing.Point(710, 29);
+            this.chkYGrid.Location = new System.Drawing.Point(65, 2);
             this.chkYGrid.Name = "chkYGrid";
             this.chkYGrid.Size = new System.Drawing.Size(61, 21);
             this.chkYGrid.TabIndex = 31;
@@ -348,7 +361,7 @@
             // 
             this.chkXGrid.AutoSize = true;
             this.chkXGrid.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
-            this.chkXGrid.Location = new System.Drawing.Point(648, 29);
+            this.chkXGrid.Location = new System.Drawing.Point(3, 2);
             this.chkXGrid.Name = "chkXGrid";
             this.chkXGrid.Size = new System.Drawing.Size(61, 21);
             this.chkXGrid.TabIndex = 32;
@@ -379,12 +392,18 @@
             this.bgdWorkerMail.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgdWorkerMail_ProgressChanged);
             this.bgdWorkerMail.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgdWorkerMail_RunWorkerCompleted);
             // 
-            // munRecorderFig
+            // pnlChartSetting
             // 
-            this.munRecorderFig.Name = "munRecorderFig";
-            this.munRecorderFig.Size = new System.Drawing.Size(105, 20);
-            this.munRecorderFig.Text = "控制器編號圖(&F)";
-            this.munRecorderFig.Click += new System.EventHandler(this.munRecorderFig_Click);
+            this.pnlChartSetting.Controls.Add(this.chkXGrid);
+            this.pnlChartSetting.Controls.Add(this.chkYGrid);
+            this.pnlChartSetting.Controls.Add(this.label1);
+            this.pnlChartSetting.Controls.Add(this.chkThreshold);
+            this.pnlChartSetting.Controls.Add(this.txtMaxLimit);
+            this.pnlChartSetting.Controls.Add(this.txtMinLimit);
+            this.pnlChartSetting.Location = new System.Drawing.Point(645, 29);
+            this.pnlChartSetting.Name = "pnlChartSetting";
+            this.pnlChartSetting.Size = new System.Drawing.Size(356, 25);
+            this.pnlChartSetting.TabIndex = 0;
             // 
             // frmRecorderDrawer
             // 
@@ -392,15 +411,10 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1005, 778);
+            this.Controls.Add(this.pnlChartSetting);
             this.Controls.Add(this.pnlChartItems);
-            this.Controls.Add(this.chkXGrid);
-            this.Controls.Add(this.chkYGrid);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.txtMaxLimit);
-            this.Controls.Add(this.txtMinLimit);
-            this.Controls.Add(this.chkThreshold);
             this.Controls.Add(this.lblTimeDisplay);
-            this.Controls.Add(this.lblProcessing);
+            this.Controls.Add(this.lblProcessingInfo);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.txtFilePath);
             this.Controls.Add(this.menuStrip1);
@@ -419,6 +433,8 @@
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chtMain)).EndInit();
+            this.pnlChartSetting.ResumeLayout(false);
+            this.pnlChartSetting.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -431,12 +447,11 @@
         private System.Windows.Forms.ToolStripMenuItem munAnalysis;
         private System.Windows.Forms.TextBox txtFilePath;
         private System.Windows.Forms.ToolStripMenuItem munSetting;
-        private System.Windows.Forms.ToolStripStatusLabel lblStatus;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripMenuItem munExportImg;
         private System.Windows.Forms.DataVisualization.Charting.Chart chtMain;
         private System.Windows.Forms.ToolStripMenuItem munToClip;
-        internal System.Windows.Forms.Label lblProcessing;
+        internal System.Windows.Forms.Label lblProcessingInfo;
         private System.Windows.Forms.ToolStripMenuItem munAbout;
         private System.Windows.Forms.Label lblTimeDisplay;
         private System.Windows.Forms.CheckBox chkThreshold;
@@ -449,7 +464,6 @@
         private System.Windows.Forms.Panel pnlChartItems;
         private System.ComponentModel.BackgroundWorker bgdWorkerAnimation;
         private System.ComponentModel.BackgroundWorker bgdWorkerDraw;
-        private System.Windows.Forms.ToolStripProgressBar pgbProcess;
         private System.Windows.Forms.ToolStripMenuItem munExportAnimation;
         private System.Windows.Forms.ToolStripMenuItem munExportImgToFile;
         private System.Windows.Forms.ToolStripMenuItem munExportImgToMail;
@@ -459,6 +473,9 @@
         private System.Windows.Forms.ToolStripMenuItem munTitle;
         private System.Windows.Forms.ToolStripMenuItem munDetailedSetting;
         private System.Windows.Forms.ToolStripMenuItem munRecorderFig;
+        private System.Windows.Forms.ToolStripMenuItem munRawdata;
+        private System.Windows.Forms.ToolStripStatusLabel lblInformation;
+        private System.Windows.Forms.Panel pnlChartSetting;
     }
 }
 
