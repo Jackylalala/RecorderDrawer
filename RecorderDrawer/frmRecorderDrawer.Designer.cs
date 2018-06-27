@@ -53,6 +53,8 @@
             this.pnlChartItems = new System.Windows.Forms.Panel();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.lblInformation = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.chtMain = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.lblProcessingInfo = new System.Windows.Forms.Label();
             this.lblTimeDisplay = new System.Windows.Forms.Label();
@@ -220,7 +222,7 @@
             // 
             this.txtFilePath.BackColor = System.Drawing.SystemColors.Window;
             this.txtFilePath.Enabled = false;
-            this.txtFilePath.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.txtFilePath.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.txtFilePath.Location = new System.Drawing.Point(10, 27);
             this.txtFilePath.Name = "txtFilePath";
             this.txtFilePath.Size = new System.Drawing.Size(632, 25);
@@ -239,18 +241,34 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lblInformation});
+            this.lblInformation,
+            this.toolStripStatusLabel1,
+            this.toolStripStatusLabel2});
             this.statusStrip1.Location = new System.Drawing.Point(0, 756);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1005, 22);
+            this.statusStrip1.SizingGrip = false;
+            this.statusStrip1.Stretch = false;
             this.statusStrip1.TabIndex = 21;
             this.statusStrip1.Text = "statusStrip1";
             // 
             // lblInformation
             // 
             this.lblInformation.Name = "lblInformation";
-            this.lblInformation.Size = new System.Drawing.Size(128, 17);
-            this.lblInformation.Text = "toolStripStatusLabel1";
+            this.lblInformation.Size = new System.Drawing.Size(28, 17);
+            this.lblInformation.Text = "Idle";
+            // 
+            // toolStripStatusLabel1
+            // 
+            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(694, 17);
+            this.toolStripStatusLabel1.Spring = true;
+            // 
+            // toolStripStatusLabel2
+            // 
+            this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
+            this.toolStripStatusLabel2.Size = new System.Drawing.Size(237, 17);
+            this.toolStripStatusLabel2.Text = "Mon-Wei Hsiao Copyright ©  2017-2018";
             // 
             // chtMain
             // 
@@ -277,7 +295,7 @@
             // lblProcessingInfo
             // 
             this.lblProcessingInfo.BackColor = System.Drawing.SystemColors.ControlDarkDark;
-            this.lblProcessingInfo.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblProcessingInfo.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblProcessingInfo.ForeColor = System.Drawing.Color.White;
             this.lblProcessingInfo.Location = new System.Drawing.Point(367, 368);
             this.lblProcessingInfo.Name = "lblProcessingInfo";
@@ -294,7 +312,7 @@
             this.lblTimeDisplay.BackColor = System.Drawing.Color.White;
             this.lblTimeDisplay.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.lblTimeDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.lblTimeDisplay.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.lblTimeDisplay.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.lblTimeDisplay.Location = new System.Drawing.Point(10, 142);
             this.lblTimeDisplay.Name = "lblTimeDisplay";
             this.lblTimeDisplay.Size = new System.Drawing.Size(986, 23);
@@ -304,7 +322,7 @@
             // chkThreshold
             // 
             this.chkThreshold.AutoSize = true;
-            this.chkThreshold.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.chkThreshold.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.chkThreshold.Location = new System.Drawing.Point(127, 2);
             this.chkThreshold.Name = "chkThreshold";
             this.chkThreshold.Size = new System.Drawing.Size(53, 21);
@@ -338,7 +356,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.label1.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.label1.Location = new System.Drawing.Point(256, 4);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(18, 17);
@@ -348,7 +366,7 @@
             // chkYGrid
             // 
             this.chkYGrid.AutoSize = true;
-            this.chkYGrid.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.chkYGrid.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.chkYGrid.Location = new System.Drawing.Point(65, 2);
             this.chkYGrid.Name = "chkYGrid";
             this.chkYGrid.Size = new System.Drawing.Size(61, 21);
@@ -360,7 +378,7 @@
             // chkXGrid
             // 
             this.chkXGrid.AutoSize = true;
-            this.chkXGrid.Font = new System.Drawing.Font("微軟正黑體", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            this.chkXGrid.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.chkXGrid.Location = new System.Drawing.Point(3, 2);
             this.chkXGrid.Name = "chkXGrid";
             this.chkXGrid.Size = new System.Drawing.Size(61, 21);
@@ -476,6 +494,8 @@
         private System.Windows.Forms.ToolStripMenuItem munRawdata;
         private System.Windows.Forms.ToolStripStatusLabel lblInformation;
         private System.Windows.Forms.Panel pnlChartSetting;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
     }
 }
 

@@ -15,6 +15,7 @@ using System.Linq;
 using ZXing;
 using ZXing.QrCode;
 using System.Data;
+using JR.Utils.GUI.Forms;
 
 namespace RecorderDrawer
 {
@@ -190,7 +191,6 @@ namespace RecorderDrawer
         public static DateTime EndTime { get; set; }
         public static string TitleText { get; set; } = "";
         public static int DensityIndex { get; set; }
-        public static float CostPerHour { get; set; }
         public static int ReactorSizeIndex { get; set; } //In Liter
         public static int Percentage { get; set; }
         public static int Duration { get; set; }
@@ -346,7 +346,6 @@ namespace RecorderDrawer
             XType = Properties.Settings.Default.XType;
             XInterval = Properties.Settings.Default.XInterval;
             XAngle = Properties.Settings.Default.XAngle;
-            CostPerHour = Properties.Settings.Default.CostPerHour;
             DensityIndex = Properties.Settings.Default.DensityIndex;
             ReactorSizeIndex = Properties.Settings.Default.ReactorSizeIndex;
             chkXGrid.Checked = true;
@@ -617,7 +616,6 @@ namespace RecorderDrawer
             Properties.Settings.Default.XType = XType;
             Properties.Settings.Default.XInterval = XInterval;
             Properties.Settings.Default.XAngle = XAngle;
-            Properties.Settings.Default.CostPerHour = CostPerHour;
             Properties.Settings.Default.DensityIndex = DensityIndex;
             Properties.Settings.Default.ReactorSizeIndex = ReactorSizeIndex;
             Properties.Settings.Default.Save();
@@ -680,7 +678,7 @@ namespace RecorderDrawer
                     }
                     Bitmap image = Trim(new Bitmap(SaveExpandedImg(5.0F, format)), whiteBorder);
                     image.Save(sfd.FileName);
-                    MessageBox.Show("匯出圖片成功！");
+                    MessageBox.Show("匯出圖片成功！", "Alert");
                 }
             }
             catch (Exception ex)
@@ -829,24 +827,7 @@ namespace RecorderDrawer
                         tempChannal = frmTypeSelector.Type;
                 }
                 //Cal. & Show
-                Form frmMsg = new Form();
-                TextBox txtMsg = new TextBox();
-                txtMsg.Multiline = true;
-                txtMsg.Dock = DockStyle.Fill;
-                txtMsg.ReadOnly = true;
-                txtMsg.TabStop = false;
-                txtMsg.Font = new Font("微軟正黑體", 10);
-                txtMsg.ScrollBars = ScrollBars.Vertical;
-                txtMsg.Text = calculate(fluidType, tempChannal);
-                frmMsg.Text = "統計數據";
-                frmMsg.MaximizeBox = false;
-                frmMsg.MinimizeBox = false;
-                frmMsg.Controls.Add(txtMsg);
-                frmMsg.Width = 640;
-                frmMsg.Height = 480;
-                frmMsg.StartPosition = FormStartPosition.Manual;
-                frmMsg.Location = new Point(Location.X + Width / 2 - frmMsg.ClientSize.Width / 2, Location.Y + Height / 2 - frmMsg.ClientSize.Height / 2);
-                frmMsg.ShowDialog();
+                FlexibleMessageBox.Show(Calculate(fluidType, tempChannal), "統計數據");
             }
         }
 
@@ -1591,7 +1572,7 @@ namespace RecorderDrawer
                 writer.Format = BarcodeFormat.QR_CODE;
                 writer.Options = new QrCodeEncodingOptions()
                 {
-                    ErrorCorrection = ZXing.QrCode.Internal.ErrorCorrectionLevel.L,
+                    ErrorCorrection = ZXing.QrCode.Internal.ErrorCorrectionLevel.H,
                     DisableECI = true,
                     Width = (int)( 80 * zoom ),
                     Height = (int)( 80 * zoom ),
@@ -1600,7 +1581,7 @@ namespace RecorderDrawer
                 string statInfo="";
                 //Default inner temperature channal:0
                 for (int i = 0; i < seriesMap[3][type].Length; i++)
-                    statInfo += calculate(i, 0, true) + Environment.NewLine;
+                    statInfo += Calculate(i, 0, true) + Environment.NewLine;
                 NamedImage qrcode = new NamedImage("qrcode", writer.Write(statInfo));
                 chtDraw.Images.Add(qrcode);
                 ImageAnnotation qrImage = new ImageAnnotation()
@@ -1865,6 +1846,22 @@ namespace RecorderDrawer
                             else
                                 throw new Exception("資料格式不符");
                         }
+                        //set process parameter
+                        switch (type)
+                        {
+                            case 0: //5L
+                                ReactorSizeIndex = 3;
+                                break;
+                            case 1:
+                            case 2:
+                            default: //1L
+                                ReactorSizeIndex = 0;
+                                break;
+                            case 4:
+                            case 7: //2L
+                                ReactorSizeIndex = 1;
+                                break;
+                        }
                         //Data end flag, only for string X axis (because DateTime format will automatically sort)
                         //Parse data string, remember skip first row(no data)
                         int firstDataRow = ( type == 4 || (type >= 8 && type <= 11) || type == 14) ? 3 : 1; //The 1st data row for type 4, 8~11, 14 is 3rd row
@@ -1909,6 +1906,8 @@ namespace RecorderDrawer
                                                     num *= 10;
                                             }
                                             if (type == 4 && j == 4)
+                                                num /= 10;
+                                            if (type == 2 && j == 9)
                                                 num /= 10;
                                             if (chkThreshold.Checked)
                                             {
@@ -2406,7 +2405,7 @@ namespace RecorderDrawer
             }
         }
 
-        private string calculate(int fluidType = 0, int tempChannal = 0, bool simple = false)
+        private string Calculate(int fluidType = 0, int tempChannal = 0, bool simple = false)
         {
             if (type == 12 || rawData == null)
                 return "No available information";
@@ -2581,8 +2580,7 @@ namespace RecorderDrawer
                     Environment.NewLine +
                     "*****製程放大相關數據*****" + Environment.NewLine +
                     "1噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 1000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
-                    "10噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine +
-                    "預估生產成本：" + string.Format("{0:N0}", ( totalTimeWithBlank + agingTime ) / 60 * CostPerHour) + " USD"
+                    "10噸槽預估平均進料速率：" + string.Format("{0:N0}", avgFlow * 60 * FLUID_DENSITY[DensityIndex] / 1000 * 10000 / REACTOR_SIZE[ReactorSizeIndex]) + " kg/hr" + Environment.NewLine
                     : "通道" + paraTitle[seriesMap[3][type][fluidType]] + "無可用資訊" );
             }
             else
@@ -2592,10 +2590,12 @@ namespace RecorderDrawer
                     "Target channal: " + paraTitle[seriesMap[3][type][fluidType]] + Environment.NewLine +
                     Environment.NewLine +
                     "Pause time(less than 8hr): " + string.Format("{0:N2}", totalTimeWithBlank - totalTime) + "min" + Environment.NewLine +
-                    "Total time(include pause): " + string.Format("{0:N2}", totalTimeWithBlank) + "min" + Environment.NewLine +
-                    "Avg. flow(include pause):" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
-                    "Avg. P(include pause):" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
-                    "Avg. temp.(include pause):" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine +
+                    "Total time: " + string.Format("{0:N2}", totalTimeWithBlank) + "min" + Environment.NewLine +
+                    "Avg. Flow:" + string.Format("{0:N2}", avgFlowWithBlank) + " ml/min" + Environment.NewLine +
+                    "Avg. P.:" + string.Format("{0:N2}", avgPressureWithBlank) + " " + UNIT_TABLE[yProp[type][2].Unit] + Environment.NewLine +
+                    "Avg. Temp.:" + string.Format("{0:N2}", avgInnerPVWithBlank) + " \u00B0C" + Environment.NewLine +
+                    "Max. P.:" + string.Format("{0:N2}", maxP) + " " + UNIT_TABLE[yProp[type][2].Unit] + " at " + maxPTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
+                    "Max. Temp.：" + string.Format("{0:N2}", maxInnerTemp) + " \u00B0C at " + maxInnerTempTime.ToString("MM/dd HH:mm:ss") + Environment.NewLine +
                     Environment.NewLine +
                     "Aging start: " + ( agingDone ? agingStart.ToString("MM/dd HH:mm:ss") : "N/A" ) + Environment.NewLine +
                     "Aging end: " + ( agingDone ? agingEnd.ToString("MM/dd HH:mm:ss") + " at " + string.Format("{0:N2}", agingEndP) + " " + UNIT_TABLE[yProp[type][2].Unit] : "N/A" ) + Environment.NewLine +

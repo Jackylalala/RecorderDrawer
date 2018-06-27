@@ -37,7 +37,7 @@ namespace RecorderDrawer
                 return;
             }
             //Check file name
-            if (!System.Text.RegularExpressions.Regex.IsMatch(txtFileName.Text, @"^[\w\-. ]+$"))
+            if (txtFileName.Text.IndexOfAny(System.IO.Path.GetInvalidFileNameChars()) != -1)
             {
                 MessageBox.Show("檔案名稱錯誤，請更正。", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;

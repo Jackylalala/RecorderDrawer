@@ -102,6 +102,7 @@
     <Compile Include="AnimatedGifEncoder.cs" />
     <Compile Include="AxesProp.cs" />
     <Compile Include="CustomOpenFileDialog.cs" />
+    <Compile Include="FlexibleMessageBox.cs" />
     <Compile Include="frmAnalysis.cs">
       <SubType>Form</SubType>
     </Compile>

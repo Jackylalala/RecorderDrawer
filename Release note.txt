@@ -1,6 +1,12 @@
-Version:7.6.5.16076
+Version:7.6.7.25272
 
 Release Note
+7.6.7
+- 修正檔名判斷規則
+
+7.6.6
+- Fix PO flow at #3
+
 7.6.5
 - 修正匯出圖片錯誤
 - QR code improve
