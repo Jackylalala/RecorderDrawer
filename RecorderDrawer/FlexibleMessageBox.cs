@@ -32,18 +32,18 @@ namespace JR.Utils.GUI.Forms
      ************************************************************************************************************
      * Usage examples:
      * 
-     *  FlexibleMessageBox.Show("Just a text");
+     *  FlexibleMessageBox.Show(this,"Just a text");
      * 
-     *  FlexibleMessageBox.Show("A text", 
+     *  FlexibleMessageBox.Show(this,"A text", 
      *                          "A caption"); 
      *  
-     *  FlexibleMessageBox.Show("Some text with a link: www.google.com", 
+     *  FlexibleMessageBox.Show(this,"Some text with a link: www.google.com", 
      *                          "Some caption",
      *                          MessageBoxButtons.AbortRetryIgnore, 
      *                          MessageBoxIcon.Information,
      *                          MessageBoxDefaultButton.Button2);
      *  
-     *  var dialogResult = FlexibleMessageBox.Show("Do you know the answer to life the universe and everything?", 
+     *  var dialogResult = FlexibleMessageBox.Show(this,"Do you know the answer to life the universe and everything?", 
      *                                             "One short question",
      *                                             MessageBoxButtons.YesNo);     
      * 

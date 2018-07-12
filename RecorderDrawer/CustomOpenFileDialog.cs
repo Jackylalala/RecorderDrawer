@@ -214,9 +214,12 @@ namespace RecorderDrawer
                     //create the label
                     int labelHandle = CreateWindowEx(0, "STATIC", "mylabel", WS_VISIBLE | WS_CHILD | WS_TABSTOP, point.X, point.Y + 12, 200, 100, parent, 0, 0, 0);
                     SetWindowText(labelHandle, "控制器類型(&S):");
+                    int labelHandle2 = CreateWindowEx(0, "STATIC", "mylabel2", WS_VISIBLE | WS_CHILD | WS_TABSTOP, point.X, point.Y + 40, 600, 100, parent, 0, 0, 0);
+                    SetWindowText(labelHandle2, "※僅有讀取csv檔案時需要選擇控制器類型");
 
                     int fontHandle = SendMessage(fileTypeWindow, WM_GETFONT, 0, 0);
                     SendMessage(labelHandle, WM_SETFONT, fontHandle, 0);
+                    SendMessage(labelHandle2, WM_SETFONT, fontHandle, 0);
 
                     //we now need to find the combo-box to position the new combo-box under
 
@@ -242,7 +245,7 @@ namespace RecorderDrawer
 
                     //and add the encodings we want to offer
                     SendMessage(comboHandle, CB_ADDSTRING, 0, "自動選擇");
-                    foreach (string name in frmRecorderDrawer.REACTOR_LIST)
+                    foreach (string name in frmMain.recorderList)
                         SendMessage(comboHandle, CB_ADDSTRING, 0, name);
                     SendMessage(comboHandle, CB_SETCURSEL, m_SchemaType + 1, 0); //Schema type start with -1
 

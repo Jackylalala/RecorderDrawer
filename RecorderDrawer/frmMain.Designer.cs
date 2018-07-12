@@ -1,6 +1,6 @@
 ﻿namespace RecorderDrawer
 {
-    partial class frmRecorderDrawer
+    partial class frmMain
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@
             System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmRecorderDrawer));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.munOpen = new System.Windows.Forms.ToolStripMenuItem();
             this.munAnalysis = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +66,6 @@
             this.chkXGrid = new System.Windows.Forms.CheckBox();
             this.bgdWorkerAnimation = new System.ComponentModel.BackgroundWorker();
             this.bgdWorkerDraw = new System.ComponentModel.BackgroundWorker();
-            this.bgdWorkerMail = new System.ComponentModel.BackgroundWorker();
             this.pnlChartSetting = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -255,20 +254,19 @@
             // lblInformation
             // 
             this.lblInformation.Name = "lblInformation";
-            this.lblInformation.Size = new System.Drawing.Size(28, 17);
-            this.lblInformation.Text = "Idle";
+            this.lblInformation.Size = new System.Drawing.Size(0, 17);
             // 
             // toolStripStatusLabel1
             // 
             this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(694, 17);
+            this.toolStripStatusLabel1.Size = new System.Drawing.Size(753, 17);
             this.toolStripStatusLabel1.Spring = true;
             // 
             // toolStripStatusLabel2
             // 
             this.toolStripStatusLabel2.Name = "toolStripStatusLabel2";
             this.toolStripStatusLabel2.Size = new System.Drawing.Size(237, 17);
-            this.toolStripStatusLabel2.Text = "Mon-Wei Hsiao Copyright ©  2017-2018";
+            this.toolStripStatusLabel2.Text = "Mon-Wei Hsiao Copyright ©  2015-2018";
             // 
             // chtMain
             // 
@@ -403,13 +401,6 @@
             this.bgdWorkerDraw.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgdWorkerDraw_ProgressChanged);
             this.bgdWorkerDraw.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgdWorkerDraw_RunWorkerCompleted);
             // 
-            // bgdWorkerMail
-            // 
-            this.bgdWorkerMail.WorkerReportsProgress = true;
-            this.bgdWorkerMail.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgdWorkerMail_DoWork);
-            this.bgdWorkerMail.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgdWorkerMail_ProgressChanged);
-            this.bgdWorkerMail.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgdWorkerMail_RunWorkerCompleted);
-            // 
             // pnlChartSetting
             // 
             this.pnlChartSetting.Controls.Add(this.chkXGrid);
@@ -423,7 +414,7 @@
             this.pnlChartSetting.Size = new System.Drawing.Size(356, 25);
             this.pnlChartSetting.TabIndex = 0;
             // 
-            // frmRecorderDrawer
+            // frmMain
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -441,7 +432,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
-            this.Name = "frmRecorderDrawer";
+            this.Name = "frmMain";
             this.Text = "反應槽繪圖器";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmRecorderDrawer_FormClosing);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.frmRecorderDrawer_DragDrop);
@@ -487,7 +478,6 @@
         private System.Windows.Forms.ToolStripMenuItem munExportImgToMail;
         private System.Windows.Forms.ToolStripMenuItem munExportAnimationToFile;
         private System.Windows.Forms.ToolStripMenuItem munExportAnimationToMail;
-        private System.ComponentModel.BackgroundWorker bgdWorkerMail;
         private System.Windows.Forms.ToolStripMenuItem munTitle;
         private System.Windows.Forms.ToolStripMenuItem munDetailedSetting;
         private System.Windows.Forms.ToolStripMenuItem munRecorderFig;

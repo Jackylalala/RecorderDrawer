@@ -75,6 +75,11 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+      <HintPath>..\packages\Microsoft.Office.Interop.Outlook.15.0.4797.1003\lib\net20\Microsoft.Office.Interop.Outlook.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -87,9 +92,13 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="zxing, Version=0.14.0.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\zxing.dll</HintPath>
+    <Reference Include="zxing, Version=0.16.4.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZXing.Net.0.16.4\lib\net40\zxing.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="zxing.presentation, Version=0.16.4.0, Culture=neutral, PublicKeyToken=4e88037ac681fe60, processorArchitecture=MSIL">
+      <HintPath>..\packages\ZXing.Net.0.16.4\lib\net40\zxing.presentation.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -103,17 +112,11 @@
     <Compile Include="AxesProp.cs" />
     <Compile Include="CustomOpenFileDialog.cs" />
     <Compile Include="FlexibleMessageBox.cs" />
-    <Compile Include="frmAnalysis.cs">
+    <Compile Include="frmFormatSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmAnalysis.Designer.cs">
-      <DependentUpon>frmAnalysis.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmAnimation.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmAnimation.Designer.cs">
-      <DependentUpon>frmAnimation.cs</DependentUpon>
+    <Compile Include="frmFormatSelector.Designer.cs">
+      <DependentUpon>frmFormatSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="frmMailer.cs">
       <SubType>Form</SubType>
@@ -127,11 +130,11 @@
     <Compile Include="frmRawData.Designer.cs">
       <DependentUpon>frmRawData.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmRecorderDrawer.cs">
+    <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmRecorderDrawer.Designer.cs">
-      <DependentUpon>frmRecorderDrawer.cs</DependentUpon>
+    <Compile Include="frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="frmDetailedSetting.cs">
       <SubType>Form</SubType>
@@ -145,17 +148,11 @@
     <Compile Include="frmRecorderFigure.Designer.cs">
       <DependentUpon>frmRecorderFigure.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmTimePeriod.cs">
+    <Compile Include="frmSelector.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmTimePeriod.Designer.cs">
-      <DependentUpon>frmTimePeriod.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmTypeSelector.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmTypeSelector.Designer.cs">
-      <DependentUpon>frmTypeSelector.cs</DependentUpon>
+    <Compile Include="frmSelector.Designer.cs">
+      <DependentUpon>frmSelector.cs</DependentUpon>
     </Compile>
     <Compile Include="GifDecoder.cs" />
     <Compile Include="LZWEncoder.cs" />
@@ -175,21 +172,12 @@
     </Compile>
     <Compile Include="RecordData.cs" />
     <Compile Include="SaveFileDialogWithResolution.cs" />
-    <Compile Include="frmSetTime.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmSetTime.Designer.cs">
-      <DependentUpon>frmSetTime.cs</DependentUpon>
-    </Compile>
     <Compile Include="Settings.cs" />
     <EmbeddedResource Include="AboutBox.resx">
       <DependentUpon>AboutBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmAnalysis.resx">
-      <DependentUpon>frmAnalysis.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmAnimation.resx">
-      <DependentUpon>frmAnimation.cs</DependentUpon>
+    <EmbeddedResource Include="frmFormatSelector.resx">
+      <DependentUpon>frmFormatSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmMailer.resx">
       <DependentUpon>frmMailer.cs</DependentUpon>
@@ -197,8 +185,8 @@
     <EmbeddedResource Include="frmRawData.resx">
       <DependentUpon>frmRawData.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmRecorderDrawer.resx">
-      <DependentUpon>frmRecorderDrawer.cs</DependentUpon>
+    <EmbeddedResource Include="frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDetailedSetting.resx">
       <DependentUpon>frmDetailedSetting.cs</DependentUpon>
@@ -206,20 +194,15 @@
     <EmbeddedResource Include="frmRecorderFigure.resx">
       <DependentUpon>frmRecorderFigure.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmSetTime.resx">
-      <DependentUpon>frmSetTime.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmTimePeriod.resx">
-      <DependentUpon>frmTimePeriod.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmTypeSelector.resx">
-      <DependentUpon>frmTypeSelector.cs</DependentUpon>
+    <EmbeddedResource Include="frmSelector.resx">
+      <DependentUpon>frmSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -230,6 +213,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <EmbeddedResource Include="Resources\zxing.dll" />
+    <EmbeddedResource Include="Resources\zxing.presentation.dll" />
+    <EmbeddedResource Include="Resources\mailList.txt" />
     <None Include="Resources\Fig2.png" />
     <None Include="Resources\Fig1.png" />
   </ItemGroup>

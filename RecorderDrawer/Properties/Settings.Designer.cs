@@ -98,12 +98,12 @@ namespace RecorderDrawer.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int DensityIndex {
+        public int FluidIndex {
             get {
-                return ((int)(this["DensityIndex"]));
+                return ((int)(this["FluidIndex"]));
             }
             set {
-                this["DensityIndex"] = value;
+                this["FluidIndex"] = value;
             }
         }
         

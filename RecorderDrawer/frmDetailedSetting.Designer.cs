@@ -338,9 +338,6 @@
             this.cboFluid.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cboFluid.Font = new System.Drawing.Font("Microsoft JhengHei", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.cboFluid.FormattingEnabled = true;
-            this.cboFluid.Items.AddRange(new object[] {
-            "Ethylene Oxide",
-            "Propylene Oxide"});
             this.cboFluid.Location = new System.Drawing.Point(92, 104);
             this.cboFluid.Name = "cboFluid";
             this.cboFluid.Size = new System.Drawing.Size(176, 24);

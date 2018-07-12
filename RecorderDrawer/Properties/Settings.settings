@@ -20,7 +20,7 @@
     <Setting Name="Duration" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="DensityIndex" Type="System.Int32" Scope="User">
+    <Setting Name="FluidIndex" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="ReactorSizeIndex" Type="System.Int32" Scope="User">
