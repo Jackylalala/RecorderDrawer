@@ -21,12 +21,14 @@ namespace RecorderDrawer
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmMain());
+            Application.Run(new FrmMain());
         }
 
         private static Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
             string resourceName = "RecorderDrawer.Resources." + new AssemblyName(args.Name).Name + ".dll";
+            if (resourceName.EndsWith(".resources.dll"))
+                return null;
             using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
             {
                 byte[] assemblyData = new byte[stream.Length];

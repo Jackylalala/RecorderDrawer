@@ -130,5 +130,17 @@ namespace RecorderDrawer.Properties {
                 this["CostPerHour"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(",")]
+        public string YCount {
+            get {
+                return ((string)(this["YCount"]));
+            }
+            set {
+                this["YCount"] = value;
+            }
+        }
     }
 }

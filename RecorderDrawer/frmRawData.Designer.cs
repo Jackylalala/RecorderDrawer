@@ -35,7 +35,6 @@
             this.btnExport = new System.Windows.Forms.Button();
             this.dgvDisplay = new System.Windows.Forms.DataGridView();
             this.chkMail = new System.Windows.Forms.CheckBox();
-            this.bgdMain = new System.ComponentModel.BackgroundWorker();
             this.lblProcessingInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDisplay)).BeginInit();
             this.SuspendLayout();
@@ -109,13 +108,11 @@
             this.dgvDisplay.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dgvDisplay.Size = new System.Drawing.Size(780, 476);
             this.dgvDisplay.TabIndex = 32;
-            this.dgvDisplay.CellValidating += new System.Windows.Forms.DataGridViewCellValidatingEventHandler(this.dgvDisplay_CellValidating);
+            this.dgvDisplay.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvDisplay_CellValueChanged);
             // 
             // chkMail
             // 
             this.chkMail.AutoSize = true;
-            this.chkMail.Checked = true;
-            this.chkMail.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkMail.Font = new System.Drawing.Font("Microsoft JhengHei", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.chkMail.Location = new System.Drawing.Point(526, 486);
             this.chkMail.Name = "chkMail";
@@ -123,13 +120,6 @@
             this.chkMail.TabIndex = 48;
             this.chkMail.Text = "以Mail寄出";
             this.chkMail.UseVisualStyleBackColor = true;
-            // 
-            // bgdMain
-            // 
-            this.bgdMain.WorkerReportsProgress = true;
-            this.bgdMain.DoWork += new System.ComponentModel.DoWorkEventHandler(this.bgdMain_DoWork);
-            this.bgdMain.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.bgdMain_ProgressChanged);
-            this.bgdMain.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.bgdMain_RunWorkerCompleted);
             // 
             // lblProcessingInfo
             // 
@@ -143,7 +133,6 @@
             this.lblProcessingInfo.Text = "Now Processing";
             this.lblProcessingInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.lblProcessingInfo.Visible = false;
-            this.lblProcessingInfo.VisibleChanged += new System.EventHandler(this.lblProcessingInfo_VisibleChanged);
             // 
             // frmRawData
             // 
@@ -176,7 +165,6 @@
         private System.Windows.Forms.Button btnExport;
         public System.Windows.Forms.DataGridView dgvDisplay;
         private System.Windows.Forms.CheckBox chkMail;
-        private System.ComponentModel.BackgroundWorker bgdMain;
         internal System.Windows.Forms.Label lblProcessingInfo;
     }
 }

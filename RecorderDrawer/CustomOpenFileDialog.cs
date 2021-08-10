@@ -205,9 +205,11 @@ namespace RecorderDrawer
                     GetWindowRect(fileTypeWindow, ref aboveRect);
 
                     //now convert the label's screen co-ordinates to client co-ordinates
-                    POINT point = new POINT();
-                    point.X = aboveRect.Left;
-                    point.Y = aboveRect.Bottom;
+                    POINT point = new POINT
+                    {
+                        X = aboveRect.Left,
+                        Y = aboveRect.Bottom
+                    };
 
                     ScreenToClient(parent, ref point);
 
@@ -227,14 +229,18 @@ namespace RecorderDrawer
                     aboveRect = new RECT();
                     GetWindowRect(fileComboWindow, ref aboveRect);
 
-                    point = new POINT();
-                    point.X = aboveRect.Left;
-                    point.Y = aboveRect.Bottom;
+                    point = new POINT
+                    {
+                        X = aboveRect.Left,
+                        Y = aboveRect.Bottom
+                    };
                     ScreenToClient(parent, ref point);
 
-                    POINT rightPoint = new POINT();
-                    rightPoint.X = aboveRect.Right;
-                    rightPoint.Y = aboveRect.Top;
+                    POINT rightPoint = new POINT
+                    {
+                        X = aboveRect.Right,
+                        Y = aboveRect.Top
+                    };
 
                     ScreenToClient(parent, ref rightPoint);
 
@@ -245,7 +251,7 @@ namespace RecorderDrawer
 
                     //and add the encodings we want to offer
                     SendMessage(comboHandle, CB_ADDSTRING, 0, "自動選擇");
-                    foreach (string name in frmMain.recorderList)
+                    foreach (string name in FrmMain.recorderList)
                         SendMessage(comboHandle, CB_ADDSTRING, 0, name);
                     SendMessage(comboHandle, CB_SETCURSEL, m_SchemaType + 1, 0); //Schema type start with -1
 

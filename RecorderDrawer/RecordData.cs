@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -11,12 +12,30 @@ namespace RecorderDrawer
     public class RecordData : IComparable<RecordData>
     {
         public DateTime Time { get; private set; }
-        public List<float> Parameter { get; private set; }
+        public List<float> Parameter { get; set; }
+
+        public RecordData(DateTime time)
+        {
+            Time = time;
+            Parameter = new List<float>();
+        }
+
+        public RecordData(DateTime time, int paramCount)
+        {
+            Time = time;
+            Parameter = new List<float> { float.MaxValue, float.MaxValue, float.MaxValue, float.MaxValue, float.MaxValue, float.MaxValue };
+        }
 
         public RecordData(DateTime time, List<float> parameter)
         {
             Time = time;
             Parameter = parameter;
+        }
+
+        public RecordData(DateTime time, params float[] parameter)
+        {
+            Time = time;
+            Parameter = parameter.ToList();
         }
 
         public RecordData(DateTime time, List<string> parameter, float maxLimit = float.MaxValue, float minLimit = float.MinValue)
@@ -27,22 +46,46 @@ namespace RecorderDrawer
             {
                 float num = 0;
                 float.TryParse(parameter[i], out num);
-                if (frmMain.Type == 6)
+                if (FrmMain.Type == 6)
                 {
                     if (i == 6 || i == 5) //first flow and pressure column
                         num /= 10;
                     else if (i == 8) //rotation speed column
                         num *= 10;
                 }
-                if (frmMain.Type == 4 && i == 2) //pressure column
+                if (FrmMain.Type == 4 && i == 2) //pressure column
                     num /= 10;
-                if (frmMain.Type == 2 && i == 7) //second flow column
+                if (FrmMain.Type == 2 && i == 7) //second flow column
                     num /= 10;
-                if (num > maxLimit || num < minLimit)
-                    num = 0;
+                if (FrmMain.Type == 13 && i == 4)
+                    num /= 10;
+                if (FrmMain.Type == 13 && i == 5)
+                    num /= 10;
+                if (FrmMain.Type == 13 && i == 7)
+                    num *= 10;
+                if (FrmMain.Type == 13 && i == 8)
+                    num /= 10;
                 num = (float)Math.Round(num, 2, MidpointRounding.AwayFromZero);
                 Parameter.Add(num);
             }
+        }
+
+        public void AddParameter(float num)
+        {
+            Parameter.Add(num);
+        }
+
+        public RecordData Refine(float minLimit, float maxLimit)
+        {
+            List<float> param = new List<float>();
+            for (int i = 0; i < Parameter.Count; i++)
+            {
+                if (Parameter[i] < minLimit || Parameter[i] > maxLimit)
+                    param.Add(0);
+                else
+                    param.Add(Parameter[i]);
+            }
+            return new RecordData(Time, param);
         }
 
         public int CompareTo(RecordData obj)

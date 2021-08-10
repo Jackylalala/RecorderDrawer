@@ -7,11 +7,11 @@ using System.Resources;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("高壓反應器趨勢圖繪圖程式")]
-[assembly: AssemblyDescription("繪製反應趨勢圖")]
+[assembly: AssemblyDescription("繪製反應趨勢圖、計算製程資訊")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("jackylalala2@gmail.com")]
 [assembly: AssemblyProduct("高壓反應器趨勢圖繪圖程式")]
-[assembly: AssemblyCopyright("Mon-Wei Hsiao Copyright ©  2015 - 2018")]
+[assembly: AssemblyCopyright("Mon-Wei Hsiao Copyright ©  2015 - 2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,6 +33,6 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("8.1.*")]
-[assembly: AssemblyFileVersion("8.1")]
+[assembly: AssemblyVersion("11.1.*")]
+[assembly: AssemblyFileVersion("11.1")]
 [assembly: NeutralResourcesLanguageAttribute("zh-TW")]

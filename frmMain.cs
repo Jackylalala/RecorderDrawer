@@ -21,7 +21,7 @@ using System.Drawing.Drawing2D;
 
 namespace RecorderDrawer
 {
-    public partial class FrmMain : Form
+    public partial class frmMain : Form
     {
         #region | Class |
         private class RecorderTypeErrorException : Exception
@@ -41,12 +41,6 @@ namespace RecorderDrawer
             public MemoryCardErrorException() : base() { }
             public MemoryCardErrorException(string message) : base(message) { }
             public MemoryCardErrorException(string message, Exception innerException) : base(message, innerException) { }
-        }
-        private class SchemaErrorException : Exception
-        {
-            public SchemaErrorException() : base() { }
-            public SchemaErrorException(string message) : base(message) { }
-            public SchemaErrorException(string message, Exception innerException) : base(message, innerException) { }
         }
         #endregion
 
@@ -206,11 +200,29 @@ namespace RecorderDrawer
         //X position of y axis label
         private static readonly float[] yLabelXPos = new float[] { -0.03F, 1.03F, -0.105F, 1.105F, -0.17F, 1.17F };
         private static readonly float[] yLabelYPos = new float[] { -0.05F, -0.11F, -0.145F, -0.18F, -0.215F, -0.25F };
+        //Color of series
+        private static readonly Color[] seriesColor =
+            new Color[] {
+                Color.Red, Color.Lime, Color.Blue, Color.Gold, Color.Fuchsia,
+                Color.Aqua, Color.Purple, Color.FromArgb(128, 64, 0), Color.FromArgb(251, 114, 13), Color.FromArgb(0, 128, 0),
+                Color.FromArgb(250, 141, 171), Color.FromArgb(218, 151,240), Color.FromArgb(137,172,254), Color.FromArgb(1,201,101), Color.FromArgb(201,41,57),
+                Color.FromArgb(133,92,150), Color.FromArgb(185,80,57), Color.FromArgb(112,131,112), Color.FromArgb(121,117,125), Color.FromArgb(87,36,206),
+                Color.FromArgb(27,159,216), Color.FromArgb(186,56,56), Color.FromArgb(194,203,39), Color.FromArgb(0,242,43) };
+        private static readonly Color[] seriesSelectionBoxTextColor =
+            new Color[] {
+                Color.Black, Color.Black, Color.White, Color.Black, Color.Black,
+                Color.Black, Color.White, Color.White, Color.Black, Color.White,
+                Color.White, Color.White, Color.White, Color.White, Color.White,
+                Color.White, Color.White, Color.White, Color.White, Color.White,
+                Color.White, Color.White, Color.Black, Color.Black};
         private static readonly int maxDataCount = 86400;
+        #endregion
+
+        #region | Field |
         //Series map (6 axes for each type)
         //Axes: 時間, 內溫, 外溫, 壓力, 流速(升溫), 轉速, 扭力 (Default)
         //new int[7][] { new int[] { }, new int[] { }, new int[] { }, new int[] {  }, new int[] {  }, new int[] {  }, new int[] {  } }
-        private static readonly List<int[][]> seriesMap = new List<int[][]>{
+        private static List<int[][]> seriesMap = new List<int[][]>{
             new int[7][] { new int[] { 0 }, new int[] { 1, 5 }, new int[] { 2, 3, 4, 6 }, new int[] { 7 }, new int[] { 10 }, new int[] { 8 }, new int[] { 9 } }, //0
             new int[7][] { new int[] { 0 }, new int[] { 1, 5 }, new int[] { 2, 3, 4, 6 }, new int[] { 7 }, new int[] { 10 }, new int[] { 8 }, new int[] { 9 } }, //1
             new int[7][] { new int[] { 0 }, new int[] { 1, 2, 7 }, new int[] { 3, 4 }, new int[] { 6 }, new int[] { 5, 9 }, new int[] { 8 }, new int[] {  } }, //2
@@ -228,9 +240,8 @@ namespace RecorderDrawer
             new int[7][] { new int[] { 0 }, new int[] { 1, 2, 7 }, new int[] { 3, 4 }, new int[] { 6 }, new int[] { 5, 9 }, new int[] { 8 }, new int[] {  } }, //14
             };
         //row number of first data row
-        private static readonly List<int> firstDataRow = new List<int> { 1, 1, 1, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1 };
-        //parameter title
-        private static readonly List<string[]> paramTitle = new List<string[]> {
+        private static List<int> firstDataRow = new List<int> { 1, 1, 1, 1, 3, 1, 1, 1, 3, 3, 3, 3, 1, 1, 1 };
+        private static List<string[]> paramTitle = new List<string[]> {
             new string[] { "釜溫PV", "油溫PV", "油出口PV", "油入口PV", "內溫SV", "油上限SV", "壓力PV", "轉速PV", "扭力PV", "流速PV" }, //0
             new string[] { "釜溫PV", "油溫PV", "油出口PV", "油入口PV", "內溫SV", "油上限SV", "壓力PV", "轉速PV", "扭力PV", "流速PV" }, //1
             new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "EO流速", "壓力PV", "程控SV", "轉速PV", "PO流速" }, //2
@@ -248,33 +259,6 @@ namespace RecorderDrawer
             new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "EO流速", "壓力PV", "程控SV", "轉速PV", "PO流速" }, //13
             new string[] { "內溫SV", "內溫PV", "外溫SV", "外溫PV", "升溫段1", "壓力PV", "程控SV", "轉速PV", "升溫段2" }, //14
          };
-        //parameter color(forecolor only for the text in selection box)
-        private static readonly Color[] paramBackcolor =
-            new Color[] {
-                Color.Red, Color.Lime, Color.Blue, Color.Gold, Color.Fuchsia,
-                Color.Aqua, Color.Purple, Color.FromArgb(128, 64, 0), Color.FromArgb(251, 114, 13), Color.FromArgb(0, 128, 0),
-                Color.FromArgb(250, 141, 171), Color.FromArgb(218, 151,240), Color.FromArgb(137,172,254), Color.FromArgb(1,201,101), Color.FromArgb(201,41,57),
-                Color.FromArgb(133,92,150), Color.FromArgb(185,80,57), Color.FromArgb(112,131,112), Color.FromArgb(121,117,125), Color.FromArgb(87,36,206),
-                Color.FromArgb(27,159,216), Color.FromArgb(186,56,56), Color.FromArgb(194,203,39), Color.FromArgb(0,242,43) };
-        private static readonly Color[] paramForecolor =
-            new Color[] {
-                Color.Black, Color.Black, Color.White, Color.Black, Color.Black,
-                Color.Black, Color.White, Color.White, Color.Black, Color.White,
-                Color.White, Color.White, Color.White, Color.White, Color.White,
-                Color.White, Color.White, Color.White, Color.White, Color.White,
-                Color.White, Color.White, Color.Black, Color.Black};
-        #endregion
-
-        #region | Field |
-        //Y axis properties
-        private static List<AxesProp[]> yProp = new List<AxesProp[]>();
-        //**********some field have custom type, name with Custom suffix**********
-        private static int[][] seriesMapCustom;
-        private static int firstDataRowCustom;
-        private static string[] paramTitleCustom;
-        private static Color[] paramBackcolorCustom;
-        private static Color[] paramForecolorCustom;
-        private static AxesProp[] yPropCustom;
         //Data information
         private static bool dataRefined = false;
         private List<int> hiddenList = new List<int>(); //Hidden list of series
@@ -282,6 +266,8 @@ namespace RecorderDrawer
         private int fileType; //-1: folder, 0: csv, 1: krf, 2: dat, 3: dmt
         private static PointPairList[] trendSeriesRaw;
         private static PointPairList[] trendSeriesRefined;
+        //Y axis properties
+        private static List<AxesProp[]> yProp = new List<AxesProp[]>();
         //Chart item selection box and title
         private CheckBox[] chkChartItem;
         //Chart data display box
@@ -312,129 +298,16 @@ namespace RecorderDrawer
         #endregion
 
         #region | Properties |
+        public static int[][] SeriesMap { get { return seriesMap[Type]; } }
         //Recorder type, -1 means auto detect, according to REACTOR_LIST
         public static int Type { get; private set; }
-        public static bool Custom { get; private set; }
-        public static int[][] SeriesMap
-        {
-            get
-            {
-                if (Custom)
-                {
-                    if (seriesMapCustom != null)
-                        return seriesMapCustom;
-                    else
-                        return seriesMap[Type];
-                }
-                else
-                    return seriesMap[Type];
-            }
-            set
-            {
-                seriesMapCustom = value;
-            }
-        }
-        public static int FirstDataRow
-        {
-            get
-            {
-                if (Custom)
-                {
-                    if (firstDataRowCustom > 0)
-                        return firstDataRowCustom;
-                    else
-                        return firstDataRow[Type];
-                }
-                else
-                    return firstDataRow[Type];
-            }
-            set
-            {
-                firstDataRowCustom = value;
-            }
-        }
-        public static string[] ParamTitle
-        {
-            get
-            {
-                if (Custom)
-                {
-                    if (paramTitleCustom != null)
-                        return paramTitleCustom;
-                    else
-                        return paramTitle[Type];
-                }
-                else
-                    return paramTitle[Type];
-            }
-            set
-            {
-                paramTitleCustom = value;
-            }
-        }
-        public static Color[] ParamBackColor
-        {
-            get
-            {
-                if (Custom)
-                {
-                    if (paramBackcolorCustom != null)
-                        return paramBackcolorCustom;
-                    else
-                        return paramBackcolor;
-                }
-                else
-                    return paramBackcolor;
-            }
-            set
-            {
-                paramBackcolorCustom = value;
-            }
-
-        }
-       public static Color[] ParamForeColor
-        {
-            get
-            {
-                if (Custom)
-                {
-                    if (paramForecolorCustom != null)
-                        return paramForecolorCustom;
-                    else
-                        return paramForecolor;
-                }
-                else
-                    return paramForecolor;
-            }
-            set
-            {
-                paramForecolorCustom = value;
-            }
-
-        }
-        public static AxesProp[] YProp
-        {
-            get
-            {
-                if (Custom)
-                {
-                    if (yPropCustom != null)
-                        return yPropCustom;
-                    else
-                        return yProp[Type];
-                }
-                else
-                    return yProp[Type];
-            }
-            set
-            {
-                yPropCustom = value;
-            }
-        }
+        public static int FirstDataRow { get { return firstDataRow[Type]; } }
         //note: ALL SERIES must have same count (fill 0 when null)
         public static PointPairList[] TrendSeries { get { if (dataRefined) return trendSeriesRefined; else return trendSeriesRaw; } }
         //ascending number of columu(s) contains parameter(s), which create from SeriesMap[Type]
         private int[] ParamColNum { get { return SeriesMap.Skip(1).SelectMany(m => m).OrderBy(n => n).ToArray(); } }
+        public static string[] ParamTitle { get { return paramTitle[Type]; } }
+        public static AxesProp[] YProp { get { return yProp[Type]; } }
         public static int XType { get; private set; } = 0;//0: text, 1: DateTime
         public static int XInterval { get; private set; } = 0;//X axis interval in minute
         public static int XAngle { get; private set; } = 0;//X axis label angle
@@ -452,7 +325,7 @@ namespace RecorderDrawer
         #endregion
 
         #region | Event |
-        public FrmMain()
+        public frmMain()
         {
             InitializeComponent();
             //Load the settings
@@ -513,7 +386,6 @@ namespace RecorderDrawer
 
         private void frmRecorderDrawer_DragDrop(object sender, DragEventArgs e)
         {
-            Custom = false;
             if (validFile)
             {
                 //Type select
@@ -554,7 +426,6 @@ namespace RecorderDrawer
 
         private void mnuOpen_Click(object sender, EventArgs e)
         {
-            Custom = false;
             CustomOpenFileDialog ofd = new CustomOpenFileDialog();
             ofd.Title = "選擇數據檔";
             ofd.Filter = "所有支援的檔案格式|*.csv;*.krf;*.dat|逗號分隔值的文字檔案(*.csv)|*.csv|KR2000(*.krf)|*.krf|data file(*.dat)|*.dat";
@@ -591,10 +462,9 @@ namespace RecorderDrawer
 
         private void mnuOpenFolder_Click(object sender, EventArgs e)
         {
-            Custom = false;
-            CustomFileBrowserDialog fbd = new CustomFileBrowserDialog();
-            //fbd.Description = "選擇記憶卡";
-            if (fbd.ShowDialog(this) == DialogResult.OK)
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            fbd.Description = "選擇記憶卡";
+            if (fbd.ShowDialog() == DialogResult.OK)
             {
                 //Type select
                 frmSelector frmTypeSelector = new frmSelector(new string[] { "自動選擇" }.Union(recorderList).ToArray(), "控制器編號", true);
@@ -602,7 +472,7 @@ namespace RecorderDrawer
                 frmTypeSelector.Location = new Point(Location.X + Width / 2 - frmTypeSelector.ClientSize.Width / 2, Location.Y + Height / 2 - frmTypeSelector.ClientSize.Height / 2);
                 if (frmTypeSelector.ShowDialog(this) == DialogResult.OK)
                 {
-                    rawFileName = fbd.DirectoryPath;
+                    rawFileName = fbd.SelectedPath;
                     txtFilePath.Text = rawFileName;
                     Type = frmTypeSelector.Index - 1;
                     fileType = -1;
@@ -614,7 +484,6 @@ namespace RecorderDrawer
 
         private void mnuAnalysis_Click(object sender, EventArgs e)
         {
-            Custom = false;
             bgdWorkerDraw.RunWorkerAsync(new object[] { true, false, chtMain });
         }
 
@@ -644,6 +513,7 @@ namespace RecorderDrawer
                 ReactorSizeIndex = frmDetailedSetting.ReactorSizeIndex;
                 RecorderName = frmDetailedSetting.RecorderName;
                 //Axes tab
+                yProp[Type] = frmDetailedSetting.YProp;
                 XType = frmDetailedSetting.XType;
                 XInterval = frmDetailedSetting.XInterval;
                 XAngle = frmDetailedSetting.XAngle;
@@ -654,12 +524,6 @@ namespace RecorderDrawer
                 AgingTempFix = frmDetailedSetting.AgingTempFix;
                 AgingPDiff = frmDetailedSetting.AgingPDiff;
                 AgingTimeHold = frmDetailedSetting.AgingTimeHold;
-                //cutom field update
-                Custom = true;
-                ParamTitle = frmDetailedSetting.ParamTitle;
-                ParamBackColor = frmDetailedSetting.ParamBackColor;
-                ParamForeColor = frmDetailedSetting.ParamForeColor;
-                YProp = frmDetailedSetting.YProp;
                 //commit
                 bgdWorkerDraw.RunWorkerAsync(new object[] { false, true, chtMain });
             }
@@ -694,7 +558,6 @@ namespace RecorderDrawer
             chtDraw.SaveAs(ms, 300, ImageFormat.Jpeg);
             if (ms != null)
             {
-                Clipboard.Clear();
                 Clipboard.SetImage(new Bitmap(ms));
                 MessageBox.Show(this, "圖片已複製到剪貼簿(最佳化bitmap)");
             }
@@ -703,7 +566,7 @@ namespace RecorderDrawer
             FunctionSwitch(true);
         }
 
-        private void mnuExportImg_Click(object sender, EventArgs e)
+        private void mnuExportImgToFile_Click(object sender, EventArgs e)
         {
             FunctionSwitch(false);
             SaveFileDialog sfd = new SaveFileDialog();
@@ -803,7 +666,7 @@ namespace RecorderDrawer
                     MessageBox.Show("由於資料點超過" + maxDataCount + "，目前顯示數據為平均數值，請縮小範圍後再進行編輯", "警告", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
-                if (MessageBox.Show("注意！這將會修改到原始數據，需[重新讀取]或重新讀入檔案才會回復。請確認後再繼續。", "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+                if (MessageBox.Show("注意！這將會修改到原始數據，需[重新分析]或重新讀取檔案才會回復。請確認後再繼續。", "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                     return;
                 dataRefined = false;
                 frmRawData frmRawData = new frmRawData();
@@ -1016,12 +879,8 @@ namespace RecorderDrawer
                     bgdWorkerDraw.ReportProgress(99, "Refine Data");
                     RefineData(factor, index);
                 }
-                bgdWorkerDraw.ReportProgress(99, "Set Framework");
-                if (SetFrameWork())
-                {
-                    bgdWorkerDraw.ReportProgress(99, "Draw Chart");
-                    e.Result = DrawChart(targetChart);
-                }
+                bgdWorkerDraw.ReportProgress(99, "Draw Chart");
+                e.Result = DrawChart(targetChart);
             }
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds.ToString() + " ms");
@@ -1064,7 +923,7 @@ namespace RecorderDrawer
 
         private void SetDataFactor(object sender, EventArgs e)
         {
-            if (MessageBox.Show("注意！這將會修改到原始數據，需[重新讀取]或重新讀入檔案才會回復。請確認後再繼續。", "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+            if (MessageBox.Show("注意！這將會修改到原始數據，需[重新分析]或重新讀取檔案才會回復。請確認後再繼續。", "警告", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
                 return;
             int index = int.Parse(((Button)sender).Tag.ToString());
             float factor = ((Button)sender).Text.Equals("x10") ? 10 : 0.1f;
@@ -1382,6 +1241,15 @@ namespace RecorderDrawer
                 hiddenList.Clear();
                 maxLimit = float.MaxValue;
                 minLimit = float.MinValue;
+                //clear custom data
+                if (seriesMap.Count == recorderList.Length)
+                    seriesMap.RemoveAt(seriesMap.Count - 1);
+                if (firstDataRow.Count == recorderList.Length)
+                    firstDataRow.RemoveAt(firstDataRow.Count - 1);
+                if (yProp.Count == recorderList.Length)
+                    yProp.RemoveAt(yProp.Count - 1);
+                if (paramTitle.Count == recorderList.Length)
+                    paramTitle.RemoveAt(paramTitle.Count - 1);
                 //Reading
                 switch (fileType)
                 {
@@ -1404,16 +1272,14 @@ namespace RecorderDrawer
                             frmFormatSelector frmFormatSelector = new frmFormatSelector(allLines.ToArray());
                             if (frmFormatSelector.ShowDialog() == DialogResult.OK)
                             {
+                                seriesMap.Add(frmFormatSelector.SeriesMap);
+                                firstDataRow.Add(frmFormatSelector.FirstDataRow);
+                                paramTitle.Add(frmFormatSelector.ParamTitle.ToArray());
                                 RecorderName = frmFormatSelector.RecorderName;
+                                yProp.Add(frmFormatSelector.YProp);
                                 XType = frmFormatSelector.XType;
                                 XInterval = frmFormatSelector.XInterval;
                                 XAngle = frmFormatSelector.XAngle;
-                                //custom field
-                                Custom = true;
-                                SeriesMap = frmFormatSelector.SeriesMap;
-                                ParamTitle = frmFormatSelector.ParamTitle.ToArray();
-                                FirstDataRow = frmFormatSelector.FirstDataRow;
-                                YProp = frmFormatSelector.YProp;
                             }
                             else
                                 return false;
@@ -1424,8 +1290,27 @@ namespace RecorderDrawer
                         //Determine schema type
                         if (Type == -1)
                         {
-                            //old version compatible
-                            if (secondRowLength == 10)
+                            if (allLines[0].Split(',', '\t').Length > 0 && allLines[0].Split(',', '\t')[0].Contains("RecorderDrawer"))
+                            {
+                                //old version compatible
+                                Type = int.Parse(allLines[0].Split(',', '\t')[1]);
+                                int[][] tempMap = SeriesMap;
+                                //modify map, remove datetime column
+                                List<List<int>> map = new List<List<int>>();
+                                map.Add(new List<int>(new int[] { 0 }));
+                                for (int i = 1; i < tempMap.Length; i++)
+                                {
+                                    map.Add(new List<int>());
+                                    for (int j = 0; j < tempMap[i].Length; j++)
+                                        map[i].Add(tempMap[i][j] - tempMap[0].Length + 1);
+                                }
+                                seriesMap.Add(map.Select(m => m.ToArray()).ToArray());
+                                firstDataRow.Add(1);
+                                yProp.Add(YProp);
+                                paramTitle.Add(ParamTitle);
+                                Type = recorderList.Length - 1;
+                            }
+                            else if (secondRowLength == 10)
                                 Type = 2; //#3 #4 #7
                             else if (secondRowLength == 11)
                                 Type = 0; //#1 #2
@@ -1462,7 +1347,8 @@ namespace RecorderDrawer
                                 //add parameter
                                 for (int j = 0; j < trendSeriesRaw.Length; j++)
                                 {
-                                    double.TryParse(paramString[j], out double num);
+                                    double num = 0;
+                                    double.TryParse(paramString[j], out num);
                                     //fix number with factor
                                     switch (Type)
                                     {
@@ -1494,9 +1380,6 @@ namespace RecorderDrawer
                         }
                         break;
                     case 1: //krf file
-                        //shouldn't be custom type
-                        if (Type == recorderList.Length - 1)
-                            throw new SchemaErrorException();
                         using (BinaryReader reader = new BinaryReader(new FileStream(rawFileName, FileMode.Open, FileAccess.Read)))
                         {
                             DateTime start;
@@ -1546,9 +1429,6 @@ namespace RecorderDrawer
                         }
                         break;
                     case 2: //dat file
-                        //shouldn't be custom type
-                        if (Type == recorderList.Length - 1)
-                            throw new SchemaErrorException();
                         using (FileStream fs = new FileStream(rawFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                         {
                             BinaryReader reader = new BinaryReader(fs, Encoding.UTF8);
@@ -1558,7 +1438,6 @@ namespace RecorderDrawer
                             if (Type == int.MaxValue) //custom type
                             {
                                 Type = recorderList.Length - 1; //set to correct type
-                                Custom = true;
                                 //read series map
                                 List<List<int>> map = new List<List<int>>();
                                 int axisCount = reader.ReadInt32();
@@ -1569,21 +1448,21 @@ namespace RecorderDrawer
                                     for (int j = 0; j < channelCount; j++)
                                         map[i].Add(reader.ReadInt32());
                                 }
-                                SeriesMap = map.Select(m => m.ToArray()).ToArray();
+                                seriesMap.Add(map.Select(m => m.ToArray()).ToArray());
                                 //read first row
-                                FirstDataRow = reader.ReadInt32();
+                                firstDataRow.Add(reader.ReadInt32());
                                 //read y-axis parameter
                                 List<AxesProp> param = new List<AxesProp>();
                                 axisCount = reader.ReadInt32();
                                 for (int i = 0; i < axisCount; i++)
                                     param.Add(AxesProp.Deserialize(fs));
-                                YProp = param.ToArray();
+                                yProp.Add(param.ToArray());
                                 //read parameter title
                                 int paramCount = reader.ReadInt32();
                                 List<string> temp = new List<string>();
                                 for (int i = 0; i < paramCount; i++)
                                     temp.Add(reader.ReadString());
-                                ParamTitle = temp.ToArray();
+                                paramTitle.Add(temp.ToArray());
                             }
                             RecorderName = reader.ReadString(); //recorder name
                             trendSeriesRaw = new PointPairList[reader.ReadInt32()]; //trend count
@@ -1601,9 +1480,6 @@ namespace RecorderDrawer
                         }
                         break;
                     case -1: //folder, CHUNDE(Observer) data
-                        //shouldn't be custom type
-                        if (Type == recorderList.Length - 1)
-                            throw new SchemaErrorException();
                         if (Type == -1)
                             Type = 4; //default type is 4
                         //check file
@@ -1614,95 +1490,91 @@ namespace RecorderDrawer
                         }
                         List<long[]>[] index = new List<long[]>[6];
                         //NOTE: ALL time save as seconds(ticks * 10,000,000)
-                        long[] timeStart = new long[6];
+                        long[] dataStart = new long[6];
                         for (int i = 0; i < 6; i++)
                         {
                             //get index
                             index[i] = new List<long[]>();
                             byte[] data = File.ReadAllBytes(rawFileName + @"\P" + i + @".idx");
                             int counter = 0;
-                            unsafe
+                            dataStart[i] = DateTime.FromFileTimeUtc(BitConverter.ToInt64(data, counter)).Ticks / 10000000;
+                            Console.WriteLine(new DateTime(dataStart[i]*10000000).ToString());
+                            counter += 24; //skip 16 bytes
+                            while (counter < data.Length)
                             {
-                                fixed (byte* dataPtr = &data[0])
+                                index[i].Add(new long[4]);
+                                index[i][index[i].Count - 1][0] = BitConverter.ToInt32(data, counter); //start address
+                                counter += 4;
+                                index[i][index[i].Count - 1][1] = BitConverter.ToInt32(data, counter); //data count
+                                counter += 4;
+                                index[i][index[i].Count - 1][2] = BitConverter.ToInt32(data, counter); //datetime offset(in 100 millisecond)
+                                counter += 8; //skip 4 bytes
+                                index[i][index[i].Count - 1][3] = BitConverter.ToInt64(data, counter); ; //digit fingerprint
+                                counter += 8;
+                            }
+                        }
+                        //compare start time and end time, create an array contain ALL data
+                        long dataStartMin = dataStart.Min();
+                        long[] endTimeList = new long[6];
+                        for (int j = 0; j < 6; j++)
+                            endTimeList[j] = dataStart[j] + (index[j][index[j].Count - 1][2] / 10) + (index[j][index[j].Count - 1][1] - 1);
+                        long dataEndMax = endTimeList.Max();
+                        PointPairList[] allData = new PointPairList[ParamTitle.Length];
+                        for (int i = 0; i < ParamTitle.Length; i++)
+                        {
+                            allData[i] = new PointPairList();
+                            allData[i].AddRange(new PointPair[dataEndMax - dataStartMin + 1]);
+                        }
+                        Parallel.For(0, ParamTitle.Length, i =>
+                        {
+                            byte[] data = File.ReadAllBytes(rawFileName + @"\P" + i + @".dat");
+                            for (int j = 0; j < index[i].Count; j++)
+                            {
+                                long time = dataStart[i] + index[i][j][2] / 10;
+                                //digit(temp)
+                                int digit = 0;
+                                if (index[i][j][3] == 0x0201000AC347FD71)
+                                    digit = 2;
+                                else if (index[i][j][3] == 0x0101000AC4F9FCCD)
+                                    digit = 1;
+                                else if (index[i][j][3] == 0x0001000AC69C3E00)
+                                    digit = 0;
+                                //special fix for type 4
+                                if (Type == 4 && i == 2)
+                                    digit += 1;
+                                int counter = (int)index[i][j][0];
+                                for (int k = 0; k < index[i][j][1]; k++)
                                 {
-                                    timeStart[i] = *((long*)(dataPtr + counter));
-                                    counter += 24; //skip 16 bytes
-                                    while (counter < data.Length)
-                                    {
-                                        index[i].Add(new long[4]);
-                                        //0: start address
-                                        index[i][index[i].Count - 1][0] = *((int*)(dataPtr + counter)); 
-                                        counter += 4;
-                                        //1: data count
-                                        index[i][index[i].Count - 1][1] = *((int*)(dataPtr + counter)); 
-                                        counter += 4;
-                                        //2: datetime offset(1,000,000 ticks)
-                                        index[i][index[i].Count - 1][2] = *((int*)(dataPtr + counter)); 
-                                        counter += 8; //skip 4 bytes
-                                        //3: digit fingerprint
-                                        index[i][index[i].Count - 1][3] = *((long*)(dataPtr + counter)); ; 
-                                        counter += 8;
-                                    }
+                                    allData[i][(int)(time + k - dataStartMin)] = new PointPair(
+                                            new XDate(new DateTime((time + k) * 10000000)),
+                                            (BitConverter.ToInt16(data, counter) - 0x4e1f) / (float)(Math.Pow(10, digit)),
+                                            ParamTitle[i]
+                                        );
+                                    counter += 2;
+                                }
+                            }
+                        });
+                        //remove empty element
+                        trendSeriesRaw = new PointPairList[ParamTitle.Length];
+                        for (int i = 0; i < trendSeriesRaw.Length; i++)
+                            trendSeriesRaw[i] = new PointPairList();
+                        for (int i = 0; i < allData[0].Count; i++)
+                        {
+                            if (!allData.All(m => m[i] == null))
+                            {
+                                for (int j = 0; j < trendSeriesRaw.Length; j++)
+                                {
+                                    if (allData[j][i] != null)
+                                        trendSeriesRaw[j].Add(allData[j][i]);
+                                    /*
+                                    if (allData[j][i] == null)
+                                        trendSeriesRaw[j].Add(new PointPair(new XDate(new DateTime(((long)i * 10000000))), 0, ParamTitle[j]));
+                                    else
+                                        trendSeriesRaw[j].Add(allData[j][i]);
+                                        */
                                 }
                             }
                         }
-
-                        //get min. time in ticks
-                        long timeStartMin = timeStart.Min();
-                        //get max. time in ticks
-                        long timeEndMax = timeStartMin;
-                        for (int i = 0; i < 6; i++)
-                        {
-                            if (timeStart[i] + (index[i][index[i].Count - 1][2] / 10) + (index[i][index[i].Count - 1][1] - 1) > timeEndMax)
-                                timeEndMax = timeStart[i] + index[i][index[i].Count - 1][2] * 1000000 + (index[i][index[i].Count - 1][1] - 1) * 10000000;
-                        }
-                        //create PointPairList[] contains ALL time
-                        trendSeriesRaw = new PointPairList[ParamTitle.Length];
-                        //********************KEY RDS***************************
-                        Parallel.For(0, ParamTitle.Length, i =>
-                        {
-                            trendSeriesRaw[i] = new PointPairList();
-                            trendSeriesRaw[i].AddRange(new PointPair[(timeEndMax - timeStartMin) / 10000000 + 1]);
-                            for (int j = 0; j < trendSeriesRaw[i].Count; j++)
-                                trendSeriesRaw[i][j] = new PointPair(XDate.DateTimeToXLDate(DateTime.FromFileTimeUtc(timeStartMin + (long)j * 10000000)), double.NaN, ParamTitle[i]);
-                            /*
-                            for (long j = timeStartMin; j <= timeEndMax; j += 10000000)
-                                trendSeriesRaw[i].Add(new PointPair(XDate.DateTimeToXLDate(DateTime.FromFileTimeUtc(j)), double.NaN, ParamTitle[i]));
-                            */
-                        });
-                        //********************KEY RDS***************************
-                        Parallel.For(0, trendSeriesRaw.Length, i =>
-                        {
-                            byte[] data = File.ReadAllBytes(rawFileName + @"\P" + i + @".dat");
-                            Parallel.ForEach(index[i], block =>
-                            {
-                                //digit(temp)
-                                int digit = 0;
-                                if (block[3] == 0x0201000AC347FD71)
-                                    digit = 2;
-                                else if (block[3] == 0x0101000AC4F9FCCD)
-                                    digit = 1;
-                                else if (block[3] == 0x0001000AC69C3E00)
-                                    digit = 0;
-                                if (Type == 4 && i == 2)
-                                    digit += 1;
-                                //get data
-                                Parallel.For(0, block[1], k =>
-                                {
-                                    long time = timeStart[i] + block[2] * 1000000 + k * 10000000;
-                                    double value = BitConverter.ToUInt16(data, (int)(block[0] + k * 2));
-                                    if (value == 0xffff)
-                                        value = double.NaN;
-                                    else if (value == 0xfffe)
-                                        value = 45536 / (float)(Math.Pow(10, digit));
-                                    else
-                                        value = (value - 0x4e1f) / (float)(Math.Pow(10, digit));
-                                    //add data
-                                    //trendSeriesRaw[i][(int)((time - timeStartMin) / 10000000)].X = XDate.DateTimeToXLDate(DateTime.FromFileTimeUtc(time));
-                                    trendSeriesRaw[i][(int)((time - timeStartMin) / 10000000)].Y = value;
-                                });
-                            });
-                        });
                         break;
                 }
                 //set process parameter
@@ -1723,15 +1595,11 @@ namespace RecorderDrawer
                         break;
                 }
                 //get start time and end time
-                StartTime = new XDate(trendSeriesRaw.Min(m => m[0].X));
-                EndTime = new XDate(trendSeriesRaw.Max(m => m[m.Count - 1].X));
+                StartTime = new XDate(trendSeriesRaw[0][0].X);
+                EndTime = new XDate(trendSeriesRaw[0][trendSeriesRaw[0].Count - 1].X);
                 //refine data
                 RefineData();
                 return true;
-            }
-            catch (SchemaErrorException)
-            {
-                MessageBox.Show("不支援該資料格式", "錯誤", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (FileNotFoundException)
             {
@@ -1778,13 +1646,11 @@ namespace RecorderDrawer
                 try
                 {
                     //tooltip
-                    ToolTip tooltip = new ToolTip
-                    {
-                        ToolTipTitle = "參數說明",
-                        UseAnimation = true,
-                        UseFading = true,
-                        IsBalloon = true
-                    };
+                    ToolTip tooltip = new ToolTip();
+                    tooltip.ToolTipTitle = "參數說明";
+                    tooltip.UseAnimation = true;
+                    tooltip.UseFading = true;
+                    tooltip.IsBalloon = true;
                     bool showTooltip = false;
                     string[] tooltipString = new string[] { };
                     //Set series parameter
@@ -1809,17 +1675,15 @@ namespace RecorderDrawer
                     for (int i = 0; i < chkChartItem.Length; i++)
                     {
                         //check box
-                        chkChartItem[i] = new CheckBox
-                        {
-                            Text = ParamTitle[i],
-                            Width = boxWidth,
-                            Height = 24,
-                            Top = (panelExactHeight - (24 * 3 + 10)) / 2,
-                            Left = padding + i * (boxWidth + padding)
-                        };
+                        chkChartItem[i] = new CheckBox();
+                        chkChartItem[i].Text = ParamTitle[i];
+                        chkChartItem[i].Width = boxWidth;
+                        chkChartItem[i].Height = 24;
+                        chkChartItem[i].Top = (panelExactHeight - (24 * 3 + 10)) / 2;
+                        chkChartItem[i].Left = padding + i * (boxWidth + padding);
                         chkChartItem[i].Font = new Font("微軟正黑體", Math.Min(StringWidth("內溫PV", chkChartItem[i].Font) / StringWidth(ParamTitle[i], chkChartItem[i].Font) * 10F, 10F));
-                        chkChartItem[i].BackColor = ParamBackColor[i];
-                        chkChartItem[i].ForeColor = ParamForeColor[i];
+                        chkChartItem[i].BackColor = seriesColor[i];
+                        chkChartItem[i].ForeColor = seriesSelectionBoxTextColor[i];
                         if (showTooltip)
                             tooltip.SetToolTip(chkChartItem[i], tooltipString[i]);
                         chkChartItem[i].Tag = ParamColNum[i]; //corresponding column
@@ -1829,37 +1693,30 @@ namespace RecorderDrawer
                         if (!hiddenList.Contains(i))
                             chkChartItem[i].Checked = true;
                         */
-                        if(!hiddenList.Contains(ParamColNum[i]))
-                            chkChartItem[i].Checked = true;
-                        else
-                            chkChartItem[i].Checked = false;
+                        chkChartItem[i].Checked = true;
                         chkChartItem[i].CheckedChanged += ChangeChartItems;
                         pnlChartItems.Controls.Add(chkChartItem[i]);
                         //factor button
-                        btnMultiple[i] = new Button
-                        {
-                            Text = "x10",
-                            Font = new Font("Calibri", 10),
-                            Width = (boxWidth - 5) / 2,
-                            Height = 24,
-                            Top = chkChartItem[i].Top + chkChartItem[i].Height + 5,
-                            Left = padding + i * (boxWidth + padding),
-                            TextAlign = ContentAlignment.MiddleCenter,
-                            Tag = i
-                        };
+                        btnMultiple[i] = new Button();
+                        btnMultiple[i].Text = "x10";
+                        btnMultiple[i].Font = new Font("Calibri", 10);
+                        btnMultiple[i].Width = (boxWidth - 5) / 2;
+                        btnMultiple[i].Height = 24;
+                        btnMultiple[i].Top= chkChartItem[i].Top + chkChartItem[i].Height + 5;
+                        btnMultiple[i].Left = padding + i * (boxWidth + padding);
+                        btnMultiple[i].TextAlign = ContentAlignment.MiddleCenter;
+                        btnMultiple[i].Tag = i;
                         btnMultiple[i].Click += SetDataFactor;
                         pnlChartItems.Controls.Add(btnMultiple[i]);
-                        btnReduce[i] = new Button
-                        {
-                            Text = "÷10",
-                            Font = new Font("Calibri", 10),
-                            Width = (boxWidth - 5) / 2,
-                            Height = 24,
-                            Top = chkChartItem[i].Top + chkChartItem[i].Height + 5,
-                            Left = padding + i * (boxWidth + padding) + btnMultiple[i].Width + 5,
-                            TextAlign = ContentAlignment.MiddleCenter,
-                            Tag = i
-                        };
+                        btnReduce[i] = new Button();
+                        btnReduce[i].Text = "÷10";
+                        btnReduce[i].Font = new Font("Calibri", 10);
+                        btnReduce[i].Width = (boxWidth - 5) / 2;
+                        btnReduce[i].Height = 24;
+                        btnReduce[i].Top = chkChartItem[i].Top + chkChartItem[i].Height + 5;
+                        btnReduce[i].Left = padding + i * (boxWidth + padding) + btnMultiple[i].Width + 5;
+                        btnReduce[i].TextAlign = ContentAlignment.MiddleCenter;
+                        btnReduce[i].Tag = i;
                         btnReduce[i].Click += SetDataFactor;
                         pnlChartItems.Controls.Add(btnReduce[i]);
                         //display
@@ -1925,8 +1782,8 @@ namespace RecorderDrawer
                     panel.XAxis.Scale.FontSpec.Border.IsVisible = false;
                     panel.XAxis.Scale.FontSpec.Angle = XAngle;
                     panel.XAxis.Type = XType == 0 ? AxisType.Text : AxisType.Date;
-                    panel.XAxis.Scale.MaxAuto = XType == 0;
-                    panel.XAxis.Scale.MinAuto = XType == 0;
+                    panel.XAxis.Scale.MaxAuto = XType == 0 ? true : false;
+                    panel.XAxis.Scale.MinAuto = XType == 0 ? true : false;
                     if (XType == 0) //text
                     {
                         panel.XAxis.Scale.TextLabels = TrendSeries[0].Select(m => new XDate(m.X).ToString("MM/dd HH:mm:ss")).ToArray();
@@ -2026,7 +1883,7 @@ namespace RecorderDrawer
                         foreach (PointPairList series in seriesList)
                         {
                             LineItem item = new LineItem(series[0].Tag.ToString(), series, chkChartItem.Single(m => m.Text.Equals(series[0].Tag.ToString())).BackColor, SymbolType.None);
-                            item.IsY2Axis = yAxisCount % 2 != 0;
+                            item.IsY2Axis = yAxisCount % 2 == 0 ? false : true;
                             item.YAxisIndex = (int)Math.Floor((double)yAxisCount / 2);
                             item.Line.Width = 2f * zoomFactor;
                             if (item.Points.Count > 100000)
@@ -2064,17 +1921,12 @@ namespace RecorderDrawer
                         //Default inner temperature channal: 0
                         for (int i = 0; i < SeriesMap[3].Length; i++)
                             statInfo += Calculate(i, 0, true) + Environment.NewLine;
-                        if (statInfo != "")
-                        {
-                            ImageObj qrImage = new ImageObj
-                            {
-                                Image = writer.Write(statInfo),
-                                Location = new Location(0.02f, 0.862f, CoordType.PaneFraction)
-                            };
-                            qrImage.Location.Width = (double)writer.Options.Width / targetChart.Width;
-                            qrImage.Location.Height = (double)writer.Options.Height / targetChart.Height;
-                            panel.GraphObjList.Add(qrImage);
-                        }
+                        ImageObj qrImage = new ImageObj();
+                        qrImage.Image = writer.Write(statInfo);
+                        qrImage.Location = new Location(0.02f, 0.862f, CoordType.PaneFraction);
+                        qrImage.Location.Width = (double)writer.Options.Width / targetChart.Width;
+                        qrImage.Location.Height = (double)writer.Options.Height / targetChart.Height;
+                        panel.GraphObjList.Add(qrImage);
                     }
                     //set legend
                     panel.Legend.Position = LegendPos.Float;
@@ -2326,7 +2178,7 @@ namespace RecorderDrawer
                             trendSeriesRefined[i].Add(
                                 trendSeriesRaw[i][j].X,
                                 (trendSeriesRaw[i][j].Y >= maxLimit || trendSeriesRaw[i][j].Y <= minLimit) ? 0 : trendSeriesRaw[i][j].Y,
-                                ParamTitle[i]
+                                trendSeriesRaw[i][j].Tag.ToString()
                             );
                     }
                 });
@@ -2359,6 +2211,7 @@ namespace RecorderDrawer
             }
         }
         #endregion
+
     }
 }
 

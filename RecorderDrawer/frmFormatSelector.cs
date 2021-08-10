@@ -22,25 +22,26 @@ namespace RecorderDrawer
             new AxesProp("扭力", 5, 0, 220, 20)
             };
         //Controls
-        private TextBox[] txtTitle = new TextBox[6];
-        private ComboBox[] cboUnit = new ComboBox[6];
-        private TextBox[] txtMin = new TextBox[6];
-        private TextBox[] txtMax = new TextBox[6];
-        private TextBox[] txtInterval = new TextBox[6];
-        private List<Label> lblAxis = new List<Label>();
-        private List<ComboBox> cboAxis = new List<ComboBox>();
-        private List<TextBox> txtAxis = new List<TextBox>();
-        private int columnCount;
+        private readonly TextBox[] txtTitle = new TextBox[6];
+        private readonly ComboBox[] cboUnit = new ComboBox[6];
+        private readonly TextBox[] txtMin = new TextBox[6];
+        private readonly TextBox[] txtMax = new TextBox[6];
+        private readonly TextBox[] txtInterval = new TextBox[6];
+        private readonly List<Label> lblAxis = new List<Label>();
+        private readonly List<ComboBox> cboAxis = new List<ComboBox>();
+        private readonly List<TextBox> txtAxis = new List<TextBox>();
+        private readonly int columnCount;
         #endregion
 
         #region | Property |
-        public AxesProp[] YProp { get; private set; } = new AxesProp[6];
+        public AxesProp[] YProp { get; private set; }
         public int XType { get; private set; }
         public int XInterval { get; private set; }
         public int XAngle { get; private set; }
         public int[][] SeriesMap { get; private set; }
         public int FirstDataRow { get; private set; }
         public List<string> ParamTitle { get; private set; } = new List<string>();
+        public string RecorderName { get; private set; }
         #endregion
 
         public frmFormatSelector(string[] previewData)
@@ -49,44 +50,53 @@ namespace RecorderDrawer
             //Init. componment
             for (int i = 0; i < 6; i++)
             {
-                txtTitle[i] = new TextBox();
-                txtTitle[i].Text = defaultYProp[i].Title;
-                txtTitle[i].MaxLength = 4;
-                txtTitle[i].TextAlign = HorizontalAlignment.Center;
+                txtTitle[i] = new TextBox
+                {
+                    Text = defaultYProp[i].Title,
+                    MaxLength = 4,
+                    TextAlign = HorizontalAlignment.Center
+                };
                 tblMain.Controls.Add(txtTitle[i], 1, i + 1);
                 cboUnit[i] = new ComboBox();
-                cboUnit[i].Items.AddRange(frmMain.unitList);
+                cboUnit[i].Items.AddRange(FrmMain.unitList);
                 cboUnit[i].SelectedIndex = defaultYProp[i].UnitIndex;
                 cboUnit[i].DropDownStyle = ComboBoxStyle.DropDownList;
                 tblMain.Controls.Add(cboUnit[i], 2, i + 1);
-                txtMin[i] = new TextBox();
-                txtMin[i].Text = defaultYProp[i].Min.ToString(); ;
+                txtMin[i] = new TextBox
+                {
+                    Text = defaultYProp[i].Min.ToString(),
+                    Dock = DockStyle.Fill,
+                    TextAlign = HorizontalAlignment.Center
+                };
+                ;
                 txtMin[i].KeyPress += InputOnlyNumber;
-                txtMin[i].Dock = DockStyle.Fill;
-                txtMin[i].TextAlign = HorizontalAlignment.Center;
                 tblMain.Controls.Add(txtMin[i], 3, i + 1);
-                txtMax[i] = new TextBox();
-                txtMax[i].Text = defaultYProp[i].Max.ToString();
+                txtMax[i] = new TextBox
+                {
+                    Text = defaultYProp[i].Max.ToString(),
+                    Dock = DockStyle.Fill,
+                    TextAlign = HorizontalAlignment.Center
+                };
                 txtMax[i].KeyPress += InputOnlyNumber;
-                txtMax[i].Dock = DockStyle.Fill;
-                txtMax[i].TextAlign = HorizontalAlignment.Center;
                 tblMain.Controls.Add(txtMax[i], 4, i + 1);
-                txtInterval[i] = new TextBox();
-                txtInterval[i].Text = defaultYProp[i].Interval.ToString();
+                txtInterval[i] = new TextBox
+                {
+                    Text = defaultYProp[i].Interval.ToString(),
+                    Dock = DockStyle.Fill,
+                    TextAlign = HorizontalAlignment.Center
+                };
                 txtInterval[i].KeyPress += InputOnlyNumber;
-                txtInterval[i].Dock = DockStyle.Fill;
-                txtInterval[i].TextAlign = HorizontalAlignment.Center;
                 tblMain.Controls.Add(txtInterval[i], 5, i + 1);
             }
             cboXAngle.Items.Clear();
             for (int i = -90; i <= 90; i += 5)
                 cboXAngle.Items.Add(i);
-            cboXType.SelectedIndex = frmMain.XType;
-            if (frmMain.XInterval == 0)
+            cboXType.SelectedIndex = FrmMain.XType;
+            if (FrmMain.XInterval == 0)
                 cboXInterval.SelectedIndex = 0;
             else
-                cboXInterval.SelectedItem = frmMain.XInterval.ToString();
-            cboXAngle.SelectedItem = frmMain.XAngle;
+                cboXInterval.SelectedItem = FrmMain.XInterval.ToString();
+            cboXAngle.SelectedItem = FrmMain.XAngle;
             //set tooltip
             ToolTip tooltip = new ToolTip();
             tooltip.SetToolTip(lblAxe1, "請將此座標軸設定為內溫資訊");
@@ -124,17 +134,33 @@ namespace RecorderDrawer
                 cboAxis[i].Location = new Point(44, 29 + 31 * i);
                 cboAxis[i].Size = new Size(80, 25);
                 cboAxis[i].SelectedIndex = 0;
+                cboAxis[i].Tag = i;
+                cboAxis[i].SelectedIndexChanged += CboAxis_SelectedIndexChanged;
                 pnlChannel.Controls.Add(cboAxis[i]);
                 txtAxis.Add(new TextBox());
                 txtAxis[i].Font = new Font("微軟正黑體", 10);
                 txtAxis[i].TextAlign = HorizontalAlignment.Center;
-                txtAxis[i].Text = "訊號" + i;
+                txtAxis[i].Text = i < previewData[0].Split(',', '\t').Length ? previewData[0].Split(',', '\t')[i] : "訊號" + i;
+                txtAxis[i].ImeMode = ImeMode.On;
                 txtAxis[i].Location = new Point(130, 29 + 31 * i);
                 txtAxis[i].Size = new Size(60, 25);
                 txtAxis[i].MaxLength = 6;
                 pnlChannel.Controls.Add(txtAxis[i]);
             }
             cboFirstDataRow.SelectedIndex = 1;
+            txtRecorderName.Text = FrmMain.RecorderName;
+            cboAxis[0].SelectedIndex = 1; //default datetime
+        }
+
+        private void CboAxis_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            foreach(ComboBox cbo in cboAxis)
+            {
+                if (cbo.SelectedIndex <= 1)
+                    txtAxis[int.Parse(cbo.Tag.ToString())].Enabled = false;
+                else
+                    txtAxis[int.Parse(cbo.Tag.ToString())].Enabled = true;
+            }
         }
 
         public void InputOnlyNumber(object sender, KeyPressEventArgs e)
@@ -152,16 +178,10 @@ namespace RecorderDrawer
                 e.Handled = true;
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void BtnOk_Click(object sender, EventArgs e)
         {
-            for (int i = 0; i < YProp.Length; i++)
-                YProp[i] = new AxesProp(txtTitle[i].Text, cboUnit[i].SelectedIndex, float.Parse(txtMin[i].Text), float.Parse(txtMax[i].Text), float.Parse(txtInterval[i].Text));
-            XType = cboXType.SelectedIndex;
-            if (cboXInterval.SelectedIndex == 0)
-                XInterval = 0;
-            else
-                XInterval = int.Parse(cboXInterval.SelectedItem.ToString());
-            XAngle = (int)cboXAngle.SelectedItem;
+            FirstDataRow = cboFirstDataRow.SelectedIndex;
+            RecorderName = txtRecorderName.Text;
             //create series map
             List<int>[] map = new List<int>[7];
             for (int i = 0; i < map.Length; i++)
@@ -171,20 +191,35 @@ namespace RecorderDrawer
                 if (cboAxis[i].SelectedIndex > 0)
                     map[cboAxis[i].SelectedIndex - 1].Add(i);
                 if (cboAxis[i].SelectedIndex > 1)
-                    ParamTitle.Add(txtAxis[i].Text);
+                    ParamTitle.Add(txtAxis[i].Text.Equals(string.Empty) ? "訊號" + i : txtAxis[i].Text);
             }
-            FirstDataRow = cboFirstDataRow.SelectedIndex;
             //check
             if (map[0].Count == 0)
-                MessageBox.Show(this,"必須有時間通道資訊");
-            else if (map.Skip(1).SelectMany(m => m).Count() == 0)
-                MessageBox.Show(this,"至少必須有一個以上的通道資訊");
-            else
             {
-                SeriesMap = map.Select(m => m.ToArray()).ToArray();
-                //commit
-                DialogResult = DialogResult.OK;
+                MessageBox.Show(this, "必須有時間通道資訊");
+                return;
             }
+            else if (map.Skip(1).SelectMany(m => m).Count() == 0)
+            {
+                MessageBox.Show(this, "至少必須有一個以上的通道資訊");
+                return;
+            }
+            else
+                SeriesMap = map.Select(m => m.ToArray()).ToArray();
+            //y-axis param
+            List<AxesProp> temp = new List<AxesProp>();
+            int axisCount = SeriesMap.Skip(1).Where(m => m.Length > 0).Count();
+            for (int i = 0; i < txtTitle.Length; i++)
+                temp.Add(new AxesProp(txtTitle[i].Text, cboUnit[i].SelectedIndex, float.Parse(txtMin[i].Text), float.Parse(txtMax[i].Text), float.Parse(txtInterval[i].Text)));
+            YProp = temp.ToArray();
+            XType = cboXType.SelectedIndex;
+            if (cboXInterval.SelectedIndex == 0)
+                XInterval = 0;
+            else
+                XInterval = int.Parse(cboXInterval.SelectedItem.ToString());
+            XAngle = (int)cboXAngle.SelectedItem;
+            //commit
+            DialogResult = DialogResult.OK;
         }
     }
 }
