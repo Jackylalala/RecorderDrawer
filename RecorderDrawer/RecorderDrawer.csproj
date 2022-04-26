@@ -146,7 +146,6 @@
     </Compile>
     <Compile Include="AxesProp.cs" />
     <Compile Include="CustomFolderBrowserDialog.cs" />
-    <Compile Include="CustomOpenFileDialog.cs" />
     <Compile Include="FlexibleMessageBox.cs" />
     <Compile Include="frmDifferential.cs">
       <SubType>Form</SubType>
@@ -255,7 +254,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
-    <Content Include="License-LGPL.txt" />
     <EmbeddedResource Include="Resources\ZedGraph.dll" />
     <EmbeddedResource Include="Resources\zxing.dll" />
     <EmbeddedResource Include="Resources\zxing.presentation.dll" />
