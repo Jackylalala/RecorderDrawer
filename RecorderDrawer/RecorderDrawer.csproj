@@ -146,6 +146,7 @@
     </Compile>
     <Compile Include="AxesProp.cs" />
     <Compile Include="CustomFolderBrowserDialog.cs" />
+    <Compile Include="CustomOpenFileDialog.cs" />
     <Compile Include="FlexibleMessageBox.cs" />
     <Compile Include="frmDifferential.cs">
       <SubType>Form</SubType>
